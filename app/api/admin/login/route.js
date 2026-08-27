@@ -9,14 +9,14 @@ function sign(value) {
 
 export async function POST(request) {
   try {
-    const { email, password } = await request.json();
-    const expectedEmail = process.env.VSI_AUTH_EMAIL;
+    const { username, password } = await request.json();
+    const expectedUsername = process.env.VSI_AUTH_USERNAME;
     const expectedPassword = process.env.VSI_ADMIN_PASSWORD;
     const secret = process.env.VSI_SESSION_SECRET;
-    if (!expectedEmail || !expectedPassword || !secret) return Response.json({ error: 'Admin authentication is not configured.' }, { status: 503 });
-    if (email !== expectedEmail || password !== expectedPassword) return Response.json({ error: 'Invalid email or password.' }, { status: 401 });
+    if (!expectedUsername || !expectedPassword || !secret) return Response.json({ error: 'Admin authentication is not configured.' }, { status: 503 });
+    if (username !== expectedUsername || password !== expectedPassword) return Response.json({ error: 'Invalid username or password.' }, { status: 401 });
 
-    const payload = `${email}|${Date.now()}`;
+    const payload = `${username}|${Date.now()}`;
     const token = `${Buffer.from(payload).toString('base64url')}.${sign(payload)}`;
     const store = await cookies();
     store.set(COOKIE, token, { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 8 });
@@ -40,8 +40,8 @@ export function isAdminSession(token) {
     const payload = Buffer.from(encoded, 'base64url').toString('utf8');
     const expected = sign(payload);
     if (signature.length !== expected.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return false;
-    const [email, timestamp] = payload.split('|');
-    if (email !== process.env.VSI_AUTH_EMAIL) return false;
+    const [username, timestamp] = payload.split('|');
+    if (username !== process.env.VSI_AUTH_USERNAME) return false;
     return Number.isFinite(Number(timestamp)) && Date.now() - Number(timestamp) < 8 * 60 * 60 * 1000;
   } catch {
     return false;
