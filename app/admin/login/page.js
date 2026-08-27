@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to sign in.');
@@ -35,9 +35,7 @@ export default function AdminLoginPage() {
     <main className="page" style={{ minHeight: '100vh' }}>
       <div className="topbar">
         <div className="topbar-inner">
-          <div className="brand">
-            <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" className="vsi-logo" />
-          </div>
+          <div className="brand"><img src="/vsi-logo-white.png" alt="Visionary Students Initiative" className="vsi-logo" /></div>
           <span>ADMINISTRATION</span>
           <nav className="social-links" aria-label="VSI social links">
             <a href="https://web.facebook.com/vsizambia" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
@@ -54,14 +52,12 @@ export default function AdminLoginPage() {
           <p className="kicker">VSI IMS</p>
           <h1 style={{ margin: '0 0 8px', color: 'var(--regal-navy)', fontSize: 30 }}>Administrator Sign in</h1>
           <p style={{ margin: '0 0 26px', color: 'var(--muted)', lineHeight: 1.6 }}>Sign in to access the VSI Information Management System.</p>
-
           <form onSubmit={submit}>
-            <label>Email<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required autoComplete="username" /></label>
+            <label>Username<input value={username} onChange={(e) => setUsername(e.target.value)} type="text" required autoComplete="username" /></label>
             <label style={{ marginTop: 18 }}>Password<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required autoComplete="current-password" /></label>
             {error && <div role="alert" className="error" style={{ marginTop: 18 }}>{error}</div>}
-            <div className="actions" style={{ justifyContent: 'stretch' }}>
-              <button disabled={busy} type="submit" className="submit" style={{ width: '100%' }}>{busy ? 'Signing in…' : 'Sign in'}</button>
-            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}><a href="/admin/forgot-password" style={{ color: 'var(--regal-navy)', fontSize: 14, fontWeight: 700 }}>Forgot password?</a></div>
+            <div className="actions" style={{ justifyContent: 'stretch', marginTop: 18 }}><button disabled={busy} type="submit" className="submit" style={{ width: '100%' }}>{busy ? 'Signing in…' : 'Sign in'}</button></div>
           </form>
         </div>
         <p style={{ textAlign: 'center', marginTop: 18, color: 'var(--muted)', fontSize: 12 }}>Authorised VSI personnel only.</p>
