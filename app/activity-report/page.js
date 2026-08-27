@@ -1,178 +1,49 @@
-<Section
-  n="10"
-  title="Finance & Budget"
-  description="Enter financial information based on available records. All amounts must be entered in Zambian Kwacha (ZMW). Totals and variance are calculated automatically."
->
-  <div className="table-wrap">
-    <table className="money-table">
-      <thead>
-        <tr>
-          <th>Financial Item</th>
-          <th>Approved Budget (ZMW)</th>
-          <th>Actual Amount Spent (ZMW)</th>
-          <th></th>
-        </tr>
-      </thead>
+'use client';
 
-      <tbody>
-        {budgetItems.map((row,i)=>(
-          <tr key={i}>
-            <td>
-              <input
-                value={row.item}
-                onChange={e=>setBudgetItems(
-                  b=>b.map((x,j)=>j===i?{...x,item:e.target.value}:x)
-                )}
-              />
-            </td>
+import { useMemo, useRef, useState } from 'react';
 
-            <td>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={row.approved}
-                onChange={e=>setBudgetItems(
-                  b=>b.map((x,j)=>j===i?{...x,approved:e.target.value}:x)
-                )}
-              />
-            </td>
+const activityTypes=['Training / Workshop','School Session','Community Outreach','Awareness Activity','Mentorship Session','Meeting','Campaign / Event','Other'];
+const fundingTypes=['Donor-funded','VSI internal funding','Partner-funded','Jointly funded','Other'];
+const attendanceTypes=['Yes','No','Not applicable'];
+const implementationTypes=['Fully implemented','Partially implemented','Not implemented'];
+const safeguardingTypes=['No concerns identified','Concern identified and handled according to VSI procedures','Concern requires follow-up'];
+const budgetStatuses=['Within approved budget','Underspent','Overspent'];
+const assessmentTypes=['Excellent','Good','Satisfactory','Needs Improvement'];
+const evidenceTypes=['Attendance / participant register','Photos','Training / presentation materials','Participant feedback','Pre/post assessment','Financial documentation','Receipts','Referral / follow-up documentation','Other'];
 
-            <td>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={row.actual}
-                onChange={e=>setBudgetItems(
-                  b=>b.map((x,j)=>j===i?{...x,actual:e.target.value}:x)
-                )}
-              />
-            </td>
+const blank={activityTitle:'',activityDate:'',startTime:'',endTime:'',activityType:'',activityTypeOther:'',directorate:'',programme:'',project:'',activityCode:'',activityDescription:'',province:'',district:'',constituency:'',wardCommunity:'',venue:'',reporterFullName:'',reporterPosition:'',reporterPhone:'',reporterEmail:'',supervisorFullName:'',supervisorPosition:'',supervisorPhone:'',supervisorEmail:'',donorName:'',grantTitle:'',grantReference:'',grantManager:'',grantPhone:'',grantEmail:'',fundingSource:'',fundingSourceOther:'',leadFacilitator:'',otherStaffVolunteers:'',partnerOrganisations:'',partnerContact:'',targetGroup:'',participantTotal:'',participantFemale:'',participantMale:'',participantOther:'',ageGroups:'',participantsWithDisabilities:'',attendanceStatus:'',objectives:'',activityDelivered:'',implementationStatus:'',implementationChange:'',knowledgeSkills:'',keyIssues:'',participantFeedback:'',immediateOutcomes:'',notableAchievements:'',resultsEvidence:'',approvedBudget:'',actualSpent:'',budgetStatus:'',overspendReason:'',overspendCause:'',priorApproval:'',overspendApprovedBy:'',overspendApprovalDate:'',financialDocuments:'',challenges:'',challengesAddressed:'',lessonsLearned:'',futureImprovements:'',safeguardingStatus:'',safeguardingDescription:'',safeguardingMeasures:'',overallAssessment:'',assessmentExplanation:'',evidenceUploaded:'',photoMediaConsent:'',declaration:false};
 
-            <td>
-              <button
-                type="button"
-                className="small-btn"
-                onClick={()=>setBudgetItems(
-                  b=>b.filter((_,j)=>j!==i)
-                )}
-              >
-                Remove
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+function Section({n,title,description,children}){return <section className="section"><div className="section-head"><span className="number">{n}</span><div><h2>{title}</h2><p>{description}</p></div></div><div className="section-body">{children}</div></section>}
+function Field({label,name,form,setForm,required=false,type='text',placeholder='',children,className=''}){return <label className={className}>{label}{required?' *':''}{children||<input type={type} name={name} value={form[name]||''} onChange={e=>setForm({...form,[name]:e.target.value})} placeholder={placeholder} required={required}/>}</label>}
+function Select({label,name,form,setForm,required=false,options,children}){return <label>{label}{required?' *':''}<select name={name} value={form[name]||''} onChange={e=>setForm({...form,[name]:e.target.value})} required={required}><option value="">Select</option>{options.map(x=><option key={x}>{x}</option>)}</select>{children}</label>}
+function Text({label,name,form,setForm,required=false,placeholder='',className=''}){return <Field label={label} name={name} form={form} setForm={setForm} required={required} className={className}><textarea name={name} value={form[name]||''} onChange={e=>setForm({...form,[name]:e.target.value})} placeholder={placeholder} required={required}/></Field>}
 
-  <div className="actions" style={{justifyContent:'flex-start'}}>
-    <button
-      type="button"
-      className="small-btn"
-      onClick={()=>setBudgetItems(
-        b=>[...b,{item:'',approved:'',actual:''}]
-      )}
-    >
-      + Add financial item
-    </button>
-  </div>
-
-  <div className="grid" style={{marginTop:20}}>
-
-    <Field
-      label="Approved Budget (Total) — ZMW"
-      name="approvedBudget"
-      form={{...form,approvedBudget:totals.approved.toFixed(2)}}
-      setForm={()=>{}}
-      type="number"
-    />
-
-    <Field
-      label="Actual Amount Spent (Total) — ZMW"
-      name="actualSpent"
-      form={{...form,actualSpent:totals.actual.toFixed(2)}}
-      setForm={()=>{}}
-      type="number"
-    />
-
-    <div>
-      <label>
-        Balance / (Overspend) — ZMW
-        <input
-          value={
-            Math.abs(variance).toFixed(2) +
-            (variance < 0 ? ' overspend' : ' balance')
-          }
-          readOnly
-        />
-      </label>
-    </div>
-
-    <Select
-      label="Budget Status"
-      name="budgetStatus"
-      form={{...form,budgetStatus:form.budgetStatus||selectedBudget}}
-      setForm={set}
-      required
-      options={budgetStatuses}
-    />
-
-  </div>
-
-  {(form.budgetStatus||selectedBudget)==='Overspent'&&
-    <div className="grid" style={{marginTop:20}}>
-
-      <Field
-        label="Amount Overspent — ZMW"
-        name="overspendReason"
-        form={{
-          ...form,
-          overspendReason:Math.abs(variance).toFixed(2)
-        }}
-        setForm={()=>{}}
-      />
-
-      <Text
-        label="Reason for Overspend"
-        name="overspendCause"
-        form={form}
-        setForm={set}
-        required
-      />
-
-      <Select
-        label="Was prior approval obtained?"
-        name="priorApproval"
-        form={form}
-        setForm={set}
-        required
-        options={['Yes','No','Not applicable']}
-      />
-
-      <Field
-        label="Approved by"
-        name="overspendApprovedBy"
-        form={form}
-        setForm={set}
-      />
-
-      <Field
-        label="Approval Date"
-        name="overspendApprovalDate"
-        form={form}
-        setForm={set}
-        type="date"
-      />
-
-      <Text
-        label="Financial supporting documents"
-        name="financialDocuments"
-        form={form}
-        setForm={set}
-      />
-
-    </div>
-  }
-</Section>
+export default function ActivityReport(){
+ const [form,setForm]=useState(blank); const [evidence,setEvidence]=useState([]); const [budgetItems,setBudgetItems]=useState([{item:'',approved:'',actual:''}]); const [followUps,setFollowUps]=useState([{action:'',responsible:'',deadline:'',status:'Pending'}]); const [files,setFiles]=useState([]); const [error,setError]=useState(''); const [saving,setSaving]=useState(false); const [submitted,setSubmitted]=useState(''); const fileInputRef=useRef(null);
+ const set=(patch)=>setForm(x=>({...x,...patch}));
+ const totals=useMemo(()=>({approved:budgetItems.reduce((s,x)=>s+(Number(x.approved)||0),0),actual:budgetItems.reduce((s,x)=>s+(Number(x.actual)||0),0)}),[budgetItems]);
+ const variance=totals.approved-totals.actual;
+ const selectedBudget=variance>0?'Underspent':variance<0?'Overspent':'Within approved budget';
+ const safeguardingConcern=form.safeguardingStatus && form.safeguardingStatus!=='No concerns identified';
+ const removeFile=(index)=>setFiles(prev=>prev.filter((_,i)=>i!==index));
+ async function submit(e){e.preventDefault();setError(''); if(!form.declaration){setError('Please confirm the declaration before submitting.');return} if(form.participantTotal!=='' && Number(form.participantTotal)!==(Number(form.participantFemale)||0)+(Number(form.participantMale)||0)+(Number(form.participantOther)||0)){setError('Participant total must match female + male + other/prefer not to say.');return} if(files.length && form.evidenceUploaded!=='Yes'){setError('Please select “Yes” for Documents / evidence uploaded when you attach files.');return} setSaving(true); try{let attachments=[]; if(files.length){const uploadReference=`PENDING-${crypto.randomUUID().slice(0,8).toUpperCase()}`; for(const file of files){const fd=new FormData();fd.append('file',file);fd.append('reference',uploadReference);const upload=await fetch('/api/activity-reports/upload',{method:'POST',body:fd});const uploaded=await upload.json();if(!upload.ok)throw new Error(uploaded.error||`Unable to upload ${file.name}.`);attachments.push({name:uploaded.name,type:uploaded.type,size:uploaded.size,url:uploaded.url,pathname:uploaded.pathname});}} const payload={...form,participantTotal:Number(form.participantTotal)||0,participantFemale:Number(form.participantFemale)||0,participantMale:Number(form.participantMale)||0,participantOther:Number(form.participantOther)||0,approvedBudget:totals.approved||Number(form.approvedBudget)||0,actualSpent:totals.actual||Number(form.actualSpent)||0,budgetStatus:form.budgetStatus||selectedBudget,budgetItems,followUpActions:followUps,evidenceAvailable:evidence,attachments}; const r=await fetch('/api/activity-reports',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const d=await r.json(); if(!r.ok)throw new Error(d.error||'Unable to submit the report.');setSubmitted(d.reference);}catch(err){setError(err.message)}finally{setSaving(false)}}
+ if(submitted)return <main className="page"><div className="topbar"><div className="topbar-inner"><div className="brand">VSI <small>VISIONARY STUDENTS INITIATIVE</small></div></div></div><div className="shell"><div className="success"><div className="success-mark">✓</div><p className="kicker">REPORT RECEIVED</p><h1>Activity report submitted.</h1><p>Your report has been received by VSI and is now recorded for review.</p><div className="ref">{submitted}</div><p>You may close this page.</p></div></div></main>;
+ return <main className="page"><div className="topbar"><div className="topbar-inner"><div className="brand"><img src="/VSI%20LOGO%20white.png" alt="Visionary Students Initiative" className="vsi-logo"/><small>VISIONARY STUDENTS INITIATIVE</small></div><span>ACTIVITY REPORT</span><nav className="social-links" aria-label="VSI social links"><a href="https://web.facebook.com/vsizambia" target="_blank" rel="noreferrer" aria-label="Facebook">f</a><a href="https://www.linkedin.com/in/visionary-students-initiative-vsi-0a447238/" target="_blank" rel="noreferrer" aria-label="LinkedIn">in</a><a href="https://www.instagram.com/vsizambia" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a><a href="https://www.youtube.com/@vsizambia" target="_blank" rel="noreferrer" aria-label="YouTube">▶</a><a href="https://www.vsizambia.org" target="_blank" rel="noreferrer" aria-label="VSI website">↗</a></nav></div></div><div className="shell"><header className="form-intro"><p>Complete this report after an activity implemented by VSI. All activity information is entered by the reporting officer. Please provide accurate information and attach supporting evidence where available.</p></header><form onSubmit={submit}>
+ <Section n="01" title="Activity Identification" description="Record the activity and its organisational context."><div className="grid"><Field label="Activity Title" name="activityTitle" form={form} setForm={set} required/><Field label="Activity Date" name="activityDate" form={form} setForm={set} required type="date"/><Field label="Start Time" name="startTime" form={form} setForm={set} type="time"/><Field label="End Time" name="endTime" form={form} setForm={set} type="time"/><Select label="Activity Type" name="activityType" form={form} setForm={set} required options={activityTypes}/>{form.activityType==='Other'&&<Field label="Other activity type" name="activityTypeOther" form={form} setForm={set} required/>}<Field label="Directorate" name="directorate" form={form} setForm={set} required/><Field label="Programme" name="programme" form={form} setForm={set} required/><Field label="Project" name="project" form={form} setForm={set} required/><Field label="Activity / Project Code" name="activityCode" form={form} setForm={set}/><Text label="Brief description of the activity" name="activityDescription" form={form} setForm={set} required className="full"/></div></Section>
+ <Section n="02" title="Activity Location" description="Record where the activity took place."><div className="grid"><Field label="Province" name="province" form={form} setForm={set} required/><Field label="District" name="district" form={form} setForm={set} required/><Field label="Constituency" name="constituency" form={form} setForm={set}/><Field label="Ward / Community" name="wardCommunity" form={form} setForm={set}/><Field label="Specific Venue / Location" name="venue" form={form} setForm={set} required className="full"/></div></Section>
+ <Section n="03" title="Reporting Officer" description="Enter the officer submitting this report and supervisor information."><div className="grid"><Field label="Full Name" name="reporterFullName" form={form} setForm={set} required/><Field label="Position / Role" name="reporterPosition" form={form} setForm={set} required/><Field label="Phone Number" name="reporterPhone" form={form} setForm={set} required type="tel"/><Field label="Email Address" name="reporterEmail" form={form} setForm={set} required type="email"/><Field label="Supervisor's Full Name" name="supervisorFullName" form={form} setForm={set}/><Field label="Position / Role" name="supervisorPosition" form={form} setForm={set}/><Field label="Phone Number" name="supervisorPhone" form={form} setForm={set} type="tel"/><Field label="Email Address" name="supervisorEmail" form={form} setForm={set} type="email"/></div></Section>
+ <Section n="04" title="Donor Information" description="Complete this section where the activity is funded externally."><div className="grid"><Select label="Funding Source" name="fundingSource" form={form} setForm={set} required options={fundingTypes}/>{form.fundingSource==='Other'&&<Field label="Other funding source" name="fundingSourceOther" form={form} setForm={set} required/>}<Field label="Donor Name" name="donorName" form={form} setForm={set}/><Field label="Project / Grant Title" name="grantTitle" form={form} setForm={set}/><Field label="Grant / Project Reference" name="grantReference" form={form} setForm={set}/><Field label="Grant Manager / Donor Contact" name="grantManager" form={form} setForm={set}/><Field label="Grant Manager Phone" name="grantPhone" form={form} setForm={set} type="tel"/><Field label="Grant Manager Email" name="grantEmail" form={form} setForm={set} type="email"/></div></Section>
+ <Section n="05" title="Facilitators & Partners" description="Record the people and organisations involved in implementation."><div className="grid"><Field label="Lead Facilitator" name="leadFacilitator" form={form} setForm={set}/><Field label="Other VSI Staff / Volunteers Involved" name="otherStaffVolunteers" form={form} setForm={set}/><Field label="Partner Organisation(s)" name="partnerOrganisations" form={form} setForm={set}/><Field label="Partner Contact Person" name="partnerContact" form={form} setForm={set}/></div></Section>
+ <Section n="06" title="Participants" description="Record participation and demographic information only where safely collected."><div className="grid"><Field label="Target Group" name="targetGroup" form={form} setForm={set} required/><Field label="Number of Participants" name="participantTotal" form={form} setForm={set} required type="number"/><Field label="Female" name="participantFemale" form={form} setForm={set} type="number"/><Field label="Male" name="participantMale" form={form} setForm={set} type="number"/><Field label="Other / Prefer not to say" name="participantOther" form={form} setForm={set} type="number"/><Field label="Age Group(s)" name="ageGroups" form={form} setForm={set}/><Field label="Participants with disabilities" name="participantsWithDisabilities" form={form} setForm={set}/><Select label="Attendance register attached" name="attendanceStatus" form={form} setForm={set} required options={attendanceTypes}/></div></Section>
+ <Section n="07" title="Activity Objectives" description="What was the activity intended to achieve?"><Text label="Objectives" name="objectives" form={form} setForm={set} required className="full"/></Section>
+ <Section n="08" title="Activity Delivered" description="Describe what actually happened, including topics, methods, exercises, materials and changes."><div className="grid"><Text label="What was delivered?" name="activityDelivered" form={form} setForm={set} required className="full"/><Select label="Implementation status" name="implementationStatus" form={form} setForm={set} required options={implementationTypes}/><Text label="Changes from the plan, if any" name="implementationChange" form={form} setForm={set}/></div></Section>
+ <Section n="09" title="Key Results & Outcomes" description="Capture what was achieved and the evidence available."><div className="grid"><Text label="Key knowledge / skills gained" name="knowledgeSkills" form={form} setForm={set}/><Text label="Key issues raised" name="keyIssues" form={form} setForm={set}/><Text label="Participant responses / feedback" name="participantFeedback" form={form} setForm={set}/><Text label="Immediate outcomes" name="immediateOutcomes" form={form} setForm={set}/><Text label="Notable achievements" name="notableAchievements" form={form} setForm={set}/><Text label="Evidence of results" name="resultsEvidence" form={form} setForm={set}/></div></Section>
+ <Section n="10" title="Finance & Budget" description="Enter financial information based on available records. All amounts must be entered in Zambian Kwacha (ZMW). Totals and variance are calculated automatically."><div className="table-wrap"><table className="money-table"><thead><tr><th>Financial Item</th><th>Approved Budget (ZMW)</th><th>Actual Amount Spent (ZMW)</th><th></th></tr></thead><tbody>{budgetItems.map((row,i)=><tr key={i}><td><input value={row.item} onChange={e=>setBudgetItems(b=>b.map((x,j)=>j===i?{...x,item:e.target.value}:x))}/></td><td><input type="number" min="0" step="0.01" value={row.approved} onChange={e=>setBudgetItems(b=>b.map((x,j)=>j===i?{...x,approved:e.target.value}:x))}/></td><td><input type="number" min="0" step="0.01" value={row.actual} onChange={e=>setBudgetItems(b=>b.map((x,j)=>j===i?{...x,actual:e.target.value}:x))}/></td><td><button type="button" className="small-btn" onClick={()=>setBudgetItems(b=>b.filter((_,j)=>j!==i))}>Remove</button></td></tr>)}</tbody></table></div><div className="actions" style={{justifyContent:'flex-start'}}><button type="button" className="small-btn" onClick={()=>setBudgetItems(b=>[...b,{item:'',approved:'',actual:''}])}>+ Add financial item</button></div><div className="grid" style={{marginTop:20}}><Field label="Approved Budget (Total) — ZMW" name="approvedBudget" form={{...form,approvedBudget:totals.approved.toFixed(2)}} setForm={()=>{}} type="number"/><Field label="Actual Amount Spent (Total) — ZMW" name="actualSpent" form={{...form,actualSpent:totals.actual.toFixed(2)}} setForm={()=>{}} type="number"/><div><label>Balance / (Overspend) — ZMW<input value={Math.abs(variance).toFixed(2)+(variance<0?' overspend':' balance')} readOnly/></label></div><Select label="Budget Status" name="budgetStatus" form={{...form,budgetStatus:form.budgetStatus||selectedBudget}} setForm={set} required options={budgetStatuses}/></div>{(form.budgetStatus||selectedBudget)==='Overspent'&&<div className="grid" style={{marginTop:20}}><Field label="Amount Overspent — ZMW" name="overspendReason" form={{...form,overspendReason:Math.abs(variance).toFixed(2)}} setForm={()=>{}}/><Text label="Reason for Overspend" name="overspendCause" form={form} setForm={set} required/><Select label="Was prior approval obtained?" name="priorApproval" form={form} setForm={set} required options={['Yes','No','Not applicable']}/><Field label="Approved by" name="overspendApprovedBy" form={form} setForm={set}/><Field label="Approval Date" name="overspendApprovalDate" form={form} setForm={set} type="date"/><Text label="Financial supporting documents" name="financialDocuments" form={form} setForm={set}/></div>}</Section>
+ <Section n="11" title="Challenges & Lessons Learned" description="Capture implementation learning and what should improve next time."><div className="grid"><Text label="Challenges encountered" name="challenges" form={form} setForm={set}/><Text label="How were the challenges addressed?" name="challengesAddressed" form={form} setForm={set}/><Text label="Lessons learned" name="lessonsLearned" form={form} setForm={set}/><Text label="What should be improved for future activities?" name="futureImprovements" form={form} setForm={set}/></div></Section>
+ <Section n="12" title="Safeguarding & Participant Welfare" description="Do not record sensitive case or personal information in this activity report."><Select label="Safeguarding status" name="safeguardingStatus" form={form} setForm={set} required options={safeguardingTypes}/>{safeguardingConcern&&<div className="grid" style={{marginTop:20}}><Text label="Short description of the concern" name="safeguardingDescription" form={form} setForm={set} required/><Text label="Measures taken / action taken" name="safeguardingMeasures" form={form} setForm={set} required/></div>}<div className="notice">Do not enter names, case details, allegations, medical information or other sensitive personal information here. Use the appropriate VSI safeguarding reporting procedure for formal cases.</div></Section>
+ <Section n="13" title="Follow-up Actions" description="Record actions that need to happen after the activity."><div className="table-wrap"><table className="money-table"><thead><tr><th>Action Required</th><th>Responsible Person</th><th>Deadline</th><th>Status</th><th></th></tr></thead><tbody>{followUps.map((row,i)=><tr key={i}><td><input value={row.action} onChange={e=>setFollowUps(b=>b.map((x,j)=>j===i?{...x,action:e.target.value}:x))}/></td><td><input value={row.responsible} onChange={e=>setFollowUps(b=>b.map((x,j)=>j===i?{...x,responsible:e.target.value}:x))}/></td><td><input type="date" value={row.deadline} onChange={e=>setFollowUps(b=>b.map((x,j)=>j===i?{...x,deadline:e.target.value}:x))}/></td><td><select value={row.status} onChange={e=>setFollowUps(b=>b.map((x,j)=>j===i?{...x,status:e.target.value}:x))}><option>Pending</option><option>In Progress</option><option>Complete</option><option>Cancelled</option></select></td><td><button type="button" className="small-btn" onClick={()=>setFollowUps(b=>b.filter((_,j)=>j!==i))}>Remove</button></td></tr>)}</tbody></table></div><div className="actions" style={{justifyContent:'flex-start'}}><button type="button" className="small-btn" onClick={()=>setFollowUps(b=>[...b,{action:'',responsible:'',deadline:'',status:'Pending'}])}>+ Add action</button></div></Section>
+ <Section n="14" title="Evidence & Attachments" description="Select available evidence and upload supporting documents where available."><div className="options">{evidenceTypes.map(x=><label className="option" key={x}><input type="checkbox" checked={evidence.includes(x)} onChange={e=>setEvidence(e.target.checked?[...evidence,x]:evidence.filter(v=>v!==x))}/>{x}</label>)}</div><div style={{marginTop:22}}><input ref={fileInputRef} type="file" multiple hidden onChange={e=>{setFiles(prev=>[...prev,...Array.from(e.target.files||[])]);setError('');e.target.value=''}}/><button type="button" className="small-btn" onClick={()=>fileInputRef.current?.click()}>+ Add Document</button>{files.length>0?<div className="document-list" style={{marginTop:14}}><div className="document-list-title">Documents added ({files.length})</div>{files.map((file,index)=><div className="document-item" key={`${file.name}-${file.size}-${file.lastModified}-${index}`}><div className="document-meta"><strong>{file.name}</strong><span>{file.type||'File'} · {(file.size/1024/1024).toFixed(2)} MB</span></div><button type="button" className="small-btn" onClick={()=>removeFile(index)}>Remove</button></div>)}</div>:<div className="hint" style={{marginTop:10}}>No documents added yet.</div>}<div className="hint" style={{marginTop:10}}>Files are uploaded securely to VSI's private evidence storage when you submit this report. Maximum 10 MB per file. PDF, Word, Excel, JPG and PNG are supported.</div></div><div className="grid" style={{marginTop:20}}><Select label="Documents / evidence uploaded" name="evidenceUploaded" form={form} setForm={set} required options={['Yes','No','Not applicable']}/><Select label="Photo / media consent confirmed where required" name="photoMediaConsent" form={form} setForm={set} required options={['Yes','No','Not applicable']}/></div></Section>
+ <Section n="15" title="Overall Activity Assessment" description="Give the activity an overall rating and brief explanation."><div className="grid"><Select label="How would you rate the activity?" name="overallAssessment" form={form} setForm={set} required options={assessmentTypes}/><Text label="Brief explanation" name="assessmentExplanation" form={form} setForm={set} required/></div></Section>
+ <section className="section"><div className="section-body"><label className="option"><input type="checkbox" checked={form.declaration} onChange={e=>set({declaration:e.target.checked})}/><span>I confirm that the information provided in this activity report is accurate to the best of my knowledge and is supported by available documentation.</span></label>{error&&<div className="error">{error}</div>}<div className="actions"><button className="submit" type="submit" disabled={saving}>{saving?'Uploading evidence & submitting…':'Submit Activity Report →'}</button></div></div></section>
+ </form></div></main>;
+}
