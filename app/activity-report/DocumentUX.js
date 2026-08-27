@@ -5,7 +5,9 @@ export default function DocumentUX(){
   const [rows,setRows]=useState([]);
 
   useEffect(()=>{
-    let observer;
+    let cancelled=false;
+    let attempts=0;
+    let input=null;
 
     const findSection=()=>[...document.querySelectorAll('.section')]
       .find(s=>s.querySelector('h2')?.textContent?.trim()==='Evidence & Attachments');
@@ -31,7 +33,6 @@ export default function DocumentUX(){
 
       const table=document.createElement('div');
       table.className='vsi-document-table';
-
       const head=document.createElement('div');
       head.className='vsi-document-row vsi-document-head';
       head.innerHTML='<div>Document Title</div><div>File</div><div>Action</div>';
@@ -60,31 +61,22 @@ export default function DocumentUX(){
         action.type='button';
         action.className='small-btn';
         action.textContent='Remove';
-        action.addEventListener('click',()=>{
-          const lists=[...document.querySelectorAll('.document-item')];
-          const match=lists.find(x=>x.querySelector('strong')?.textContent===row.file.name && x.querySelector('button'));
-          match?.querySelector('button')?.click();
-          setRows(prev=>prev.filter((_,i)=>i!==index));
-        });
+        action.addEventListener('click',()=>setRows(prev=>prev.filter((_,i)=>i!==index)));
 
         el.append(titleWrap,file,action);
         table.appendChild(el);
       });
-
       panel.appendChild(table);
     };
 
     const setup=()=>{
       const section=findSection();
-      if(!section) return;
+      if(!section) return false;
 
       section.querySelector('.options')?.setAttribute('style','display:none');
       section.querySelector('select[name="evidenceUploaded"]')?.closest('.grid')?.setAttribute('style','display:none');
-
-      const oldList=section.querySelector('.document-list');
-      if(oldList) oldList.style.display='none';
-      const oldHint=section.querySelector('.hint');
-      if(oldHint) oldHint.style.display='none';
+      section.querySelector('.document-list')?.setAttribute('style','display:none');
+      section.querySelector('.hint')?.setAttribute('style','display:none');
 
       let panel=section.querySelector('[data-vsi-document-panel]');
       if(!panel){
@@ -95,7 +87,7 @@ export default function DocumentUX(){
         (button?.parentElement||section.querySelector('.section-body')||section).appendChild(panel);
       }
 
-      const input=section.querySelector('input[type="file"]');
+      input=section.querySelector('input[type="file"]');
       if(input && !input.dataset.vsiCapture){
         input.dataset.vsiCapture='1';
         input.addEventListener('change',(e)=>{
@@ -104,45 +96,40 @@ export default function DocumentUX(){
             setRows(prev=>[
               ...prev,
               ...selected.map(file=>({
-                key:`${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
+                key:`${file.name}-${file.size}-${file.lastModified}-${crypto.randomUUID()}`,
                 file,
                 title:''
               }))
             ]);
+            e.target.value='';
           }
-        },true);
+        });
       }
-
       render();
+      return true;
     };
 
-    const handleMutations=()=>{
-      setup();
-      render();
+    const trySetup=()=>{
+      if(cancelled) return;
+      if(setup()) return;
+      if(++attempts<120) requestAnimationFrame(trySetup);
     };
-
-    observer=new MutationObserver(handleMutations);
-    observer.observe(document.body,{childList:true,subtree:true});
-    setup();
-
-    return()=>observer?.disconnect();
+    trySetup();
+    return()=>{cancelled=true;};
   },[rows]);
 
   useEffect(()=>{
     const applySuccess=()=>{
       const success=document.querySelector('.success');
-      if(!success) return;
+      if(!success) return false;
 
       const top=success.closest('.shell')?.previousElementSibling;
       const brand=top?.querySelector('.brand');
-      if(brand){
-        brand.innerHTML='<img src="/vsi-logo-white.png" alt="Visionary Students Initiative" class="vsi-logo"/><small>VISIONARY STUDENTS INITIATIVE</small>';
+      if(brand && !brand.querySelector('[data-vsi-success-logo]')){
+        brand.innerHTML='<img src="/vsi-logo-white.png" alt="Visionary Students Initiative" class="vsi-logo" data-vsi-success-logo="true"/><small>VISIONARY STUDENTS INITIATIVE</small>';
         const inner=top.querySelector('.topbar-inner');
         let span=inner?.querySelector(':scope > span');
-        if(!span && inner){
-          span=document.createElement('span');
-          inner.appendChild(span);
-        }
+        if(!span && inner){span=document.createElement('span');inner.appendChild(span);}
         if(span) span.textContent='ACTIVITY REPORT';
       }
 
@@ -155,11 +142,12 @@ export default function DocumentUX(){
         a.textContent='Submit another activity report →';
         p?.after(a);
       }
+      return true;
     };
 
-    const observer=new MutationObserver(applySuccess);
+    if(applySuccess()) return;
+    const observer=new MutationObserver(()=>{if(applySuccess()) observer.disconnect();});
     observer.observe(document.body,{childList:true,subtree:true});
-    applySuccess();
     return()=>observer.disconnect();
   },[]);
 
