@@ -32,26 +32,40 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#fff', display: 'grid', placeItems: 'center', padding: 24 }}>
-      <section style={{ width: '100%', maxWidth: 380 }}>
-        <div style={{ textAlign: 'center', marginBottom: 30 }}>
-          <div style={{ width: 64, height: 64, margin: '0 auto 18px', borderRadius: 12, background: '#063b6d', display: 'grid', placeItems: 'center', color: '#ffd220', fontWeight: 900, fontSize: 18 }}>VSI</div>
-          <h1 style={{ margin: 0, color: '#063b6d', fontSize: 27, fontWeight: 800 }}>VSI IMS</h1>
-          <p style={{ margin: '7px 0 0', color: '#687789' }}>Administration</p>
+    <main className="page" style={{ minHeight: '100vh' }}>
+      <div className="topbar">
+        <div className="topbar-inner">
+          <div className="brand">
+            <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" className="vsi-logo" />
+          </div>
+          <span>ADMINISTRATION</span>
+          <nav className="social-links" aria-label="VSI social links">
+            <a href="https://web.facebook.com/vsizambia" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
+            <a href="https://www.linkedin.com/in/visionary-students-initiative-vsi-0a447238/" target="_blank" rel="noreferrer" aria-label="LinkedIn">in</a>
+            <a href="https://www.instagram.com/vsizambia" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a>
+            <a href="https://www.youtube.com/@vsizambia" target="_blank" rel="noreferrer" aria-label="YouTube">▶</a>
+            <a href="https://www.vsizambia.org" target="_blank" rel="noreferrer" aria-label="VSI website">↗</a>
+          </nav>
         </div>
-        <div style={{ border: '1px solid #e0e6ed', borderRadius: 12, padding: 28, boxShadow: '0 8px 28px rgba(20,45,70,.06)' }}>
-          <h2 style={{ margin: '0 0 22px', fontSize: 20, color: '#243447' }}>Sign in</h2>
+      </div>
+
+      <div className="shell" style={{ maxWidth: 520, paddingTop: 48 }}>
+        <div style={{ background: '#fff', border: '1px solid var(--line)', borderTop: '6px solid var(--school-bus-yellow)', borderRadius: 16, padding: 32, boxShadow: '0 8px 30px rgba(0,53,102,.06)' }}>
+          <p className="kicker">VSI IMS</p>
+          <h1 style={{ margin: '0 0 8px', color: 'var(--regal-navy)', fontSize: 30 }}>Administrator Sign in</h1>
+          <p style={{ margin: '0 0 26px', color: 'var(--muted)', lineHeight: 1.6 }}>Sign in to access the VSI Information Management System.</p>
+
           <form onSubmit={submit}>
-            <label style={{ display: 'block', fontWeight: 700, color: '#34495e', marginBottom: 7 }}>Email</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required autoComplete="username" style={{ width: '100%', boxSizing: 'border-box', padding: '12px 13px', border: '1px solid #ccd5df', borderRadius: 7, marginBottom: 17, fontSize: 15 }} />
-            <label style={{ display: 'block', fontWeight: 700, color: '#34495e', marginBottom: 7 }}>Password</label>
-            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required autoComplete="current-password" style={{ width: '100%', boxSizing: 'border-box', padding: '12px 13px', border: '1px solid #ccd5df', borderRadius: 7, marginBottom: 17, fontSize: 15 }} />
-            {error && <div role="alert" style={{ background: '#fff1f1', color: '#9b1c1c', borderRadius: 7, padding: 11, marginBottom: 15, fontSize: 14 }}>{error}</div>}
-            <button disabled={busy} type="submit" style={{ width: '100%', padding: 13, border: 0, borderRadius: 7, background: '#063b6d', color: '#fff', fontWeight: 800, fontSize: 15, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Signing in…' : 'Sign in'}</button>
+            <label>Email<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required autoComplete="username" /></label>
+            <label style={{ marginTop: 18 }}>Password<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required autoComplete="current-password" /></label>
+            {error && <div role="alert" className="error" style={{ marginTop: 18 }}>{error}</div>}
+            <div className="actions" style={{ justifyContent: 'stretch' }}>
+              <button disabled={busy} type="submit" className="submit" style={{ width: '100%' }}>{busy ? 'Signing in…' : 'Sign in'}</button>
+            </div>
           </form>
         </div>
-        <p style={{ textAlign: 'center', marginTop: 18, color: '#8a97a6', fontSize: 12 }}>Authorised VSI personnel only.</p>
-      </section>
+        <p style={{ textAlign: 'center', marginTop: 18, color: 'var(--muted)', fontSize: 12 }}>Authorised VSI personnel only.</p>
+      </div>
     </main>
   );
 }
