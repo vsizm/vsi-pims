@@ -32,21 +32,25 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f4f7fa', display: 'grid', placeItems: 'center', padding: 24 }}>
-      <section style={{ width: '100%', maxWidth: 440, background: '#fff', borderRadius: 18, padding: 32, boxShadow: '0 16px 50px rgba(0,0,0,.10)' }}>
-        <div style={{ background: '#063b6d', margin: '-32px -32px 28px', padding: '26px 32px', borderRadius: '18px 18px 0 0', color: '#fff' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#ffd220' }}>VSI IMS</div>
-          <h1 style={{ margin: '6px 0 0', fontSize: 28 }}>Administration</h1>
-          <p style={{ margin: '8px 0 0', opacity: .85 }}>Sign in to review activity reports.</p>
+    <main style={{ minHeight: '100vh', background: '#fff', display: 'grid', placeItems: 'center', padding: 24 }}>
+      <section style={{ width: '100%', maxWidth: 380 }}>
+        <div style={{ textAlign: 'center', marginBottom: 30 }}>
+          <div style={{ width: 64, height: 64, margin: '0 auto 18px', borderRadius: 12, background: '#063b6d', display: 'grid', placeItems: 'center', color: '#ffd220', fontWeight: 900, fontSize: 18 }}>VSI</div>
+          <h1 style={{ margin: 0, color: '#063b6d', fontSize: 27, fontWeight: 800 }}>VSI IMS</h1>
+          <p style={{ margin: '7px 0 0', color: '#687789' }}>Administration</p>
         </div>
-        <form onSubmit={submit}>
-          <label style={{ display: 'block', fontWeight: 700, marginBottom: 7 }}>Email</label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required autoComplete="username" style={{ width: '100%', boxSizing: 'border-box', padding: 13, border: '1px solid #ccd5df', borderRadius: 9, marginBottom: 18 }} />
-          <label style={{ display: 'block', fontWeight: 700, marginBottom: 7 }}>Password</label>
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required autoComplete="current-password" style={{ width: '100%', boxSizing: 'border-box', padding: 13, border: '1px solid #ccd5df', borderRadius: 9, marginBottom: 18 }} />
-          {error && <div role="alert" style={{ background: '#fff1f1', color: '#9b1c1c', borderRadius: 9, padding: 12, marginBottom: 16 }}>{error}</div>}
-          <button disabled={busy} type="submit" style={{ width: '100%', padding: 14, border: 0, borderRadius: 9, background: '#063b6d', color: '#fff', fontWeight: 800, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Signing in…' : 'Sign in'}</button>
-        </form>
+        <div style={{ border: '1px solid #e0e6ed', borderRadius: 12, padding: 28, boxShadow: '0 8px 28px rgba(20,45,70,.06)' }}>
+          <h2 style={{ margin: '0 0 22px', fontSize: 20, color: '#243447' }}>Sign in</h2>
+          <form onSubmit={submit}>
+            <label style={{ display: 'block', fontWeight: 700, color: '#34495e', marginBottom: 7 }}>Email</label>
+            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required autoComplete="username" style={{ width: '100%', boxSizing: 'border-box', padding: '12px 13px', border: '1px solid #ccd5df', borderRadius: 7, marginBottom: 17, fontSize: 15 }} />
+            <label style={{ display: 'block', fontWeight: 700, color: '#34495e', marginBottom: 7 }}>Password</label>
+            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required autoComplete="current-password" style={{ width: '100%', boxSizing: 'border-box', padding: '12px 13px', border: '1px solid #ccd5df', borderRadius: 7, marginBottom: 17, fontSize: 15 }} />
+            {error && <div role="alert" style={{ background: '#fff1f1', color: '#9b1c1c', borderRadius: 7, padding: 11, marginBottom: 15, fontSize: 14 }}>{error}</div>}
+            <button disabled={busy} type="submit" style={{ width: '100%', padding: 13, border: 0, borderRadius: 7, background: '#063b6d', color: '#fff', fontWeight: 800, fontSize: 15, cursor: busy ? 'wait' : 'pointer' }}>{busy ? 'Signing in…' : 'Sign in'}</button>
+          </form>
+        </div>
+        <p style={{ textAlign: 'center', marginTop: 18, color: '#8a97a6', fontSize: 12 }}>Authorised VSI personnel only.</p>
       </section>
     </main>
   );
