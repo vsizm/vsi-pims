@@ -3,6 +3,35 @@ import { neon } from '@neondatabase/serverless';
 const required = ['activityTitle','activityDate','activityType','directorate','programme','project','activityDescription','province','district','venue','reporterFullName','reporterPosition','reporterPhone','reporterEmail','fundingSource','targetGroup','attendanceStatus','objectives','activityDelivered','implementationStatus','safeguardingStatus','evidenceUploaded','photoMediaConsent','overallAssessment','assessmentExplanation'];
 const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+async function sendReportEmail({ recipient, reference, activityTitle, reporterName }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY is not configured; report email was not sent');
+    return;
+  }
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'VSI PIMS <noreply@ims.vsizambia.org>',
+      to: [recipient],
+      reply_to: 'vsiprojectszm@gmail.com',
+      subject: `VSI PIMS Activity Report Received — ${reference}`,
+      text: `Dear ${reporterName},\n\nYour activity report has been successfully submitted to VSI PIMS.\n\nReference: ${reference}\nActivity: ${activityTitle}\n\nThe report is now recorded for review. Please keep the reference number for your records.\n\nVSI PIMS\nVisionary Students Initiative`,
+      html: `<p>Dear ${reporterName},</p><p>Your activity report has been successfully submitted to <strong>VSI PIMS</strong>.</p><p><strong>Reference:</strong> ${reference}<br><strong>Activity:</strong> ${activityTitle}</p><p>The report is now recorded for review. Please keep the reference number for your records.</p><p>VSI PIMS<br>Visionary Students Initiative</p>`,
+    }),
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Resend email failed (${response.status}): ${details}`);
+  }
+}
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -31,6 +60,18 @@ export async function POST(request) {
     ) VALUES (
       ${reference}, ${body.activityTitle}, ${body.activityDate}, ${body.startTime || null}, ${body.endTime || null}, ${body.activityType}, ${body.activityTypeOther || null}, ${body.directorate}, ${body.programme}, ${body.project}, ${body.activityCode || null}, ${body.activityDescription}, ${body.province}, ${body.district}, ${body.constituency || null}, ${body.wardCommunity || null}, ${body.venue}, ${body.reporterFullName}, ${body.reporterPosition}, ${body.reporterPhone}, ${body.reporterEmail}, ${body.supervisorFullName || null}, ${body.supervisorPosition || null}, ${body.supervisorPhone || null}, ${body.supervisorEmail || null}, ${body.donorName || null}, ${body.grantTitle || null}, ${body.grantReference || null}, ${body.grantManager || null}, ${body.grantPhone || null}, ${body.grantEmail || null}, ${body.fundingSource}, ${body.fundingSourceOther || null}, ${body.leadFacilitator || null}, ${body.otherStaffVolunteers || null}, ${body.partnerOrganisations || null}, ${body.partnerContact || null}, ${body.targetGroup}, ${total}, ${female}, ${male}, ${other}, ${body.ageGroups || null}, ${body.participantsWithDisabilities || null}, ${body.attendanceStatus}, ${body.objectives}, ${body.activityDelivered}, ${body.implementationStatus}, ${body.implementationChange || null}, ${body.knowledgeSkills || null}, ${body.keyIssues || null}, ${body.participantFeedback || null}, ${body.immediateOutcomes || null}, ${body.notableAchievements || null}, ${body.resultsEvidence || null}, ${JSON.stringify(budgetItems)}::jsonb, ${approvedBudget}, ${actualSpent}, ${budgetStatus}, ${budgetStatus === 'Overspent' ? Math.abs(approvedBudget - actualSpent).toFixed(2) : null}, ${body.overspendCause || null}, ${body.priorApproval || null}, ${body.overspendApprovedBy || null}, ${body.overspendApprovalDate || null}, ${body.financialDocuments || null}, ${body.challenges || null}, ${body.challengesAddressed || null}, ${body.lessonsLearned || null}, ${body.futureImprovements || null}, ${body.safeguardingStatus}, ${JSON.stringify(followUps)}::jsonb, ${Array.isArray(body.evidenceAvailable) ? body.evidenceAvailable : []}, ${body.evidenceUploaded}, ${body.photoMediaConsent}, ${body.overallAssessment}, ${body.assessmentExplanation}, ${JSON.stringify(Array.isArray(body.attachments) ? body.attachments : [])}::jsonb, true
     )`;
+
+    try {
+      await sendReportEmail({
+        recipient: body.reporterEmail,
+        reference,
+        activityTitle: body.activityTitle,
+        reporterName: body.reporterFullName,
+      });
+    } catch (emailError) {
+      console.error('activity report email notification failed', emailError);
+    }
+
     return Response.json({ ok: true, reference }, { status: 201 });
   } catch (error) {
     console.error('activity report submission failed', error);
