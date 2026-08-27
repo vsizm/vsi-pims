@@ -14,6 +14,6 @@ export async function GET() {
     return Response.json({ reports });
   } catch (error) {
     console.error('admin activity report list failed', error);
-    return Response.json({ error: 'Unable to load activity reports.' }, { status: 500 });
+    return Response.json({ error: error?.message || 'Unable to load activity reports.' }, { status: 500 });
   }
 }
