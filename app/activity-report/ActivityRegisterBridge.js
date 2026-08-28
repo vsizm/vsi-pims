@@ -91,13 +91,18 @@ export default function ActivityRegisterBridge() {
 
     const load = async () => {
       const q = search.value.trim();
-      const response = await fetch(`/api/approved-activities${q ? `?q=${encodeURIComponent(q)}` : ''}`);
+      // Do not load or display the full register on first load or when the search is cleared.
+      if (!q) {
+        results.innerHTML = '';
+        return;
+      }
+      const response = await fetch(`/api/approved-activities?q=${encodeURIComponent(q)}`);
       if (!response.ok || cancelled) return;
       render(await response.json());
     };
 
     search.addEventListener('input', load);
-    load();
+    // Intentionally do not call load() here: activities appear only after the officer searches.
     return () => { cancelled = true; search.removeEventListener('input', load); wrapper.remove(); };
   }, []);
 
