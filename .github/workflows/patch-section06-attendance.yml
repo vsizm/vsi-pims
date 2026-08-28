@@ -1,0 +1,69 @@
+name: Patch Section 06 attendance register
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch Activity Report
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('app/activity-report/page.js')
+          s = p.read_text()
+
+          if 'attendanceFileInputRef' not in s:
+              s = s.replace(
+                  "const [activitySearch,setActivitySearch]=useState(''); const [activityResults,setActivityResults]=useState([]); const [activitySearching,setActivitySearching]=useState(false);",
+                  "const [activitySearch,setActivitySearch]=useState(''); const [activityResults,setActivityResults]=useState([]); const [activitySearching,setActivitySearching]=useState(false); const [attendanceFiles,setAttendanceFiles]=useState([]); const attendanceFileInputRef=useRef(null);"
+              )
+
+          if 'const removeAttendanceFile=' not in s:
+              s = s.replace(
+                  "const variance=totals.approved-totals.actual;",
+                  "const removeAttendanceFile=(index)=>setAttendanceFiles(prev=>prev.filter((_,i)=>i!==index)); const variance=totals.approved-totals.actual;"
+              )
+
+          s = s.replace(
+              "if(files.length){const uploadReference=",
+              "const allFiles=[...files,...attendanceFiles];if(allFiles.length){const uploadReference="
+          ).replace(
+              "for(const file of files){",
+              "for(const file of allFiles){"
+          )
+
+          new_section = '''<Section n="06" title="Participants" description="Record participation and demographic information only where safely collected."><div className="participant-panels"><div className="participant-panel"><div className="participant-panel-title">PLANNED PARTICIPANTS</div><div className="participant-table"><div className="participant-row participant-header"><span>Category</span><span>Children</span><span>Youth</span><span>Adult</span></div><div className="participant-row"><strong>Male</strong><input type="number" min="0" name="plannedMaleChildren" value={form.plannedMaleChildren||''} onChange={e=>set({plannedMaleChildren:e.target.value})}/><input type="number" min="0" name="plannedMaleYouth" value={form.plannedMaleYouth||''} onChange={e=>set({plannedMaleYouth:e.target.value})}/><input type="number" min="0" name="plannedMaleAdult" value={form.plannedMaleAdult||''} onChange={e=>set({plannedMaleAdult:e.target.value})}/></div><div className="participant-row"><strong>Female</strong><input type="number" min="0" name="plannedFemaleChildren" value={form.plannedFemaleChildren||''} onChange={e=>set({plannedFemaleChildren:e.target.value})}/><input type="number" min="0" name="plannedFemaleYouth" value={form.plannedFemaleYouth||''} onChange={e=>set({plannedFemaleYouth:e.target.value})}/><input type="number" min="0" name="plannedFemaleAdult" value={form.plannedFemaleAdult||''} onChange={e=>set({plannedFemaleAdult:e.target.value})}/></div><div className="participant-row"><strong>PWD Male</strong><input type="number" min="0" name="plannedPwdMaleChildren" value={form.plannedPwdMaleChildren||''} onChange={e=>set({plannedPwdMaleChildren:e.target.value})}/><input type="number" min="0" name="plannedPwdMaleYouth" value={form.plannedPwdMaleYouth||''} onChange={e=>set({plannedPwdMaleYouth:e.target.value})}/><input type="number" min="0" name="plannedPwdMaleAdult" value={form.plannedPwdMaleAdult||''} onChange={e=>set({plannedPwdMaleAdult:e.target.value})}/></div><div className="participant-row"><strong>PWD Female</strong><input type="number" min="0" name="plannedPwdFemaleChildren" value={form.plannedPwdFemaleChildren||''} onChange={e=>set({plannedPwdFemaleChildren:e.target.value})}/><input type="number" min="0" name="plannedPwdFemaleYouth" value={form.plannedPwdFemaleYouth||''} onChange={e=>set({plannedPwdFemaleYouth:e.target.value})}/><input type="number" min="0" name="plannedPwdFemaleAdult" value={form.plannedPwdFemaleAdult||''} onChange={e=>set({plannedPwdFemaleAdult:e.target.value})}/></div></div><div className="participant-total">Planned Total <strong>{plannedTotal}</strong></div></div><div className="participant-panel"><div className="participant-panel-title">REACHED PARTICIPANTS</div><div className="participant-table"><div className="participant-row participant-header"><span>Category</span><span>Children</span><span>Youth</span><span>Adult</span></div><div className="participant-row"><strong>Male</strong><input type="number" min="0" name="reachedMaleChildren" value={form.reachedMaleChildren||''} onChange={e=>set({reachedMaleChildren:e.target.value})}/><input type="number" min="0" name="reachedMaleYouth" value={form.reachedMaleYouth||''} onChange={e=>set({reachedMaleYouth:e.target.value})}/><input type="number" min="0" name="reachedMaleAdult" value={form.reachedMaleAdult||''} onChange={e=>set({reachedMaleAdult:e.target.value})}/></div><div className="participant-row"><strong>Female</strong><input type="number" min="0" name="reachedFemaleChildren" value={form.reachedFemaleChildren||''} onChange={e=>set({reachedFemaleChildren:e.target.value})}/><input type="number" min="0" name="reachedFemaleYouth" value={form.reachedFemaleYouth||''} onChange={e=>set({reachedFemaleYouth:e.target.value})}/><input type="number" min="0" name="reachedFemaleAdult" value={form.reachedFemaleAdult||''} onChange={e=>set({reachedFemaleAdult:e.target.value})}/></div><div className="participant-row"><strong>PWD Male</strong><input type="number" min="0" name="reachedPwdMaleChildren" value={form.reachedPwdMaleChildren||''} onChange={e=>set({reachedPwdMaleChildren:e.target.value})}/><input type="number" min="0" name="reachedPwdMaleYouth" value={form.reachedPwdMaleYouth||''} onChange={e=>set({reachedPwdMaleYouth:e.target.value})}/><input type="number" min="0" name="reachedPwdMaleAdult" value={form.reachedPwdMaleAdult||''} onChange={e=>set({reachedPwdMaleAdult:e.target.value})}/></div><div className="participant-row"><strong>PWD Female</strong><input type="number" min="0" name="reachedPwdFemaleChildren" value={form.reachedPwdFemaleChildren||''} onChange={e=>set({reachedPwdFemaleChildren:e.target.value})}/><input type="number" min="0" name="reachedPwdFemaleYouth" value={form.reachedPwdFemaleYouth||''} onChange={e=>set({reachedPwdFemaleYouth:e.target.value})}/><input type="number" min="0" name="reachedPwdFemaleAdult" value={form.reachedPwdFemaleAdult||''} onChange={e=>set({reachedPwdFemaleAdult:e.target.value})}/></div></div><div className="participant-total">Reached Total <strong>{reachedTotal}</strong></div></div></div><div className="participant-performance"><div><span>PERFORMANCE</span><strong>{participantPerformance||'Awaiting participant figures'}</strong></div><div><span>ACHIEVEMENT</span><strong>{plannedTotal>0?`${performancePercent}%`:'—'}</strong></div><div><span>VARIANCE</span><strong>{plannedTotal>0?reachedTotal-plannedTotal:'—'}</strong></div></div>{(participantPerformance==='UNDER-ACHIEVED'||participantPerformance==='OVER-ACHIEVED')&&<Text label="Justification for performance variance" name="participantPerformanceJustification" form={form} setForm={set} required className="full"/>}<div className="attendance-register"><div className="attendance-title">Attendance Register</div><p className="hint">Add the attendance register supporting the participant figures above.</p><input ref={attendanceFileInputRef} type="file" multiple hidden onChange={e=>{setAttendanceFiles(prev=>[...prev,...Array.from(e.target.files||[])]);e.target.value=''}}/><button type="button" className="small-btn" onClick={()=>attendanceFileInputRef.current?.click()}>+ Add Document</button>{attendanceFiles.length>0?<div className="document-list" style={{marginTop:14}}><div className="document-list-title">Attendance Documents ({attendanceFiles.length})</div>{attendanceFiles.map((file,index)=><div className="document-item" key={`${file.name}-${file.size}-${file.lastModified}-${index}`}><div className="document-meta"><strong>{file.name}</strong><span>{file.type||'File'} · {(file.size/1024/1024).toFixed(2)} MB</span></div><button type="button" className="small-btn" onClick={()=>removeAttendanceFile(index)}>Remove</button></div>)}</div>:<div className="hint" style={{marginTop:10}}>No attendance documents added yet.</div>}</div></Section>'''
+
+          pattern = re.compile(r'<Section n="06" title="Participants".*?</Section><Section n="07"', re.S)
+          replacement = new_section + '<Section n="07"'
+          s2, n = pattern.subn(replacement, s, count=1)
+          if n != 1:
+              raise SystemExit('Section 06 pattern not found; no changes made')
+          p.write_text(s2)
+          PY
+      - name: Add participant panel styles
+        run: |
+          cat >> app/globals.css <<'CSS'
+          .participant-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.participant-panel{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}.participant-panel-title{padding:14px 16px;background:#f4f7fa;color:var(--regal-navy);font-weight:900;letter-spacing:.08em;font-size:13px}.participant-table{padding:8px 12px}.participant-row{display:grid;grid-template-columns:minmax(90px,1.25fr) repeat(3,minmax(70px,1fr));gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}.participant-row:last-child{border-bottom:0}.participant-row span,.participant-row strong{font-size:12px;color:var(--ink)}.participant-row input{margin:0;padding:9px 8px;text-align:center}.participant-header{border-bottom:1px solid #ccd5dd}.participant-header span{font-weight:900;color:var(--muted);text-align:center}.participant-header span:first-child{text-align:left}.participant-total{display:flex;justify-content:space-between;padding:13px 16px;background:#f8fafc;color:var(--regal-navy);font-weight:800}.participant-total strong{font-size:18px}.participant-performance{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:22px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.participant-performance div{display:flex;flex-direction:column;gap:5px}.participant-performance span{font-size:11px;font-weight:900;letter-spacing:.08em;color:var(--muted)}.participant-performance strong{font-size:16px;color:var(--regal-navy)}.attendance-register{margin-top:22px;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff}.attendance-title{font-size:16px;font-weight:900;color:var(--regal-navy)}
+          @media(max-width:800px){.participant-panels{grid-template-columns:1fr}.participant-performance{grid-template-columns:1fr 1fr}.participant-performance div:first-child{grid-column:1/-1}}
+          CSS
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/activity-report/page.js app/globals.css .github/workflows/patch-section06-attendance.yml
+          git rm .github/workflows/patch-section06-attendance.yml
+          git commit -m "feat: add attendance register to participant section"
+          git push
