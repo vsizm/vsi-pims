@@ -62,13 +62,13 @@ export default function AdminDashboard({ active = 'Dashboard', title = 'Administ
     const approved = reports.filter(r => r.review_status === 'APPROVED').length;
     const returned = reports.filter(r => r.review_status === 'RETURNED').length;
     const rejected = reports.filter(r => r.review_status === 'REJECTED').length;
-    const planned = details.reduce((s, r) => s + Number(r.plannedParticipantTotal || r.participant_total || 0), 0);
-    const reached = details.reduce((s, r) => s + Number(r.reachedParticipantTotal || r.participant_total || 0), 0);
-    const budget = details.reduce((s, r) => s + Number(r.approved_budget || 0), 0);
-    const spent = details.reduce((s, r) => s + Number(r.actual_spent || 0), 0);
-    const achievement = details.reduce((s, r) => s + Number(r.participant_performance_percent || 0), 0);
-    const assessed = details.filter(r => r.overall_assessment).length;
-    return { total: reports.length, pending, approved, returned, rejected, planned, reached, budget, spent, achievement: assessed ? Math.round(achievement / assessed) : pct(reached, planned), health: reports.length ? Math.round((approved / reports.length) * 100) : 0 };
+    const planned = details.reduce((s, r) => s + Number(r.planned_participant_total ?? r.plannedParticipantTotal ?? r.participant_total ?? 0), 0);
+    const reached = details.reduce((s, r) => s + Number(r.reached_participant_total ?? r.reachedParticipantTotal ?? r.participant_total ?? 0), 0);
+    const budget = details.reduce((s, r) => s + Number(r.approved_budget ?? 0), 0);
+    const spent = details.reduce((s, r) => s + Number(r.actual_spent ?? 0), 0);
+    const achievementValues = details.map(r => Number(r.participant_performance_percent ?? r.participantPerformancePercent ?? 0)).filter(v => v > 0);
+    const achievement = achievementValues.length ? Math.round(achievementValues.reduce((s, v) => s + v, 0) / achievementValues.length) : pct(reached, planned);
+    return { total: reports.length, pending, approved, returned, rejected, planned, reached, budget, spent, achievement, health: reports.length ? Math.round((approved / reports.length) * 100) : 0 };
   }, [reports, details]);
 
   const byProgramme = useMemo(() => {
@@ -77,9 +77,9 @@ export default function AdminDashboard({ active = 'Dashboard', title = 'Administ
       const key = r.programme || 'Unspecified';
       const row = map.get(key) || { name: key, reports: 0, participants: 0, budget: 0, spent: 0 };
       row.reports += 1;
-      row.participants += Number(r.reachedParticipantTotal || r.participant_total || 0);
-      row.budget += Number(r.approved_budget || 0);
-      row.spent += Number(r.actual_spent || 0);
+      row.participants += Number(r.reached_participant_total ?? r.reachedParticipantTotal ?? r.participant_total ?? 0);
+      row.budget += Number(r.approved_budget ?? 0);
+      row.spent += Number(r.actual_spent ?? 0);
       map.set(key, row);
     });
     return [...map.values()].sort((a, b) => b.reports - a.reports).slice(0, 6);
