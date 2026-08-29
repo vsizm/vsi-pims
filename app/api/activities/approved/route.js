@@ -1,4 +1,4 @@
-import { GET as getApprovedActivities } from '../../../approved-activities/route';
+import { GET as getApprovedActivities } from '../../approved-activities/route';
 
 export async function GET(request) {
   const response = await getApprovedActivities(request);
