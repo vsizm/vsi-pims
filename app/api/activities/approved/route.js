@@ -6,16 +6,17 @@ const programmeByCode = {
   MHSW: 'MHSW',
   CASD: 'CASD',
   CLDG: 'CLDG',
-  PAR: 'PAR',
+  PAR: 'Policy, Advocacy & Research',
   CPRM: 'CPRM',
 };
 
 function enrichProgramme(activity) {
   const code = String(activity?.code ?? activity?.activityCode ?? '').trim();
   const existing = activity?.programme ?? activity?.programmeName ?? activity?.program ?? '';
-  if (existing) return existing;
+  const existingCode = String(existing).trim().toUpperCase();
+  if (existing && !programmeByCode[existingCode]) return existing;
   const prefix = code.split('-')[0].toUpperCase();
-  return programmeByCode[prefix] ?? prefix;
+  return programmeByCode[prefix] ?? existing ?? prefix;
 }
 
 export async function GET(request) {
