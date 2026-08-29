@@ -1,0 +1,67 @@
+{
+  "programme": {"code":"HP","name":"Health Promotion"},
+  "projects": [
+    {"code":"HP-P01","name":"Health Awareness & Education","activities":[
+      {"code":"HP-P01-A01","name":"Health education sessions","auAgenda2063Alignment":"Aspiration 1 – Inclusive Growth & Sustainable Development","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P01-A02","name":"Disease prevention awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P01-A03","name":"Health information campaigns","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P01-A04","name":"Community health talks","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 10"},
+      {"code":"HP-P01-A05","name":"Health fairs","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P01-A06","name":"Peer health education","auAgenda2063Alignment":"Aspiration 1; Aspiration 6 – People-Driven Development","unSdgsAlignment":"SDG 3"}
+    ]},
+    {"code":"HP-P02","name":"Healthy Lifestyles & Wellness","activities":[
+      {"code":"HP-P02-A01","name":"Nutrition education","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 2, SDG 3"},
+      {"code":"HP-P02-A02","name":"Healthy eating promotion","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 2, SDG 3"},
+      {"code":"HP-P02-A03","name":"Physical activity and fitness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P02-A04","name":"Healthy lifestyle campaigns","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P02-A05","name":"Wellness activities","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P02-A06","name":"Prevention of lifestyle-related diseases","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"}
+    ]},
+    {"code":"HP-P03","name":"Adolescent & Youth Health","activities":[
+      {"code":"HP-P03-A01","name":"Adolescent health education","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P03-A02","name":"Sexual and reproductive health education","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3, SDG 5"},
+      {"code":"HP-P03-A03","name":"Menstrual health and hygiene","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3, SDG 5, SDG 6"},
+      {"code":"HP-P03-A04","name":"HIV/AIDS awareness and prevention","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P03-A05","name":"Youth-friendly health information","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3, SDG 10"}
+    ]},
+    {"code":"HP-P04","name":"Mental Health & Psychosocial Wellbeing","activities":[
+      {"code":"HP-P04-A01","name":"Mental health awareness","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P04-A02","name":"Stress management education","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P04-A03","name":"Psychosocial wellbeing sessions","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P04-A04","name":"Resilience building","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P04-A05","name":"Peer support","auAgenda2063Alignment":"Aspiration 6","unSdgsAlignment":"SDG 3, SDG 10"},
+      {"code":"HP-P04-A06","name":"Psychological first-aid awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P04-A07","name":"Referral and support linkages","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 10"}
+    ]},
+    {"code":"HP-P05","name":"Substance Abuse Prevention","activities":[
+      {"code":"HP-P05-A01","name":"Alcohol and drug abuse awareness","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P05-A02","name":"Substance-use prevention education","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P05-A03","name":"Peer substance-abuse prevention","auAgenda2063Alignment":"Aspiration 6","unSdgsAlignment":"SDG 3, SDG 10"},
+      {"code":"HP-P05-A04","name":"Substance-abuse awareness campaigns","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P05-A05","name":"Referral and support information","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 10"}
+    ]},
+    {"code":"HP-P06","name":"Community Health Outreach","activities":[
+      {"code":"HP-P06-A01","name":"Community health outreach","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3, SDG 10"},
+      {"code":"HP-P06-A02","name":"Health screening activities","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P06-A03","name":"Basic health checks","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P06-A04","name":"Health referral activities","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 10"},
+      {"code":"HP-P06-A05","name":"Immunisation awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P06-A06","name":"Blood donation awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P06-A07","name":"Community health campaigns","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3, SDG 10"}
+    ]},
+    {"code":"HP-P07","name":"Hygiene, Sanitation & Environmental Health","activities":[
+      {"code":"HP-P07-A01","name":"Personal hygiene education","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P07-A02","name":"Handwashing promotion","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 6"},
+      {"code":"HP-P07-A03","name":"Sanitation awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 6"},
+      {"code":"HP-P07-A04","name":"Menstrual hygiene education","auAgenda2063Alignment":"Aspiration 1; Aspiration 6","unSdgsAlignment":"SDG 3, SDG 5, SDG 6"},
+      {"code":"HP-P07-A05","name":"Waste-management and environmental-health awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 6, SDG 12"}
+    ]},
+    {"code":"HP-P08","name":"First Aid & Health Safety","activities":[
+      {"code":"HP-P08-A01","name":"First-aid training","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P08-A02","name":"Basic health and safety training","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P08-A03","name":"Emergency preparedness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3, SDG 11"},
+      {"code":"HP-P08-A04","name":"Injury-prevention awareness","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"},
+      {"code":"HP-P08-A05","name":"Health and safety demonstrations","auAgenda2063Alignment":"Aspiration 1","unSdgsAlignment":"SDG 3"}
+    ]}
+  ]
+}
