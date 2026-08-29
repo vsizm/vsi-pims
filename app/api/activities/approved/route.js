@@ -7,7 +7,7 @@ const programmeByCode = {
   CASD: 'Climate Action & Sustainable Development',
   CLDG: 'Civic Leadership & Democratic Governance',
   PAR: 'Policy, Advocacy & Research',
-  CPRM: 'Child Protection & Protection Management',
+  CPRM: 'Child Protection & Rights Management',
   NVP: 'National Values and Principles',
   VMP: 'Volunteer Management',
   CSVP: 'Community Service and Volunteerism',
