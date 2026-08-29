@@ -7,8 +7,19 @@ const programmeByCode = {
   CASD: 'Climate Action & Sustainable Development',
   CLDG: 'Civic Leadership & Democratic Governance',
   PAR: 'Policy, Advocacy & Research',
-  CPRM: 'Child Protection & Rights Management',
-  NVP: 'National Volunteer Programme',
+  CPRM: 'Child Protection & Protection Management',
+  NVP: 'National Values and Principles',
+  VMP: 'Volunteer Management',
+  CSVP: 'Community Service and Volunteerism',
+  SOP: 'School Outreach',
+  AAP: 'Agriculture and Agro-processing',
+  TIEP: 'Technology and Innovation Entrepreneurship',
+  MHRP: 'Mental Health Resilience',
+  SPP: 'Suicide Prevention',
+  KZCGH: 'Keep Zambia Clean, Green and Healthy',
+  VEP: 'Voter Education',
+  SPD: 'Strategic Partnerships Development',
+  SER: 'Stakeholder Relations & Events',
   HP: 'Health Promotion',
 };
 
@@ -24,10 +35,12 @@ function enrichProgramme(activity) {
       ''
   ).trim();
   const existingCode = existing.toUpperCase();
-  const prefix = code.split('-')[0].toUpperCase();
+  const parts = code.split('-').map((part) => part.toUpperCase());
+  const prefix = parts[0] ?? '';
+  const programmeCode = prefix === 'PROG' ? (parts[1] ?? '') : prefix;
 
   if (programmeByCode[existingCode]) return programmeByCode[existingCode];
-  if (programmeByCode[prefix]) return programmeByCode[prefix];
+  if (programmeByCode[programmeCode]) return programmeByCode[programmeCode];
   return existing || prefix;
 }
 
