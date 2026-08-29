@@ -1,1 +1,0 @@
-Admin report review follows the same 12-section order as the Activity Report.
