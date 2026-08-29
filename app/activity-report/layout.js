@@ -1,5 +1,4 @@
 import DocumentUX from './DocumentUX';
-import ActivityRegisterBridge from './ActivityRegisterBridge';
 
 export default function ActivityReportLayout({ children }) {
   return (
@@ -48,7 +47,6 @@ export default function ActivityReportLayout({ children }) {
         }
       `}</style>
       {children}
-      <ActivityRegisterBridge />
       <DocumentUX />
     </>
   );
