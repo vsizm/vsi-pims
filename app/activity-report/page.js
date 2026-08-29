@@ -1,3 +1,3 @@
 'use client';
 
-export { default } from './CleanActivityReport';
+export { default } from './ActivityReportWorkspace';
