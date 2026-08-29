@@ -1,0 +1,1 @@
+Activity Report refactor inspection scope: approved activity source, selector, report API, schema, upload UI, admin review. Reference: vsizambia/vsiwebsite.
