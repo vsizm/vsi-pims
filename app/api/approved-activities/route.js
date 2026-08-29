@@ -4,12 +4,29 @@ const encoded = 'eNrdnFtz6jgSgP+K6zykZqpC1Ukgmdl9I0Auk5CwkJPUzNY+CFsBTWzJK8lk2K3
 
 const approvedActivities = JSON.parse(inflateSync(Buffer.from(encoded, 'base64')).toString('utf8'));
 
+function normalizeActivity(a) {
+  const sdgs = a.unSdgsAlignment ?? a.sdgsAlignment ?? a.unSdgs ?? a.sdgs ?? '';
+  const au = a.auAgenda2063Alignment ?? a.agenda2063Alignment ?? a.auAgenda2063 ?? '';
+  return {
+    ...a,
+    code: a.code ?? a.activityCode ?? '',
+    name: a.name ?? a.activityName ?? '',
+    project: a.project ?? a.projectName ?? '',
+    directorate: a.directorate ?? '',
+    programme: a.programme ?? a.programmeName ?? '',
+    unSdgsAlignment: sdgs,
+    sdgsAlignment: sdgs,
+    auAgenda2063Alignment: au,
+  };
+}
+
 export async function GET(request) {
-  const q = new URL(request.url).searchParams.get('q')?.trim().toLowerCase() || '';
+  const params = new URL(request.url).searchParams;
+  const q = (params.get('q') ?? params.get('search') ?? '').trim().toLowerCase();
   const results = q
-    ? approvedActivities.filter((a) => `${a.activityCode} ${a.activityName}`.toLowerCase().includes(q))
+    ? approvedActivities.filter((a) => `${a.activityCode ?? a.code ?? ''} ${a.activityName ?? a.name ?? ''}`.toLowerCase().includes(q))
     : approvedActivities;
-  return Response.json(results);
+  return Response.json({ activities: results.map(normalizeActivity) });
 }
 
 export async function POST(request) {
@@ -19,7 +36,7 @@ export async function POST(request) {
     const name = String(body?.activityTitle || '').trim();
     const activity = approvedActivities.find((a) => a.activityCode === code || a.activityName === name);
     if (!activity) return Response.json({ error: 'Please select an approved VSI activity from the Activities Register.' }, { status: 400 });
-    return Response.json({ ok: true, activity });
+    return Response.json({ ok: true, activity: normalizeActivity(activity) });
   } catch {
     return Response.json({ error: 'Invalid activity selection.' }, { status: 400 });
   }
