@@ -1,13 +1,14 @@
 import { GET as getApprovedActivities } from '../../approved-activities/route';
 
 const programmeByCode = {
-  CEV: 'CEV',
-  EIE: 'EIE',
-  MHSW: 'MHSW',
-  CASD: 'CASD',
-  CLDG: 'CLDG',
+  CEV: 'Community Engagement & Volunteerism',
+  EIE: 'Education, Innovation & Entrepreneurship',
+  MHSW: 'Mental Health & Social Wellbeing',
+  CASD: 'Climate Action & Sustainable Development',
+  CLDG: 'Civic Leadership & Democratic Governance',
   PAR: 'Policy, Advocacy & Research',
-  CPRM: 'CPRM',
+  CPRM: 'Child Protection & Rights Management',
+  NVP: 'National Volunteer Programme',
   HP: 'Health Promotion',
 };
 
