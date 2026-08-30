@@ -11,13 +11,17 @@ export default function AdminNavLearningLink() {
     if (!navs.length) return;
 
     const intelligenceNav = navs[navs.length - 1];
-    if (!intelligenceNav || intelligenceNav.querySelector('a[href="/admin/learning"]')) return;
+    if (!intelligenceNav) return;
 
-    const link = document.createElement('a');
-    link.href = '/admin/learning';
+    let link = intelligenceNav.querySelector('a[href="/admin/learning"]');
+    if (!link) {
+      link = document.createElement('a');
+      link.href = '/admin/learning';
+      link.innerHTML = '<span class="nav-dot intel-dot"></span>Learning & Follow-up';
+      intelligenceNav.appendChild(link);
+    }
+
     link.className = pathname === '/admin/learning' ? 'active' : '';
-    link.innerHTML = '<span class="nav-dot intel-dot"></span>Learning & Follow-up';
-    intelligenceNav.appendChild(link);
   }, [pathname]);
 
   return null;
