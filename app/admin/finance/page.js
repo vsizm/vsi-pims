@@ -1,4 +1,4 @@
-import FinanceIntelligence from './FinanceIntelligence';
+import FinanceIntelligence from './FinanceIntelligenceNew';
 
 export const dynamic = 'force-dynamic';
 
