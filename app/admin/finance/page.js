@@ -1,5 +1,7 @@
-import AdminDashboard from '../AdminDashboard';
+import FinanceIntelligence from './FinanceIntelligence';
+
+export const dynamic = 'force-dynamic';
 
 export default function FinancePage() {
-  return <AdminDashboard active="Finance Intelligence" title="Finance Intelligence" subtitle="Financial performance derived from approved VSI activity reports." />;
+  return <FinanceIntelligence />;
 }
