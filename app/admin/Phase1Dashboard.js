@@ -14,7 +14,6 @@ const NAV = [
 
 const num = (v) => Number(v ?? 0) || 0;
 const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
-const money = (n) => `ZMW ${num(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const first = (obj, keys, fallback = '') => keys.map(k => obj?.[k]).find(v => v !== undefined && v !== null && v !== '') ?? fallback;
 
 function flattenStrings(value, out = []) {
@@ -25,7 +24,7 @@ function flattenStrings(value, out = []) {
 }
 
 function findAssessment(value) {
-  let values = [];
+  const values = [];
   const walk = (v, key = '') => {
     if (typeof v === 'number' && v >= 0 && v <= 100 && /assessment|effectiveness|performance|score|rating/i.test(key)) values.push(v);
     if (typeof v === 'string' && /assessment|effectiveness|performance|score|rating/i.test(key)) {
@@ -69,8 +68,7 @@ export default function Phase1Dashboard() {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Unable to load management intelligence.');
         const list = data.reports || [];
-        const approved = list.filter(r => r.review_status === 'APPROVED');
-        const full = await Promise.all(approved.map(async r => {
+        const full = await Promise.all(list.map(async r => {
           try {
             const detailResponse = await fetch(`/api/admin/activity-reports/${encodeURIComponent(r.reference)}`, { cache: 'no-store' });
             const detailData = await detailResponse.json();
@@ -90,11 +88,12 @@ export default function Phase1Dashboard() {
     const approved = reports.filter(r => r.review_status === 'APPROVED').length;
     const returned = reports.filter(r => r.review_status === 'RETURNED').length;
     const rejected = reports.filter(r => r.review_status === 'REJECTED').length;
-    const planned = details.reduce((s, r) => s + num(first(r, ['planned_participant_total','plannedParticipantTotal','participant_target','target_participants'])), 0);
-    const reached = details.reduce((s, r) => s + num(first(r, ['reached_participant_total','reachedParticipantTotal','participant_total','total_participants','participants_reached'])), 0);
-    const budget = details.reduce((s, r) => s + num(first(r, ['approved_budget','approvedBudget','budget_total','total_budget'])), 0);
-    const spent = details.reduce((s, r) => s + num(first(r, ['actual_spent','actualSpent','total_actual_spend','actual_total'])), 0);
-    const assessments = details.flatMap(findAssessment);
+    const approvedDetails = details.filter(r => r.review_status === 'APPROVED');
+    const planned = approvedDetails.reduce((s, r) => s + num(first(r, ['planned_participant_total','plannedParticipantTotal','participant_target','target_participants'])), 0);
+    const reached = approvedDetails.reduce((s, r) => s + num(first(r, ['reached_participant_total','reachedParticipantTotal','participant_total','total_participants','participants_reached'])), 0);
+    const budget = approvedDetails.reduce((s, r) => s + num(first(r, ['approved_budget','approvedBudget','budget_total','total_budget'])), 0);
+    const spent = approvedDetails.reduce((s, r) => s + num(first(r, ['actual_spent','actualSpent','total_actual_spend','actual_total'])), 0);
+    const assessments = approvedDetails.flatMap(findAssessment);
     const assessment = assessments.length ? Math.round(assessments.reduce((a,b) => a+b, 0) / assessments.length) : 0;
     const concernsList = details.flatMap(concerns);
     const identified = concernsList.filter(s => /concern identified/i.test(s)).length;
@@ -103,6 +102,7 @@ export default function Phase1Dashboard() {
   }, [reports, details]);
 
   const feed = useMemo(() => [...reports].sort((a,b) => new Date(first(b,['received_at','submitted_at','created_at','date_time_received'],0)) - new Date(first(a,['received_at','submitted_at','created_at','date_time_received'],0))).slice(0,6), [reports]);
+  const approvedDetails = useMemo(() => details.filter(r => r.review_status === 'APPROVED'), [details]);
 
   return <div className="phase1-app">
     <Sidebar />
@@ -136,7 +136,7 @@ export default function Phase1Dashboard() {
 
           <article className="phase1-card">
             <div className="phase1-card-head"><div><span>LIVE SUBMISSION FEED</span><h2>Reporting queue</h2></div><Link href="/admin/reports">View all →</Link></div>
-            <div className="phase1-feed">{feed.length ? feed.map(r => { const status = (r.review_status || 'PENDING_REVIEW').toUpperCase(); return <div className="phase1-feed-row" key={r.reference}><div><strong>{first(r,['reference'],'Report')}</strong><small>{first(r,['activity_name','activityName','activity'],'Activity report')}</small></div><b className={`feed-status ${status.toLowerCase()}`}>{status.replace('_',' ')}</b></div>; }) : <div className="phase1-empty">No submitted reports yet.</div>}</div>
+            <div className="phase1-feed">{feed.length ? feed.map(r => { const status = (r.review_status || 'PENDING_REVIEW').toUpperCase(); return <div className="phase1-feed-row" key={r.reference}><div><strong>{first(r,['reference'],'Report')}</strong><small>{first(r,['activity_name','activityName','activity_title','activity'],'Activity report')}</small></div><b className={`feed-status ${status.toLowerCase()}`}>{status.replace('_',' ')}</b></div>; }) : <div className="phase1-empty">No submitted reports yet.</div>}</div>
           </article>
 
           <article className="phase1-card">
@@ -147,7 +147,7 @@ export default function Phase1Dashboard() {
           <article className="phase1-card">
             <div className="phase1-card-head"><div><span>SAFEGUARDING</span><h2>Attention signals</h2></div><span className="phase1-alert-label">LIVE</span></div>
             <div className="alert-grid"><div className={stats.identified ? 'alert hot' : 'alert'}><strong>{stats.identified}</strong><small>Concern identified</small></div><div className={stats.followUp ? 'alert hot' : 'alert'}><strong>{stats.followUp}</strong><small>Requires follow-up</small></div></div>
-            {!stats.identified && !stats.followUp && <p className="phase1-safe">No safeguarding concerns detected in approved report data.</p>}
+            {!stats.identified && !stats.followUp && <p className="phase1-safe">No safeguarding concerns detected in active report data.</p>}
           </article>
 
           <article className="phase1-card">
@@ -159,7 +159,7 @@ export default function Phase1Dashboard() {
 
           <article className="phase1-card wide">
             <div className="phase1-card-head"><div><span>PROGRAMME FOOTPRINT</span><h2>Approved reporting by programme</h2></div><Link href="/admin/meal">MEAL view →</Link></div>
-            <div className="phase1-footprint">{details.length ? details.map(r => <div key={first(r,['reference'],Math.random())}><strong>{first(r,['programme','programme_name','programmeName'],'Unspecified')}</strong><span>{first(r,['activity_name','activityName','activity'],'Activity')}</span><b>{num(first(r,['reached_participant_total','reachedParticipantTotal','participant_total','total_participants'])).toLocaleString()} reached</b></div>) : <div className="phase1-empty">Approved activity footprint will appear here after reports are approved.</div>}</div>
+            <div className="phase1-footprint">{approvedDetails.length ? approvedDetails.map(r => <div key={first(r,['reference'],Math.random())}><strong>{first(r,['programme','programme_name','programmeName'],'Unspecified')}</strong><span>{first(r,['activity_name','activityName','activity_title','activity'],'Activity')}</span><b>{num(first(r,['reached_participant_total','reachedParticipantTotal','participant_total','total_participants'])).toLocaleString()} reached</b></div>) : <div className="phase1-empty">Approved activity footprint will appear here after reports are approved.</div>}</div>
           </article>
         </section>
       </>}
