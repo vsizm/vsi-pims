@@ -3,160 +3,57 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
-const NAV = [
-  ['Dashboard', '/admin'],
-  ['Activity Reports', '/admin/reports'],
-  ['Pending Review', '/admin/reports?status=PENDING_REVIEW'],
-  ['Approved Reports', '/admin/reports?status=APPROVED'],
-  ['Finance Intelligence', '/admin/finance'],
-  ['MEAL Intelligence', '/admin/meal'],
-  ['Learning & Follow-up', '/admin/learning'],
-];
+const NAV=[['Dashboard','/admin'],['Activity Reports','/admin/reports'],['Pending Review','/admin/reports?status=PENDING_REVIEW'],['Approved Reports','/admin/reports?status=APPROVED'],['Finance Intelligence','/admin/finance'],['MEAL Intelligence','/admin/meal'],['Learning & Follow-up','/admin/learning']];
+const first=(o,keys,fallback='')=>keys.map(k=>o?.[k]).find(v=>v!==undefined&&v!==null&&v!=='')??fallback;
+const text=v=>v===null||v===undefined||v===''?'Not recorded':String(v);
+const list=v=>{if(!v)return[];if(Array.isArray(v))return v;try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch{return[]}};
+const dateOnly=v=>v?new Date(v).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'—';
+const daysUntil=v=>{if(!v)return null;const d=new Date(v);return Number.isNaN(d.getTime())?null:Math.ceil((d.getTime()-Date.now())/86400000)};
 
-const first = (o, keys, fallback = '') => keys.map((k) => o?.[k]).find((v) => v !== undefined && v !== null && v !== '') ?? fallback;
-const text = (v) => (v === null || v === undefined || v === '' ? 'Not recorded' : String(v));
-const parseList = (v) => {
-  if (!v) return [];
-  if (Array.isArray(v)) return v;
-  try { const x = typeof v === 'string' ? JSON.parse(v) : v; return Array.isArray(x) ? x : []; } catch { return []; }
-};
-const dateOnly = (v) => v ? new Date(v).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
-const daysUntil = (v) => { if (!v) return null; const d = new Date(v); return Number.isNaN(d.getTime()) ? null : Math.ceil((d.getTime() - Date.now()) / 86400000); };
+function Sidebar(){return <aside className="admin-sidebar"><div className="side-brand"><div className="side-logo-wrap"><img src="/vsi-logo-white.png" alt="Visionary Students Initiative"/></div><div className="side-brand-copy"><strong>VSI IMS</strong><small>ADMINISTRATION</small></div></div><div className="side-label">WORKSPACE</div><nav>{NAV.slice(0,4).map(([label,href])=><Link key={label} href={href}><span className="nav-dot"/>{label}</Link>)}</nav><div className="side-label intelligence">INTELLIGENCE</div><nav>{NAV.slice(4).map(([label,href])=><Link key={label} href={href} className={label==='Learning & Follow-up'?'active':''}><span className="nav-dot intel-dot"/>{label}</Link>)}</nav><div className="side-note">Institutional learning turns completed activity reporting into practical follow-up and programme improvement.</div><Link className="back-report" href="/activity-report">Open Activity Report ↗</Link></aside>}
 
-function Sidebar() {
-  return <aside className="p5-sidebar">
-    <div className="p5-brand">
-      <div className="p5-logo"><img src="/vsi-logo-white.png" alt="Visionary Students Initiative" /></div>
-      <div className="p5-brand-copy"><strong>VSI IMS</strong><small>ADMINISTRATION</small></div>
-    </div>
-    <div className="p5-label">WORKSPACE</div>
-    <nav>{NAV.slice(0, 4).map(([label, href]) => <Link key={label} href={href}><span className="p5-dot" />{label}</Link>)}</nav>
-    <div className="p5-label">INTELLIGENCE</div>
-    <nav>{NAV.slice(4).map(([label, href]) => <Link key={label} href={href} className={label === 'Learning & Follow-up' ? 'active' : ''}><span className="p5-dot gold" />{label}</Link>)}</nav>
-    <div className="p5-note">Institutional learning turns completed activity reporting into practical follow-up and programme improvement.</div>
-    <Link className="p5-back" href="/activity-report">Open Activity Report ↗</Link>
-  </aside>;
-}
+function actionsFor(report){return list(first(report,['follow_up_actions','followUpActions'],[])).map((x,i)=>({id:`${report.reference}-${i}`,action:x?.action||x?.description||x?.task||'',responsible:x?.responsible||x?.assignee||x?.assignedTo||'',deadline:x?.deadline||x?.dueDate||x?.due_date||'',status:x?.status||'Pending',reference:report.reference,activity:first(report,['activity_title','activityTitle'],'Activity')})).filter(x=>x.action||x.responsible||x.deadline)}
 
-function normaliseActions(report) {
-  const raw = first(report, ['follow_up_actions', 'followUpActions'], []);
-  return parseList(raw).map((x, i) => ({
-    id: `${report.reference}-${i}`,
-    action: x?.action || x?.description || x?.task || '',
-    responsible: x?.responsible || x?.assignee || x?.assignedTo || '',
-    deadline: x?.deadline || x?.dueDate || x?.due_date || '',
-    status: x?.status || 'Pending',
-    reference: report.reference,
-    activity: first(report, ['activity_title', 'activityTitle'], 'Activity'),
-  })).filter((x) => x.action || x.responsible || x.deadline);
-}
+export default function Phase5Dashboard(){
+ const [reports,setReports]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('');
+ useEffect(()=>{let dead=false;(async()=>{try{const r=await fetch('/api/admin/activity-reports',{cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(d.error||'Unable to load learning intelligence.');const approved=(d.reports||[]).filter(x=>x.review_status==='APPROVED');const full=await Promise.all(approved.map(async x=>{try{const rr=await fetch(`/api/admin/activity-reports/${encodeURIComponent(x.reference)}`,{cache:'no-store'}),dd=await rr.json();return dd.report||x}catch{return x}}));if(!dead)setReports(full)}catch(e){if(!dead)setError(e.message)}finally{if(!dead)setLoading(false)}})();return()=>{dead=true}},[]);
+ const actions=useMemo(()=>reports.flatMap(actionsFor),[reports]);
+ const stats=useMemo(()=>({pending:actions.filter(a=>String(a.status).toLowerCase()==='pending').length,progress:actions.filter(a=>/in.?progress/i.test(String(a.status))).length,complete:actions.filter(a=>/complete/i.test(String(a.status))).length,overdue:actions.filter(a=>{const d=daysUntil(a.deadline);return d!==null&&d<0&&!/complete/i.test(String(a.status))}).length}),[actions]);
+ const learning=useMemo(()=>({challenges:reports.filter(r=>first(r,['challenges'])).length,addressed:reports.filter(r=>first(r,['challenges_addressed','challengesAddressed'])).length,lessons:reports.filter(r=>first(r,['lessons_learned','lessonsLearned'])).length,improvements:reports.filter(r=>first(r,['future_improvements','futureImprovements'])).length}),[reports]);
+ const programmeLearning=useMemo(()=>{const m=new Map();reports.forEach(r=>{const name=first(r,['programme','programme_name','programmeName'],'Unspecified');const x=m.get(name)||{name,reports:0,challenges:0,lessons:0,improvements:0};x.reports++;if(first(r,['challenges']))x.challenges++;if(first(r,['lessons_learned','lessonsLearned']))x.lessons++;if(first(r,['future_improvements','futureImprovements']))x.improvements++;m.set(name,x)});return[...m.values()]},[reports]);
+ const coverage=v=>reports.length?Math.round(v/reports.length*100):0;
+ const lessonReports=reports.filter(r=>first(r,['lessons_learned','lessonsLearned']));
+ const improvementReports=reports.filter(r=>first(r,['future_improvements','futureImprovements']));
+ return <div className="admin-app"><Sidebar/><main className="admin-main">
+   <header className="admin-header"><div><div className="admin-kicker">VSI ADMINISTRATION · PHASE 5</div><h1>Learning &amp; Follow-up Intelligence</h1><p>Turn approved activity reports into accountable follow-up, institutional learning and practical programme improvement.</p></div><Link href="/admin/reports?status=APPROVED" className="header-action">Approved Reports →</Link></header>
+   {loading&&<div className="admin-notice">Loading institutional learning intelligence…</div>}
+   {error&&<div className="admin-error">{error}</div>}
+   {!loading&&!error&&<>
+    <section className="stat-grid p5-stat-grid">
+      <Link className="stat-link" href="/admin/reports?status=APPROVED"><div className="stat-card navy"><span>APPROVED REPORTS</span><strong>{reports.length}</strong><small>Trusted learning dataset</small></div></Link>
+      <Link className="stat-link" href="#follow-up"><div className="stat-card yellow"><span>FOLLOW-UP ACTIONS</span><strong>{actions.length}</strong><small>{stats.overdue} overdue</small></div></Link>
+      <div className="stat-card green"><span>ACTIONS COMPLETE</span><strong>{stats.complete}</strong><small>Closed follow-up items</small></div>
+      <div className="stat-card"><span>LESSONS CAPTURED</span><strong>{learning.lessons}</strong><small>Reports with lessons learned</small></div>
+    </section>
 
-export default function Phase5Dashboard() {
-  const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+    <section className="dashboard-grid">
+      <article id="follow-up" className="dash-panel wide hero-panel"><div className="panel-head"><div><span>SECTION 10 · FOLLOW-UP ACTIONS</span><h2>Operational follow-up tracker</h2></div><span className="p5-count">{actions.length} actions</span></div>
+       <div className="metric-grid p5-action-grid"><div><small>Pending</small><strong>{stats.pending}</strong><span>Open actions</span></div><div><small>In Progress</small><strong>{stats.progress}</strong><span>Being addressed</span></div><div><small>Complete</small><strong>{stats.complete}</strong><span>Closed items</span></div><div><small>Overdue</small><strong className={stats.overdue?'p5-danger':''}>{stats.overdue}</strong><span>Past deadline</span></div></div>
+       {actions.length?<div className="table-wrap p5-table-wrap"><table className="p5-table"><colgroup><col style={{width:'25%'}}/><col style={{width:'35%'}}/><col style={{width:'16%'}}/><col style={{width:'12%'}}/><col style={{width:'12%'}}/></colgroup><thead><tr><th>Activity</th><th>Follow-up action</th><th>Responsible</th><th>Deadline</th><th>Status</th></tr></thead><tbody>{actions.slice(0,30).map(a=>{const d=daysUntil(a.deadline),overdue=d!==null&&d<0&&!/complete/i.test(String(a.status)),sc=String(a.status).toLowerCase().replace(/\s+/g,'-');return <tr key={a.id}><td><strong>{a.activity}</strong><small>{a.reference}</small></td><td>{text(a.action)}</td><td>{text(a.responsible)}</td><td className={overdue?'p5-danger':''}>{dateOnly(a.deadline)}{overdue&&<small>Overdue</small>}</td><td><span className={`status-pill ${sc}`}>{a.status}</span></td></tr>})}</tbody></table></div>:<div className="empty">No follow-up actions have been recorded in approved reports yet.</div>}
+      </article>
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const response = await fetch('/api/admin/activity-reports', { cache: 'no-store' });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Unable to load learning intelligence.');
-        const approved = (data.reports || []).filter((r) => r.review_status === 'APPROVED');
-        const details = await Promise.all(approved.map(async (r) => {
-          try {
-            const detailResponse = await fetch(`/api/admin/activity-reports/${encodeURIComponent(r.reference)}`, { cache: 'no-store' });
-            const detail = await detailResponse.json();
-            return detail.report || r;
-          } catch { return r; }
-        }));
-        if (!cancelled) setReports(details);
-      } catch (e) {
-        if (!cancelled) setError(e.message);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+      <article className="dash-panel"><div className="panel-head"><div><span>SECTION 08 · RESULTS &amp; LESSONS</span><h2>Institutional learning coverage</h2></div></div><div className="p5-bars">{[['Challenges captured',learning.challenges],['Challenges addressed',learning.addressed],['Lessons learned',learning.lessons],['Future improvements',learning.improvements]].map(([label,value])=><div key={label}><div><span>{label}</span><strong>{value}</strong></div><div className="p5-bar"><i style={{width:`${coverage(value)}%`}}/></div></div>)}</div></article>
 
-  const actions = useMemo(() => reports.flatMap(normaliseActions), [reports]);
-  const stats = useMemo(() => ({
-    pending: actions.filter((a) => String(a.status).toLowerCase() === 'pending').length,
-    progress: actions.filter((a) => /in.?progress/i.test(String(a.status))).length,
-    complete: actions.filter((a) => /complete/i.test(String(a.status))).length,
-    overdue: actions.filter((a) => { const d = daysUntil(a.deadline); return d !== null && d < 0 && !/complete/i.test(String(a.status)); }).length,
-  }), [actions]);
+      <article className="dash-panel"><div className="panel-head"><div><span>LEARNING SIGNALS</span><h2>Recent lessons learned</h2></div></div>{lessonReports.length?<div className="p5-feed">{lessonReports.slice(0,6).map(r=><div className="p5-feed-row" key={r.reference}><strong>{first(r,['activity_title','activityTitle'],'Activity')}</strong><p>{text(first(r,['lessons_learned','lessonsLearned']))}</p><small>{first(r,['programme','programme_name'],'Unspecified')} · {r.reference}</small></div>)}</div>:<div className="empty">Lessons learned will appear here as approved reports capture Section 08 learning.</div>}</article>
 
-  const learning = useMemo(() => ({
-    challenges: reports.filter((r) => first(r, ['challenges'])).length,
-    addressed: reports.filter((r) => first(r, ['challenges_addressed', 'challengesAddressed'])).length,
-    lessons: reports.filter((r) => first(r, ['lessons_learned', 'lessonsLearned'])).length,
-    improvements: reports.filter((r) => first(r, ['future_improvements', 'futureImprovements'])).length,
-  }), [reports]);
+      <article className="dash-panel wide"><div className="panel-head"><div><span>ADAPTIVE PROGRAMMING</span><h2>Future improvements recorded by officers</h2></div></div>{improvementReports.length?<div className="p5-improvement-grid">{improvementReports.slice(0,8).map(r=><div className="p5-improvement" key={r.reference}><strong>{first(r,['activity_title','activityTitle'],'Activity')}</strong><p>{text(first(r,['future_improvements','futureImprovements']))}</p><small>Programme: {first(r,['programme','programme_name'],'Unspecified')}</small></div>)}</div>:<div className="empty">Future improvements will appear here after officers record Section 08 recommendations.</div>}</article>
 
-  const programmes = useMemo(() => {
-    const map = new Map();
-    reports.forEach((r) => {
-      const name = first(r, ['programme', 'programme_name', 'programmeName'], 'Unspecified');
-      const row = map.get(name) || { name, reports: 0, challenges: 0, lessons: 0, improvements: 0 };
-      row.reports += 1;
-      if (first(r, ['challenges'])) row.challenges += 1;
-      if (first(r, ['lessons_learned', 'lessonsLearned'])) row.lessons += 1;
-      if (first(r, ['future_improvements', 'futureImprovements'])) row.improvements += 1;
-      map.set(name, row);
-    });
-    return [...map.values()];
-  }, [reports]);
+      <article className="dash-panel wide"><div className="panel-head"><div><span>PROGRAMME LEARNING PROFILE</span><h2>Where learning is being captured</h2></div></div>{programmeLearning.length?<div className="programme-list">{programmeLearning.map(p=><div className="programme-row" key={p.name}><div><strong>{p.name}</strong><small>{p.reports} approved report{p.reports===1?'':'s'}</small></div><div className="p5-programme-metrics"><span>Challenges <b>{p.challenges}</b></span><span>Lessons <b>{p.lessons}</b></span><span>Improvements <b>{p.improvements}</b></span></div></div>)}</div>:<div className="empty">Programme learning profiles will populate as approved reports are available.</div>}</article>
 
-  const coverage = (value) => reports.length ? Math.round((value / reports.length) * 100) : 0;
-
-  return <div className="p5-app">
-    <Sidebar />
-    <main className="p5-main">
-      <header className="p5-header">
-        <div><div className="p5-kicker">VSI ADMINISTRATION · PHASE 5</div><h1>Learning &amp; Follow-up Intelligence</h1><p>Turn approved activity reports into accountable follow-up, institutional learning and practical programme improvement.</p></div>
-        <Link href="/admin/reports?status=APPROVED" className="p5-action">Approved Reports →</Link>
-      </header>
-      {loading && <div className="p5-message">Loading institutional learning intelligence…</div>}
-      {error && <div className="p5-message error">{error}</div>}
-      {!loading && !error && <>
-        <section className="p5-kpis">
-          <div><span>APPROVED REPORTS</span><strong>{reports.length}</strong><small>Trusted learning dataset</small></div>
-          <div><span>FOLLOW-UP ACTIONS</span><strong>{actions.length}</strong><small>{stats.overdue} overdue</small></div>
-          <div><span>ACTIONS COMPLETE</span><strong>{stats.complete}</strong><small>Closed follow-up items</small></div>
-          <div><span>LESSONS CAPTURED</span><strong>{learning.lessons}</strong><small>Reports with lessons learned</small></div>
-          <div><span>IMPROVEMENTS</span><strong>{learning.improvements}</strong><small>Future improvements recorded</small></div>
-        </section>
-        <section className="p5-grid">
-          <article className="p5-card wide"><div className="p5-card-head"><div><span>SECTION 10 · FOLLOW-UP ACTIONS</span><h2>Operational follow-up tracker</h2></div><b className="p5-count">{actions.length} actions</b></div>
-            <div className="p5-action-summary"><div><strong>{stats.pending}</strong><small>Pending</small></div><div><strong>{stats.progress}</strong><small>In Progress</small></div><div><strong>{stats.complete}</strong><small>Complete</small></div><div className={stats.overdue ? 'hot' : ''}><strong>{stats.overdue}</strong><small>Overdue</small></div></div>
-            {actions.length ? <div className="p5-table-wrap"><table><colgroup><col className="c-activity"/><col className="c-action"/><col className="c-person"/><col className="c-date"/><col className="c-status"/></colgroup><thead><tr><th>Activity</th><th>Follow-up action</th><th>Responsible</th><th>Deadline</th><th>Status</th></tr></thead><tbody>{actions.slice(0, 30).map((a) => { const d = daysUntil(a.deadline); const overdue = d !== null && d < 0 && !/complete/i.test(String(a.status)); const statusClass = String(a.status).toLowerCase().replace(/\s+/g, '-'); return <tr key={a.id}><td><strong>{a.activity}</strong><small>{a.reference}</small></td><td>{text(a.action)}</td><td>{text(a.responsible)}</td><td className={overdue ? 'overdue' : ''}>{dateOnly(a.deadline)}{overdue && <small>Overdue</small>}</td><td><span className={`p5-status ${statusClass}`}>{a.status}</span></td></tr>; })}</tbody></table></div> : <div className="p5-empty">No follow-up actions have been recorded in approved reports yet.</div>}
-          </article>
-          <article className="p5-card"><div className="p5-card-head"><div><span>SECTION 08 · RESULTS &amp; LESSONS</span><h2>Institutional learning coverage</h2></div></div><div className="p5-coverage">{[['Challenges captured', learning.challenges], ['Challenges addressed', learning.addressed], ['Lessons learned', learning.lessons], ['Future improvements', learning.improvements]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong><i style={{ width: `${coverage(value)}%` }}/></div>)}</div></article>
-          <article className="p5-card"><div className="p5-card-head"><div><span>LEARNING SIGNALS</span><h2>Recent lessons learned</h2></div></div><div className="p5-feed">{reports.filter((r) => first(r, ['lessons_learned', 'lessonsLearned'])).slice(0, 6).map((r) => <div className="p5-feed-row" key={`lesson-${r.reference}`}><strong>{first(r, ['activity_title', 'activityTitle'], 'Activity')}</strong><p>{text(first(r, ['lessons_learned', 'lessonsLearned']))}</p><small>{first(r, ['programme', 'programme_name'], 'Unspecified')} · {r.reference}</small></div>)}{!learning.lessons && <div className="p5-empty">Lessons learned will appear here as approved reports capture Section 08 learning.</div>}</div></article>
-          <article className="p5-card wide"><div className="p5-card-head"><div><span>ADAPTIVE PROGRAMMING</span><h2>Future improvements recorded by officers</h2></div></div><div className="p5-feed p5-feed-grid">{reports.filter((r) => first(r, ['future_improvements', 'futureImprovements'])).slice(0, 8).map((r) => <div className="p5-feed-row" key={`improve-${r.reference}`}><strong>{first(r, ['activity_title', 'activityTitle'], 'Activity')}</strong><p>{text(first(r, ['future_improvements', 'futureImprovements']))}</p><small>Programme: {first(r, ['programme', 'programme_name'], 'Unspecified')}</small></div>)}{!learning.improvements && <div className="p5-empty">Future improvements will appear here after officers record Section 08 recommendations.</div>}</div></article>
-          <article className="p5-card wide"><div className="p5-card-head"><div><span>PROGRAMME LEARNING PROFILE</span><h2>Where learning is being captured</h2></div></div>{programmes.length ? <div className="p5-programmes">{programmes.map((p) => <div className="p5-programme" key={p.name}><div><strong>{p.name}</strong><small>{p.reports} approved report{p.reports === 1 ? '' : 's'}</small></div><div className="p5-programme-metrics"><span>Challenges <b>{p.challenges}</b></span><span>Lessons <b>{p.lessons}</b></span><span>Improvements <b>{p.improvements}</b></span></div></div>)}</div> : <div className="p5-empty">Programme learning profiles will populate as approved reports are available.</div>}</article>
-          <article className="p5-card wide"><div className="p5-card-head"><div><span>MANAGEMENT INTERPRETATION</span><h2>Learning-to-action signal</h2></div></div><div className="p5-callout"><strong>{stats.overdue ? `${stats.overdue} follow-up ${stats.overdue === 1 ? 'action is' : 'actions are'} overdue.` : 'No overdue follow-up actions.'}</strong><p>{learning.lessons ? `${learning.lessons} approved report${learning.lessons === 1 ? '' : 's'} contain lessons learned, providing an evidence base for future programme decisions.` : 'Institutional learning will strengthen as officers record lessons learned and future improvements in Section 08.'}</p><Link href="/admin/reports?status=APPROVED">Open approved reports →</Link></div></article>
-        </section>
-      </>}
-    </main>
-    <style jsx>{`
-      .p5-app{min-height:100vh;width:100%;display:flex;background:#f4f7fa;color:#17212b;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}.p5-app *{box-sizing:border-box}
-      .p5-sidebar{position:sticky;top:0;flex:0 0 250px;width:250px;height:100vh;padding:20px 14px;display:flex;flex-direction:column;background:linear-gradient(180deg,#003566 0%,#094074 58%,#082f52 100%);color:#fff;overflow:hidden}
-      .p5-brand{display:flex;align-items:center;gap:10px;height:58px;padding:0 8px 13px;border-bottom:1px solid rgba(255,255,255,.14);min-width:0}.p5-logo{width:42px;height:34px;flex:0 0 42px;display:flex;align-items:center;justify-content:center;overflow:hidden}.p5-logo img{display:block;width:42px;height:28px;max-width:42px;max-height:28px;object-fit:contain}.p5-brand-copy{min-width:0}.p5-brand-copy strong{display:block;font-size:16px;line-height:1.15;letter-spacing:.06em;white-space:nowrap}.p5-brand-copy small{display:block;margin-top:3px;color:#ffd60a;font-size:9px;font-weight:900;letter-spacing:.13em;white-space:nowrap}
-      .p5-label{padding:20px 10px 8px;color:rgba(255,255,255,.58);font-size:10px;font-weight:900;letter-spacing:.16em}.p5-sidebar nav{display:flex;flex-direction:column;gap:3px}.p5-sidebar nav a{display:flex;align-items:center;gap:9px;min-height:36px;padding:9px 11px;border-radius:9px;color:rgba(255,255,255,.84);text-decoration:none;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden}.p5-sidebar nav a:hover{background:rgba(255,255,255,.08);color:#fff}.p5-sidebar nav a.active{background:#ffc300;color:#003566}.p5-dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#3c6997}.p5-dot.gold{background:#ffd60a}.p5-sidebar nav a.active .p5-dot{background:#003566}.p5-note{padding:16px 10px 0;color:rgba(255,255,255,.66);font-size:10px;line-height:1.55}.p5-back{margin-top:auto;padding:10px 11px;border-radius:9px;background:#ffd60a;color:#003566;text-align:center;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap}
-      .p5-main{min-width:0;flex:1;padding:30px clamp(20px,3.5vw,44px) 56px;overflow:hidden}.p5-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:24px}.p5-kicker{margin-bottom:7px;color:#3c6997;font-size:10px;font-weight:900;letter-spacing:.14em}.p5-header h1{margin:0;color:#003566;font-size:clamp(27px,3vw,38px);line-height:1.05;letter-spacing:-.03em}.p5-header p{margin:8px 0 0;color:#65717d;max-width:760px;font-size:13px;line-height:1.55}.p5-action{padding:10px 13px;border:1px solid #dfe5ea;border-radius:9px;background:#fff;color:#003566;text-decoration:none;font-size:11px;font-weight:900;white-space:nowrap}.p5-message{padding:16px;border:1px solid #dfe5ea;border-radius:10px;background:#fff;color:#65717d}.p5-message.error{color:#9a2525}
-      .p5-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}.p5-kpis>div{min-width:0;padding:14px;background:#fff;border:1px solid #dfe5ea;border-top:3px solid #3c6997;border-radius:11px}.p5-kpis>div:nth-child(2){border-top-color:#ffc300}.p5-kpis>div:nth-child(3){border-top-color:#2e7d52}.p5-kpis>div:nth-child(4){border-top-color:#094074}.p5-kpis>div:nth-child(5){border-top-color:#ffd60a}.p5-kpis span{display:block;color:#65717d;font-size:8px;font-weight:900;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.p5-kpis strong{display:block;margin:6px 0 3px;color:#003566;font-size:25px;line-height:1.1}.p5-kpis small{color:#65717d;font-size:10px}
-      .p5-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.p5-card{min-width:0;background:#fff;border:1px solid #dfe5ea;border-radius:14px;padding:20px;box-shadow:0 4px 18px rgba(0,53,102,.045);overflow:hidden}.p5-card.wide{grid-column:span 2}.p5-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.p5-card-head>div{min-width:0}.p5-card-head span:first-child{color:#3c6997;font-size:9px;font-weight:900;letter-spacing:.13em}.p5-card-head h2{margin:4px 0 0;color:#003566;font-size:17px;line-height:1.25}.p5-count{color:#65717d;font-size:10px;white-space:nowrap}
-      .p5-action-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}.p5-action-summary>div{min-width:0;padding:12px;border-radius:9px;background:#f6f9fb}.p5-action-summary strong{display:block;color:#003566;font-size:21px}.p5-action-summary small{color:#65717d;font-size:10px}.p5-action-summary .hot strong{color:#b42318}
-      .p5-table-wrap{width:100%;overflow-x:auto;border:1px solid #dfe5ea;border-radius:10px}.p5-table-wrap table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}.p5-table-wrap .c-activity{width:24%}.p5-table-wrap .c-action{width:34%}.p5-table-wrap .c-person{width:16%}.p5-table-wrap .c-date{width:13%}.p5-table-wrap .c-status{width:13%}.p5-table-wrap th{padding:10px;text-align:left;background:#f4f7fa;color:#52606d;font-size:9px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}.p5-table-wrap td{padding:11px 10px;border-top:1px solid #e7edf1;color:#36434f;font-size:11px;line-height:1.45;vertical-align:top;overflow-wrap:anywhere}.p5-table-wrap td strong{display:block;color:#003566}.p5-table-wrap td small{display:block;margin-top:3px;color:#65717d;font-size:9px}.p5-table-wrap .overdue{color:#b42318;font-weight:800}.p5-status{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;background:#fff4cc;color:#8a5a00;font-size:9px;font-weight:900;white-space:nowrap}.p5-status.in-progress{background:#e0efff;color:#094074}.p5-status.complete{background:#dcfce7;color:#15803d}
-      .p5-coverage{display:flex;flex-direction:column;gap:14px}.p5-coverage>div{position:relative}.p5-coverage span{display:block;color:#52606d;font-size:10px;padding-right:35px}.p5-coverage strong{position:absolute;right:0;top:0;color:#003566;font-size:12px}.p5-coverage i{display:block;height:7px;margin-top:6px;border-radius:5px;background:#ffc300;max-width:100%}.p5-feed{display:flex;flex-direction:column}.p5-feed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.p5-feed-row{min-width:0;padding:12px 0;border-bottom:1px solid #e7edf1}.p5-feed-grid .p5-feed-row{padding:13px;background:#f6f9fb;border-radius:9px;border:0}.p5-feed-row:last-child{border-bottom:0}.p5-feed-row strong{display:block;color:#003566;font-size:11px}.p5-feed-row p{margin:5px 0;color:#36434f;font-size:11px;line-height:1.55;overflow-wrap:anywhere}.p5-feed-row small{color:#65717d;font-size:9px}.p5-empty{padding:15px;border-radius:9px;background:#f6f9fb;color:#65717d;font-size:11px;line-height:1.55}
-      .p5-programmes{display:flex;flex-direction:column}.p5-programme{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:13px 0;border-bottom:1px solid #e7edf1}.p5-programme:last-child{border-bottom:0}.p5-programme>div:first-child{min-width:0}.p5-programme strong{display:block;color:#003566;font-size:12px;overflow-wrap:anywhere}.p5-programme small{display:block;margin-top:3px;color:#65717d;font-size:10px}.p5-programme-metrics{display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-end}.p5-programme-metrics span{color:#65717d;font-size:10px;white-space:nowrap}.p5-programme-metrics b{color:#003566;margin-left:4px}.p5-callout{padding:18px;border-left:4px solid #ffc300;background:#f6f9fb;border-radius:0 10px 10px 0}.p5-callout strong{display:block;color:#003566;font-size:16px}.p5-callout p{margin:7px 0 12px;color:#65717d;font-size:11px;line-height:1.55}.p5-callout a{color:#094074;text-decoration:none;font-size:11px;font-weight:900}
-      @media(max-width:1100px){.p5-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.p5-programme{align-items:flex-start;flex-direction:column}.p5-programme-metrics{justify-content:flex-start}}
-      @media(max-width:900px){.p5-sidebar{flex-basis:210px;width:210px}.p5-grid{grid-template-columns:1fr}.p5-card.wide{grid-column:span 1}.p5-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.p5-header{flex-direction:column}.p5-feed-grid{grid-template-columns:1fr}}
-      @media(max-width:650px){.p5-app{display:block}.p5-sidebar{position:relative;width:100%;height:auto;min-height:0;max-height:none}.p5-note{display:none}.p5-sidebar nav{flex-direction:row;overflow-x:auto;padding-bottom:2px}.p5-sidebar nav a{flex:0 0 auto}.p5-main{padding:22px 14px 40px}.p5-kpis{grid-template-columns:1fr}.p5-action-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.p5-action{align-self:flex-start}}
-    `}</style>
-  </div>;
+      <article className="dash-panel wide"><div className="panel-head"><div><span>MANAGEMENT INTERPRETATION</span><h2>Learning-to-action signal</h2></div></div><div className="p5-callout"><strong>{stats.overdue?`${stats.overdue} follow-up ${stats.overdue===1?'action is':'actions are'} overdue.`:'No overdue follow-up actions.'}</strong><p>{learning.lessons?`${learning.lessons} approved report${learning.lessons===1?'':'s'} contain lessons learned, providing an evidence base for future programme decisions.`:'Institutional learning will strengthen as officers record lessons learned and future improvements in Section 08.'}</p><Link href="/admin/reports?status=APPROVED">Open approved reports →</Link></div></article>
+    </section>
+   </>}
+ </main><style jsx>{`
+.p5-stat-grid{margin-bottom:16px}.p5-count{color:#65717d;font-size:10px;white-space:nowrap}.p5-action-grid{margin-bottom:16px}.p5-table-wrap{width:100%;overflow-x:auto}.p5-table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}.p5-table th{padding:10px;text-align:left;background:#f4f7fa;color:#52606d;font-size:9px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}.p5-table td{padding:12px 10px;border-top:1px solid #e7edf1;color:#36434f;font-size:11px;line-height:1.45;vertical-align:top;overflow-wrap:anywhere}.p5-table td strong,.p5-table td small{display:block}.p5-table td strong{color:#003566}.p5-table td small{margin-top:3px;color:#65717d;font-size:9px}.p5-danger{color:#b42318!important}.status-pill{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;background:#fff4cc;color:#8a5a00;font-size:9px;font-weight:900;white-space:nowrap}.status-pill.in-progress{background:#e0efff;color:#094074}.status-pill.complete{background:#dcfce7;color:#15803d}.p5-bars{display:flex;flex-direction:column;gap:15px}.p5-bars>div>div:first-child{display:flex;justify-content:space-between;gap:10px}.p5-bars span{color:#52606d;font-size:10px}.p5-bars strong{color:#003566;font-size:12px}.p5-bar{height:7px;margin-top:6px;background:#edf1f4;border-radius:6px;overflow:hidden}.p5-bar i{display:block;height:100%;background:#ffc300;border-radius:6px}.p5-feed{display:flex;flex-direction:column}.p5-feed-row{padding:12px 0;border-bottom:1px solid #e7edf1}.p5-feed-row:last-child{border-bottom:0}.p5-feed-row strong{display:block;color:#003566;font-size:11px}.p5-feed-row p{margin:5px 0;color:#36434f;font-size:11px;line-height:1.55;overflow-wrap:anywhere}.p5-feed-row small,.p5-improvement small{color:#65717d;font-size:9px}.p5-improvement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.p5-improvement{min-width:0;padding:14px;background:#f6f9fb;border-radius:9px}.p5-improvement strong{display:block;color:#003566;font-size:11px}.p5-improvement p{margin:6px 0;color:#36434f;font-size:11px;line-height:1.55;overflow-wrap:anywhere}.p5-programme-metrics{display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-end}.p5-programme-metrics span{color:#65717d;font-size:10px;white-space:nowrap}.p5-programme-metrics b{color:#003566;margin-left:4px}.p5-callout{padding:18px;border-left:4px solid #ffc300;background:#f6f9fb;border-radius:0 10px 10px 0}.p5-callout strong{display:block;color:#003566;font-size:16px}.p5-callout p{margin:7px 0 12px;color:#65717d;font-size:11px;line-height:1.55}.p5-callout a{color:#094074;text-decoration:none;font-size:11px;font-weight:900}@media(max-width:900px){.p5-improvement-grid{grid-template-columns:1fr}}@media(max-width:760px){.p5-programme-metrics{justify-content:flex-start}.p5-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:420px){.p5-action-grid{grid-template-columns:1fr!important}}
+`}</style></div>;
 }
