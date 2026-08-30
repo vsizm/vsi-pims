@@ -1,0 +1,64 @@
+.scope :global(.finance-app){background:radial-gradient(circle at 92% 0%,rgba(60,105,151,.10),transparent 32%),#f5f7fb}
+.scope :global(.finance-main){padding-top:30px}
+.scope :global(.finance-header){padding:20px 22px;background:linear-gradient(135deg,#ffffff 0%,#f4f8fc 100%);border:1px solid #e4eaf0;border-radius:20px;box-shadow:0 10px 28px rgba(15,41,66,.06)}
+.scope :global(.finance-header h1){font-size:clamp(30px,3.2vw,42px);letter-spacing:-.045em}
+.scope :global(.finance-action){border-radius:12px;padding:11px 15px;box-shadow:0 4px 12px rgba(0,53,102,.06);transition:.15s ease}
+.scope :global(.finance-action:hover){transform:translateY(-1px);box-shadow:0 7px 18px rgba(0,53,102,.10);background:#f8fbfe}
+.scope :global(.finance-note){background:linear-gradient(135deg,#003566,#094074);border:1px solid rgba(255,255,255,.10);border-radius:15px;box-shadow:0 8px 22px rgba(0,53,102,.10)}
+.scope :global(.finance-stats){gap:12px}
+.scope :global(.finance-stats>div){position:relative;border:1px solid #e1e8ef;border-top:0;border-radius:16px;padding:16px 16px 15px;box-shadow:0 7px 22px rgba(15,41,66,.055);overflow:hidden;transition:transform .15s ease,box-shadow .15s ease}
+.scope :global(.finance-stats>div:hover){transform:translateY(-2px);box-shadow:0 11px 28px rgba(15,41,66,.09)}
+.scope :global(.finance-stats>div)::before{content:"";position:absolute;left:0;top:0;right:0;height:4px;background:#3c6997}
+.scope :global(.finance-stats .yellow)::before{background:#ffc300}
+.scope :global(.finance-stats .red)::before{background:#b42318}
+.scope :global(.finance-stats b){font-size:22px;letter-spacing:-.025em}
+.scope :global(.finance-card){border:1px solid #e1e8ef;border-radius:18px;box-shadow:0 8px 26px rgba(15,41,66,.055)}
+.scope :global(.attribution){background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%)}
+.scope :global(.card-head){padding:19px 21px;background:linear-gradient(180deg,#ffffff,#fbfcfe)}
+.scope :global(.section-kicker){font-size:9px;letter-spacing:.16em}
+.scope :global(.card-head h2),.scope :global(.section-title h2){font-size:20px;letter-spacing:-.02em}
+.scope :global(.programme-row){padding:15px 4px}
+.scope :global(.programme-row:hover){background:#f8fbfe;border-radius:10px}
+.scope :global(.section-title){margin:26px 2px 12px;padding:0 3px}
+.scope :global(.section-title h2){font-size:21px}
+.scope :global(.filters){background:#fff;border:1px solid #e1e8ef;border-radius:14px;padding:10px;margin-bottom:14px;box-shadow:0 5px 16px rgba(15,41,66,.04)}
+.scope :global(.filters input),.scope :global(.filters select){height:42px;border:0;background:#f6f8fb;border-radius:10px;padding:10px 13px;outline:1px solid transparent;transition:.15s ease}
+.scope :global(.filters input:focus),.scope :global(.filters select:focus){background:#fff;outline:2px solid rgba(60,105,151,.18)}
+.scope :global(.activity-grid){gap:16px}
+.scope :global(.activity-card){position:relative;width:100%;border:1px solid #e1e8ef;border-radius:20px;padding:19px;background:linear-gradient(145deg,#ffffff 0%,#f8fafc 100%);box-shadow:0 8px 24px rgba(15,41,66,.055);overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.scope :global(.activity-card)::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#3c6997,#094074)}
+.scope :global(.activity-card:hover){transform:translateY(-4px);box-shadow:0 16px 34px rgba(15,41,66,.12);border-color:#b9cbd9}
+.scope :global(.activity-card-top){padding-left:4px}
+.scope :global(.mini-kicker){font-size:8px;color:#7a8793;letter-spacing:.15em}
+.scope :global(.activity-card h3){font-size:18px;line-height:1.25;letter-spacing:-.02em;margin-top:5px}
+.scope :global(.activity-card p){font-size:11px;color:#6b7785}
+.scope :global(.status){padding:7px 11px;font-size:9px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)}
+.scope :global(.status.within){background:#e9f7ef;color:#17643c}
+.scope :global(.status.underspent){background:#fff5d6;color:#805d00}
+.scope :global(.status.overspent){background:#fde9e7;color:#a12620}
+.scope :global(.activity-money){gap:9px;margin:18px 0 15px}
+.scope :global(.activity-money>div){position:relative;background:#f2f5f8;border:1px solid #e7edf2;border-radius:12px;padding:12px 11px}
+.scope :global(.activity-money>div:nth-child(1)){background:#eef5fb}
+.scope :global(.activity-money>div:nth-child(2)){background:#f5f3fb}
+.scope :global(.activity-money>div:nth-child(3)){background:#eef8f2}
+.scope :global(.activity-money span)::before{display:inline-block;margin-right:5px;font-size:11px;vertical-align:-1px}
+.scope :global(.activity-money>div:nth-child(1) span)::before{content:"▣";color:#3c6997}
+.scope :global(.activity-money>div:nth-child(2) span)::before{content:"↗";color:#6b4fa3}
+.scope :global(.activity-money>div:nth-child(3) span)::before{content:"◆";color:#2e7d52}
+.scope :global(.activity-money strong){font-size:15px;letter-spacing:-.02em}
+.scope :global(.activity-progress){padding:12px 0 2px}
+.scope :global(.progress-track){height:8px;background:#e6ebf0;margin-top:7px}
+.scope :global(.progress-track i){background:linear-gradient(90deg,#ffc300,#ffd60a);box-shadow:0 0 8px rgba(255,195,0,.22)}
+.scope :global(.activity-footer){padding-top:13px;margin-top:12px;border-top:1px solid #e6ebf0;font-size:10px}
+.scope :global(.activity-footer span:first-child)::before{content:"♙";margin-right:5px;color:#3c6997}
+.scope :global(.activity-footer span:last-child){padding:6px 9px;background:#eef4f8;border-radius:8px}
+.scope :global(.utilisation){background:linear-gradient(135deg,#ffffff 0%,#f7fafc 100%)}
+.scope :global(.util-track){height:12px;background:#e6ebf0;border-radius:999px}
+.scope :global(.util-track i){background:linear-gradient(90deg,#ffc300,#ffd60a)}
+.scope :global(.finance-lines>div){padding:12px 0}
+.scope :global(.detail-modal){border:1px solid #dfe7ee;border-radius:22px;box-shadow:0 24px 80px rgba(0,25,45,.28);background:linear-gradient(180deg,#fff,#f9fbfd)}
+.scope :global(.detail-grid){gap:10px}
+.scope :global(.detail-grid>div){border:1px solid #e5ebf0;background:#f4f7fa;border-radius:12px}
+.scope :global(.modal-status){background:#f5f8fb;border-radius:12px;padding:13px 14px;border:1px solid #e5ebf0}
+@media(max-width:900px){.scope :global(.finance-header){padding:18px}.scope :global(.activity-grid){gap:13px}}
+@media(max-width:620px){.scope :global(.finance-header){border-radius:16px}.scope :global(.activity-card){border-radius:17px}.scope :global(.activity-money>div){padding:11px}.scope :global(.activity-money strong){font-size:14px}}
