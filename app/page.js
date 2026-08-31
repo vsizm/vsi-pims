@@ -57,6 +57,13 @@ export default function HomePage() {
 
       {/* Styled JSX with VSI Color Palette */}
       <style jsx>{`
+        :global(html),
+        :global(body) {
+          margin: 0;
+          padding: 0;
+          background-color: #003566;
+        }
+
         :global(:root) {
           --yale-blue: #094074ff;
           --baltic-blue: #3c6997ff;
@@ -67,7 +74,7 @@ export default function HomePage() {
 
         .page {
           position: relative;
-          min-height: 100vh;
+          min-height: 100svh;
           background-color: var(--regal-navy);
           color: #ffffff;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -148,8 +155,9 @@ export default function HomePage() {
         }
 
         .btnWhite {
-          background-color: #ffffff;
-          color: var(--regal-navy);
+          background-color: transparent;
+          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.75);
         }
 
         .btnYellow {
