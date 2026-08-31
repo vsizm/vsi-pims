@@ -5,39 +5,338 @@ import Link from 'next/link';
 export default function HomePage() {
   return (
     <main className="page">
+      {/* Top Accent Bar */}
       <div className="topLine" />
+
+      {/* Main Navigation */}
       <nav className="nav">
         <Link href="/" className="brand">
-          <img src="/VSI LOGO white.png" alt="Visionary Students Initiative" />
-          <div><small>VISIONARY STUDENTS INITIATIVE</small><strong>IMS</strong></div>
+          <div className="logoMark">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+            </svg>
+          </div>
+          <div className="brandText">
+            <span className="brandName">placement</span>
+            <span className="brandBadge">
+              <svg viewBox="0 0 24 24" className="starIcon" fill="currentColor">
+                <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+              </svg>
+              PRO
+            </span>
+          </div>
         </Link>
-        <Link href="/login" className="signin">SIGN IN <span>↗</span></Link>
+        <Link href="/login" className="signin">
+          SIGN IN <span>↗</span>
+        </Link>
       </nav>
 
+      {/* Hero Section */}
       <section className="hero">
+        {/* Left Column: Portrait & Floating Feature Icons */}
         <div className="left">
-          <div className="visual">
-            <div className="circleOuter" /><div className="circleMid" /><div className="circleInner" />
-            <div className="core"><small>VSI</small><strong>IMS</strong></div>
-            <div className="signal signal1" /><div className="signal signal2" /><div className="signal signal3" />
-            <div className="tag tag1">PROGRAMMES</div><div className="tag tag2">EVIDENCE</div><div className="tag tag3">RESULTS</div>
-            <div className="orbitDot dot1" /><div className="orbitDot dot2" /><div className="orbitDot dot3" />
+          <div className="visualContainer">
+            {/* Circular Profile Portrait */}
+            <div className="portraitCircle">
+              <img 
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
+                alt="VSI IMS Coach" 
+              />
+            </div>
+
+            {/* Floating Graphic Badge Icons */}
+            <div className="floatingIcon iconGreen" title="Programmes">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+              </svg>
+            </div>
+
+            <div className="floatingIcon iconYellow" title="Evidence">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+              </svg>
+            </div>
+
+            <div className="floatingIcon iconOrange" title="Results">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.1 7.7l-1 4.3c-.1.3-.4.5-.7.5H16v2h1.5c.8 0 1.5.7 1.5 1.5v1c0 .8-.7 1.5-1.5 1.5H16v1c0 .6-.4 1-1 1s-1-.4-1-1v-1h-2v1c0 .6-.4 1-1 1s-1-.4-1-1v-1H8c-.8 0-1.5-.7-1.5-1.5v-1c0-.8.7-1.5 1.5-1.5H12v-2H9.6c-.3 0-.6-.2-.7-.5l-1-4.3C7.3 5.9 8.7 4.5 10.5 4.5h3c1.8 0 3.2 1.4 2.6 3.2z" />
+              </svg>
+            </div>
           </div>
         </div>
 
+        {/* Right Column: Hero Content & Call to Actions */}
         <div className="right">
-          <div className="eyebrow"><i /> VSI INFORMATION MANAGEMENT SYSTEM</div>
-          <h1>The data, evidence<br />and insight behind<br /><em>our work.</em></h1>
-          <p>Connect programmes, activities, reporting and evidence in one institutional system built to help VSI understand its impact, strengthen accountability and make better decisions.</p>
-          <Link href="/login" className="cta">Enter VSI IMS <b>↗</b></Link>
-          <div className="secondary">Programme intelligence <span>·</span> Accountability <span>·</span> Evidence</div>
+          <span className="subhead">Get expert assistance with</span>
+          <h1>An Insider In<br />Your Corner</h1>
+          <p>
+            Connect 1:1 with a hiring expert who cares about your success.
+            They make job searching simple and—dare we say—kind of fun.
+          </p>
+
+          <div className="ctaGroup">
+            <Link href="/find-coach" className="ctaButton">
+              Find My Career Coach
+            </Link>
+            <Link href="/about" className="secondaryLink">
+              Learn about Placement Pro <span>→</span>
+            </Link>
+          </div>
         </div>
       </section>
 
-      <div className="bottom"><span>VISIONARY STUDENTS INITIATIVE</span><span>INFORMATION · INTELLIGENCE · IMPACT</span></div>
-
+      {/* Embedded CSS Styling */}
       <style jsx>{`
-        .page{position:relative;min-height:100svh;overflow:hidden;background:linear-gradient(115deg,#180d32 0%,#091b31 52%,#06243b 100%);color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;flex-direction:column}.topLine{position:absolute;z-index:20;top:0;left:0;right:0;height:3px;background:#ffc300}.page:before{content:"";position:absolute;width:70vw;height:70vw;right:-20vw;top:8vh;border-radius:50%;background:radial-gradient(circle,rgba(62,141,190,.22),transparent 65%);filter:blur(20px)}.page:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:80px 80px;mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 78%,transparent);pointer-events:none}.nav{position:relative;z-index:10;height:86px;padding:0 clamp(24px,6vw,90px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.09)}.brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}.brand img{width:43px;height:43px;object-fit:contain}.brand small{display:block;color:#91b6cb;font-size:7px;letter-spacing:.17em;font-weight:900}.brand strong{display:block;font-family:Georgia,serif;font-size:20px;line-height:1;margin-top:3px;letter-spacing:.05em}.signin{color:#fff;text-decoration:none;font-size:9px;font-weight:900;letter-spacing:.18em}.signin span{color:#ffc300;font-size:16px;margin-left:8px}.hero{position:relative;z-index:3;flex:1;width:100%;max-width:1450px;margin:auto;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:40px clamp(24px,6vw,90px) 65px;box-sizing:border-box}.left{height:100%;display:grid;place-items:center}.visual{position:relative;width:min(580px,42vw);height:min(580px,42vw);min-width:400px;min-height:400px;display:grid;place-items:center}.circleOuter,.circleMid,.circleInner{position:absolute;border-radius:50%;border:1px solid rgba(131,190,218,.18)}.circleOuter{width:100%;height:100%;transform:rotateX(65deg) rotateZ(-22deg)}.circleMid{width:76%;height:76%;border-color:rgba(255,195,0,.2);transform:rotateX(65deg) rotateZ(29deg)}.circleInner{width:55%;height:55%;transform:rotateX(65deg) rotateZ(-8deg);border-color:rgba(255,255,255,.14)}.core{width:155px;height:155px;border-radius:50%;display:grid;place-content:center;text-align:center;z-index:5;background:radial-gradient(circle at 32% 25%,#328ab3,#07253d 68%);border:1px solid rgba(255,255,255,.3);box-shadow:0 0 100px rgba(30,134,184,.34),inset 0 0 35px rgba(0,0,0,.25)}.core small{font-size:10px;letter-spacing:.3em;margin-left:.3em}.core strong{font-family:Georgia,serif;font-size:41px;line-height:.9;color:#ffc300}.signal{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(255,195,0,.7),transparent);width:85%;z-index:2}.signal1{transform:rotate(28deg);top:30%;left:3%}.signal2{transform:rotate(-20deg);bottom:27%;right:0}.signal3{transform:rotate(5deg);top:50%;left:8%;opacity:.45}.tag{position:absolute;z-index:8;padding:8px 11px;background:rgba(7,24,41,.8);border:1px solid rgba(255,255,255,.15);font-size:7px;letter-spacing:.15em;color:#d6e3ea;backdrop-filter:blur(8px)}.tag1{top:16%;right:7%}.tag2{left:3%;top:46%}.tag3{right:13%;bottom:17%}.orbitDot{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffc300;box-shadow:0 0 18px rgba(255,195,0,.8)}.dot1{top:10%;left:23%}.dot2{right:2%;top:38%;width:4px;height:4px}.dot3{left:16%;bottom:13%;background:#6db9db;box-shadow:0 0 15px rgba(109,185,219,.8)}.right{max-width:690px;padding-left:clamp(0px,2vw,30px)}.eyebrow{display:flex;align-items:center;gap:11px;color:#8bb9d2;font-size:9px;letter-spacing:.19em;font-weight:900}.eyebrow i{width:27px;height:1px;background:#ffc300}.right h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(50px,6.1vw,88px);line-height:.96;letter-spacing:-.05em;margin:24px 0 27px}.right h1 em{font-style:italic;color:#ffc300}.right p{max-width:570px;color:#b2c2cd;font-size:14px;line-height:1.8;margin:0 0 30px}.cta{display:inline-flex;align-items:center;gap:24px;background:#ffc300;color:#06243b;text-decoration:none;padding:16px 21px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.11em;transition:transform .2s ease,box-shadow .2s ease}.cta b{font-size:16px}.cta:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(255,195,0,.18)}.secondary{margin-top:21px;color:#718fa2;font-size:7px;letter-spacing:.12em;text-transform:uppercase}.secondary span{color:#ffc300;padding:0 7px}.bottom{position:relative;z-index:10;display:flex;justify-content:space-between;padding:16px clamp(24px,6vw,90px);border-top:1px solid rgba(255,255,255,.09);font-size:7px;letter-spacing:.15em;color:#668699}.bottom span:last-child{color:#829baa}@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:65px}.left{order:2;margin-top:25px}.right{order:1;padding-left:0}.visual{width:420px;height:420px;min-width:0;min-height:0}.circleOuter{width:100%;height:100%}.bottom{gap:15px;flex-direction:column}}@media(max-width:520px){.nav{height:72px}.brand img{width:36px;height:36px}.brand small{font-size:6px}.brand strong{font-size:17px}.hero{padding-top:48px}.right h1{font-size:48px;margin-top:20px}.right p{font-size:12px;line-height:1.7}.visual{width:300px;height:300px}.core{width:100px;height:100px}.core small{font-size:7px}.core strong{font-size:26px}.tag{font-size:5px;padding:6px 7px}.tag1{right:0}.tag2{left:0}.tag3{right:0}.bottom{font-size:5px}}
+        .page {
+          position: relative;
+          min-height: 100vh;
+          background-color: #231d4f;
+          color: #ffffff;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .topLine {
+          height: 5px;
+          background: #ffcc00;
+          width: 100%;
+        }
+
+        .nav {
+          height: 90px;
+          padding: 0 clamp(24px, 6vw, 90px);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .brand {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #ffffff;
+          text-decoration: none;
+        }
+
+        .logoMark {
+          width: 32px;
+          height: 32px;
+          color: #ffcc00;
+        }
+
+        .brandText {
+          display: flex;
+          align-items: center;
+          font-size: 28px;
+          font-weight: 700;
+          letter-spacing: -0.5px;
+        }
+
+        .brandName {
+          color: #ffffff;
+        }
+
+        .brandBadge {
+          display: flex;
+          align-items: center;
+          color: #ffcc00;
+          margin-left: 2px;
+        }
+
+        .starIcon {
+          width: 18px;
+          height: 18px;
+          fill: #ffcc00;
+        }
+
+        .signin {
+          color: #ffffff;
+          text-decoration: none;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.15em;
+        }
+
+        .signin span {
+          color: #ffcc00;
+          margin-left: 4px;
+        }
+
+        .hero {
+          flex: 1;
+          width: 100%;
+          max-width: 1280px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          align-items: center;
+          padding: 40px clamp(24px, 6vw, 90px);
+          box-sizing: border-box;
+          gap: 40px;
+        }
+
+        .left {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .visualContainer {
+          position: relative;
+          width: 380px;
+          height: 380px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .portraitCircle {
+          width: 320px;
+          height: 320px;
+          border-radius: 50%;
+          overflow: hidden;
+          background: #392f75;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .portraitCircle img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .floatingIcon {
+          position: absolute;
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .floatingIcon svg {
+          width: 24px;
+          height: 24px;
+          fill: #ffffff;
+        }
+
+        .iconGreen {
+          background-color: #28a745;
+          top: 15%;
+          right: 15%;
+        }
+
+        .iconYellow {
+          background-color: #ffb703;
+          top: 45%;
+          right: 5%;
+        }
+
+        .iconOrange {
+          background-color: #f76c35;
+          bottom: 12%;
+          right: 18%;
+        }
+
+        .right {
+          max-width: 540px;
+        }
+
+        .subhead {
+          display: block;
+          font-size: 15px;
+          font-weight: 600;
+          color: #ffffff;
+          margin-bottom: 16px;
+        }
+
+        .right h1 {
+          font-size: clamp(40px, 4.5vw, 62px);
+          line-height: 1.08;
+          font-weight: 800;
+          margin: 0 0 20px 0;
+          color: #ffffff;
+          letter-spacing: -0.02em;
+        }
+
+        .right p {
+          font-size: 16px;
+          line-height: 1.6;
+          color: #d1cfdf;
+          margin: 0 0 32px 0;
+        }
+
+        .ctaGroup {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 18px;
+        }
+
+        .ctaButton {
+          display: inline-block;
+          background: linear-gradient(180deg, #ffcc00 0%, #e6b800 100%);
+          color: #1a153b;
+          text-decoration: none;
+          padding: 16px 36px;
+          border-radius: 30px;
+          font-size: 15px;
+          font-weight: 700;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ctaButton:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+        }
+
+        .secondaryLink {
+          color: #ffcc00;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        .secondaryLink span {
+          margin-left: 4px;
+        }
+
+        @media (max-width: 900px) {
+          .hero {
+            grid-template-columns: 1fr;
+            text-align: center;
+          }
+          .right {
+            margin: 0 auto;
+          }
+          .ctaGroup {
+            align-items: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .visualContainer {
+            width: 280px;
+            height: 280px;
+          }
+          .portraitCircle {
+            width: 240px;
+            height: 240px;
+          }
+          .floatingIcon {
+            width: 38px;
+            height: 38px;
+          }
+          .floatingIcon svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
       `}</style>
     </main>
   );
