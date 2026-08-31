@@ -1,2 +1,8 @@
-/* Surgical MEAL layout cleanup: hide the legacy activity-detail block only. */
-.activity-panel { display: none !important; }
+/* Surgical MEAL layout cleanup: remove only the redundant activity-reach panel. */
+.phase1-bottom-grid > article.activity-panel { display: none !important; }
+
+/* With the activity panel removed, let the demographic footprint occupy the full row. */
+.phase1-bottom-grid > article.footprint-panel {
+  grid-column: 1 / -1 !important;
+  grid-row: auto !important;
+}
