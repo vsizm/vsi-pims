@@ -95,6 +95,19 @@ export default function MealFollowupActions() {
           card.appendChild(list);
         }
         host.insertBefore(card, old);
+
+        // Reorder only the MEAL intelligence cards; do not alter their content or behaviour.
+        const footprint = host.querySelector('.footprint-panel');
+        const programme = host.querySelector('.meal-programme-host');
+        const compliance = host.querySelector('.meal-compliance-host');
+        const ordered = [footprint, programme, compliance, card].filter(Boolean);
+        if (ordered.length > 1) {
+          let anchor = ordered[0];
+          ordered.slice(1).forEach((el) => {
+            host.insertBefore(el, anchor.nextSibling);
+            anchor = el;
+          });
+        }
       } catch { /* keep the existing MEAL page intact if follow-up data is unavailable */ }
     })();
     return () => { cancelled = true; };
