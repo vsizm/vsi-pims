@@ -24,7 +24,6 @@
     body {
       background-color: #003566; /* --regal-navy */
     }
-    /* Loading Spinner Animation */
     .spinner {
       border: 2px solid rgba(255, 255, 255, 0.2);
       border-left-color: currentColor;
@@ -40,6 +39,31 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans select-none antialiased border-t-[14px] border-school-bus-yellow">
+
+  <!-- Deployment Filter Control Bar (Author: vsizm | Environment: Production) -->
+  <div class="w-full bg-slate-900/50 backdrop-blur-sm border-b border-white/10 px-4 py-2.5 text-xs text-slate-300">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1.5">
+          <span class="text-slate-500">Author:</span> <strong class="text-white font-mono">vsizm</strong>
+        </span>
+        <span class="h-3 w-px bg-white/20"></span>
+        <span class="flex items-center gap-1.5">
+          <span class="text-slate-500">Env:</span> <span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-medium text-[11px] border border-emerald-500/20">Production</span>
+        </span>
+        <span class="h-3 w-px bg-white/20"></span>
+        <span class="flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-rose-500 animate-pulse"></span>
+          <span class="text-rose-400 font-medium">Refactor HomePage structure error resolved</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-3 font-mono text-[11px] text-slate-400">
+        <span>commit: <span class="text-slate-200">cab582a</span></span>
+        <span>branch: <span class="text-slate-200">main</span></span>
+        <span class="text-slate-500">Just now via GitHub</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Hero Content Container -->
   <main class="flex-grow flex flex-col items-center justify-center px-4 text-center">
@@ -95,24 +119,20 @@
      * before delegating execution to top-level browser routing threads.
      */
     function handleNavigation(element, targetUrl) {
-      // Prevent rapid concurrent event handling
       if (element.getAttribute('data-loading') === 'true') return;
       element.setAttribute('data-loading', 'true');
       
       const textLabel = element.querySelector('span');
       const originalText = textLabel.textContent;
       
-      // Inject loading components dynamically into the DOM node matrix
       textLabel.textContent = 'Connecting...';
       const spinner = document.createElement('div');
       spinner.className = 'spinner';
       element.insertBefore(spinner, textLabel);
       
-      // Enforce operational UX delay before initiating external redirect
       setTimeout(() => {
         window.location.href = targetUrl;
         
-        // Graceful rollback environment in case the window thread is preserved on backward caching
         setTimeout(() => {
           element.removeAttribute('data-loading');
           textLabel.textContent = originalText;
