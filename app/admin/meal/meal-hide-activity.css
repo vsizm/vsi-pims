@@ -6,3 +6,10 @@
   grid-column: 1 / -1 !important;
   grid-row: auto !important;
 }
+
+/* Agreed reading order: activity reach → demographic reach → programme performance → audit/results. */
+.phase1-bottom-grid > article.footprint-panel { order: 1; }
+.phase1-bottom-grid > article.wide:not(.activity-panel):not(.footprint-panel) { order: 2; }
+.phase1-bottom-grid > article:nth-child(6) { order: 3; }
+.phase1-bottom-grid > article:nth-child(4) { order: 4; }
+.phase1-bottom-grid > article:nth-child(5) { order: 5; }
