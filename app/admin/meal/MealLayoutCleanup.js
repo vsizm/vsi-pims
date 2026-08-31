@@ -21,6 +21,57 @@ export default function MealLayoutCleanup() {
       align-items: stretch;
     }
 
+    /* Borrow the Finance Intelligence card colour treatment for MEAL KPI cards only. */
+    .phase1-kpis.meal-five-kpis > div:nth-child(1),
+    .phase1-kpis.meal-five-kpis > a:nth-child(1) {
+      background: linear-gradient(135deg, #0a9fd4, #1477b4) !important;
+      border-color: transparent !important;
+      border-top-color: transparent !important;
+      color: #fff !important;
+    }
+    .phase1-kpis.meal-five-kpis > div:nth-child(2),
+    .phase1-kpis.meal-five-kpis > a:nth-child(2) {
+      background: linear-gradient(135deg, #245e96, #183f6f) !important;
+      border-color: transparent !important;
+      border-top-color: transparent !important;
+      color: #fff !important;
+    }
+    .phase1-kpis.meal-five-kpis > div:nth-child(3),
+    .phase1-kpis.meal-five-kpis > a:nth-child(3) {
+      background: linear-gradient(135deg, #c99b16, #80610a) !important;
+      border-color: transparent !important;
+      border-top-color: transparent !important;
+      color: #fff !important;
+    }
+    .phase1-kpis.meal-five-kpis > div:nth-child(4),
+    .phase1-kpis.meal-five-kpis > a:nth-child(4) {
+      background: linear-gradient(135deg, #0a9fd4, #1477b4) !important;
+      border-color: transparent !important;
+      border-top-color: transparent !important;
+      color: #fff !important;
+    }
+    .phase1-kpis.meal-five-kpis > div:nth-child(5),
+    .phase1-kpis.meal-five-kpis > a:nth-child(5) {
+      background: linear-gradient(135deg, #245e96, #183f6f) !important;
+      border-color: transparent !important;
+      border-top-color: transparent !important;
+      color: #fff !important;
+    }
+    .phase1-kpis.meal-five-kpis > div > span,
+    .phase1-kpis.meal-five-kpis > div > strong,
+    .phase1-kpis.meal-five-kpis > div > small,
+    .phase1-kpis.meal-five-kpis > div .kpi-footer,
+    .phase1-kpis.meal-five-kpis > a > span,
+    .phase1-kpis.meal-five-kpis > a > strong,
+    .phase1-kpis.meal-five-kpis > a > small,
+    .phase1-kpis.meal-five-kpis > a .kpi-footer {
+      color: #fff !important;
+    }
+    .phase1-kpis.meal-five-kpis > div,
+    .phase1-kpis.meal-five-kpis > a {
+      box-shadow: 0 18px 35px rgba(0,0,0,.12);
+    }
+
     /* The activity panel is intentionally hidden; footprint becomes the full-width demographic intelligence panel. */
     .phase1-bottom-grid {
       grid-template-columns: 1fr !important;
