@@ -41,7 +41,7 @@ export default function MealDemographicBar() {
           } catch { return r; }
         }));
         const next = full.map((r, i) => ({
-          name: first(r, ['activity_title','activity_name','activityName'], `Activity ${i + 1}`),
+          code: first(r, ['programme_code','programmeCode','program_code','programCode'], 'PROGRAMME'),
           reached: num(first(r, ['reached_participant_total','participant_total','participants_reached'])) || breakdown(r),
         }));
         if (!cancelled) setActivities(next);
@@ -55,16 +55,16 @@ export default function MealDemographicBar() {
   if (!host) return null;
 
   return createPortal(
-    <div className="meal-demographic-bar" aria-label="Reach by approved activity">
+    <div className="meal-demographic-bar" aria-label="Reach by programme">
       <div className="meal-bar-total"><strong>{total.toLocaleString()}</strong><span>TOTAL REACHED</span></div>
       <div className="meal-activity-bars">
         {activities.length ? activities.map((activity, index) => (
-          <div className="meal-activity-bar" key={`${activity.name}-${index}`}>
+          <div className="meal-activity-bar" key={`${activity.code}-${index}`}>
             <div className="meal-activity-value">{activity.reached.toLocaleString()}</div>
             <div className="meal-activity-track"><i style={{ height: `${Math.max(4, (activity.reached / max) * 100)}%` }} /></div>
-            <div className="meal-activity-name" title={activity.name}>{activity.name}</div>
+            <div className="meal-activity-name" title={activity.code}>{activity.code}</div>
           </div>
-        )) : <div className="phase1-empty">No approved activity reach recorded.</div>}
+        )) : <div className="phase1-empty">No approved programme reach recorded.</div>}
       </div>
     </div>, host
   );
