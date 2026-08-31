@@ -12,6 +12,20 @@ const breakdown = (report) => {
   const r = k => num(b[`reached${k}`]);
   return r('MaleChildren') + r('FemaleChildren') + r('MaleYouth') + r('FemaleYouth') + r('MaleAdult') + r('FemaleAdult');
 };
+const programmeCode = (report) => {
+  const explicit = first(report, ['programme_code','programmeCode','program_code','programCode'], '');
+  if (explicit) return explicit;
+  const name = String(first(report, ['programme','programme_name','programmeName'], '')).trim();
+  const lower = name.toLowerCase();
+  if (lower.includes('policy, advocacy') || lower === 'par') return 'PAR';
+  if (lower.includes('mental health resilience') || lower === 'mhsw') return 'MHSW';
+  if (lower.includes('child') || lower === 'cev') return 'CEV';
+  if (lower.includes('education') || lower === 'eie') return 'EIE';
+  if (lower.includes('community') || lower === 'casd') return 'CASD';
+  if (lower.includes('leadership') || lower === 'cldg') return 'CLDG';
+  if (lower.includes('protection') || lower === 'cprm') return 'CPRM';
+  return name || '—';
+};
 
 export default function MealDemographicBar() {
   const [host, setHost] = useState(null);
@@ -41,9 +55,9 @@ export default function MealDemographicBar() {
           } catch { return r; }
         }));
         const next = full.map((r, i) => ({
-          code: first(r, ['programme_code','programmeCode','program_code','programCode'], ''),
+          code: programmeCode(r),
           reached: num(first(r, ['reached_participant_total','participant_total','participants_reached'])) || breakdown(r),
-        })).filter(r => r.code);
+        })).filter(r => r.code && r.reached > 0);
         if (!cancelled) setActivities(next);
       } catch { /* existing dashboard remains the source of truth */ }
     })();
