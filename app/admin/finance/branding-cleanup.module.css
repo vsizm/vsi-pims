@@ -1,0 +1,5 @@
+.scope :global(div[class*="brand"] > div:nth-child(2)){display:none!important}
+.scope :global(div[class*="brand"]){justify-content:center!important;gap:0!important;padding-left:0!important;padding-right:0!important}
+.scope :global(div[class*="logo"]){width:78px!important;height:62px!important}
+.scope :global(div[class*="vsiBrand"]){display:none!important}
+.scope :global(div[class*="headerRight"]){gap:0!important}
