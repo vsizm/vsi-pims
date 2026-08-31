@@ -1,20 +1,17 @@
 'use client';
 
-import Link from 'next/link';
-
 export default function HomePage() {
   return (
     <main className="page">
-      {/* Top Yellow Line Accent */}
+      {/* Top Yellow Accent Bar */}
       <div className="topLine" />
 
-      {/* Hero Section Container */}
+      {/* Hero Section */}
       <section className="hero">
         <div className="content">
           {/* Main Title */}
           <h1 className="title">
             <span className="accent">VSI Information</span>
-            <br />
             <span className="mainText">Management System</span>
           </h1>
 
@@ -39,7 +36,7 @@ export default function HomePage() {
             </a>
           </div>
 
-          {/* VSI Logo & Branding Footer */}
+          {/* VSI Logo & Footer Branding */}
           <div className="footerLogo">
             <div className="logoShield">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -55,37 +52,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Styled JSX with VSI Color Palette */}
+      {/* Embedded CSS Styling */}
       <style jsx>{`
-        :global(html),
         :global(body) {
           margin: 0;
           padding: 0;
           background-color: #003566;
         }
 
-        :global(:root) {
-          --yale-blue: #094074ff;
-          --baltic-blue: #3c6997ff;
-          --regal-navy: #003566ff;
-          --school-bus-yellow: #ffc300ff;
-          --gold: #ffd60aff;
-        }
-
         .page {
           position: relative;
-          min-height: 100svh;
-          background-color: var(--regal-navy);
+          width: 100%;
+          min-height: 100vh;
+          background-color: #003566;
           color: #ffffff;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           display: flex;
           flex-direction: column;
+          box-sizing: border-box;
         }
 
         .topLine {
-          height: 8px;
-          background-color: var(--school-bus-yellow);
+          height: 12px;
+          background-color: #ffc300;
           width: 100%;
+          flex-shrink: 0;
         }
 
         .hero {
@@ -106,30 +97,32 @@ export default function HomePage() {
         }
 
         .title {
-          margin: 0 0 20px 0;
+          margin: 0 0 16px 0;
           line-height: 1.15;
-          letter-spacing: -0.01em;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .accent {
-          color: var(--school-bus-yellow);
+          color: #ffc300;
           font-size: clamp(32px, 5.5vw, 64px);
           font-weight: 700;
-          display: inline-block;
+          letter-spacing: -0.01em;
         }
 
         .mainText {
           color: #ffffff;
           font-size: clamp(38px, 6.5vw, 76px);
           font-weight: 800;
-          display: inline-block;
+          letter-spacing: -0.02em;
         }
 
         .subtitle {
           color: #ffffff;
-          font-size: clamp(18px, 2.5vw, 28px);
+          font-size: clamp(18px, 2.5vw, 26px);
           font-weight: 400;
-          margin: 0 0 44px 0;
+          margin: 0 0 40px 0;
           opacity: 0.95;
         }
 
@@ -139,7 +132,7 @@ export default function HomePage() {
           justify-content: center;
           align-items: center;
           flex-wrap: wrap;
-          margin-bottom: 70px;
+          margin-bottom: 60px;
         }
 
         .btn {
@@ -155,19 +148,18 @@ export default function HomePage() {
         }
 
         .btnWhite {
-          background-color: transparent;
-          color: #ffffff;
-          border: 1px solid rgba(255, 255, 255, 0.75);
+          background-color: #ffffff;
+          color: #003566;
         }
 
         .btnYellow {
-          background-color: var(--school-bus-yellow);
-          color: var(--regal-navy);
+          background-color: #ffc300;
+          color: #003566;
         }
 
         .btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .footerLogo {
