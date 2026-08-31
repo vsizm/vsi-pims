@@ -1,4 +1,4 @@
-import FinanceIntelligence from './FinanceIntelligenceNew';
+import FinanceIntelligence from './FinanceIntelligenceStyled';
 import styles from './finance-overrides.module.css';
 
 export const dynamic = 'force-dynamic';
