@@ -90,8 +90,26 @@ export default function MealKpiEnhancer() {
         .phase1-kpis.meal-five-kpis>div:nth-child(4)::before{background:#d9a400}
         .phase1-kpis.meal-five-kpis>div:nth-child(5)::before{background:#7657a8}
         .phase1-kpis.meal-five-kpis>div:nth-child(4) .kpi-footer b,.phase1-kpis.meal-five-kpis>div:nth-child(5) .kpi-footer b{color:#094074}
+
+        .phase1-card-head{position:relative;overflow:hidden;padding:20px 22px 17px;border-bottom:1px solid #e7edf3;background:linear-gradient(135deg,#ffffff 0%,#f8fbff 100%)}
+        .phase1-card-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#3c6997}
+        .phase1-card-head::after{content:"";position:absolute;right:-36px;top:-54px;width:118px;height:118px;border:1px solid rgba(9,64,116,.09);border-radius:50%;box-shadow:0 0 0 15px rgba(9,64,116,.018),0 0 0 30px rgba(9,64,116,.012);pointer-events:none}
+        .phase1-card-head>div{position:relative;z-index:1}
+        .phase1-card-head span{font-size:10px!important;font-weight:800!important;letter-spacing:.11em;text-transform:uppercase;color:#3c6997!important}
+        .phase1-card-head h2{margin:5px 0 3px!important;font-size:21px!important;font-weight:800!important;letter-spacing:-.025em;color:#094074!important}
+        .phase1-card-head p{margin:0!important;font-size:12px!important;color:#718398!important}
+        .phase1-card-head .count-badge{position:relative;z-index:2;background:#0284c7!important;color:#fff!important;border:0!important}
+
+        .phase1-bottom-grid>.footprint-panel .phase1-card-head::before{background:#d9a400}
+        .phase1-bottom-grid>.wide .phase1-card-head::before{background:#3c6997}
+        .phase1-bottom-grid>article:nth-child(4) .phase1-card-head::before{background:#10b981}
+        .phase1-bottom-grid>article:nth-child(5) .phase1-card-head::before{background:#0284c7}
+        .phase1-bottom-grid>article:nth-child(6) .phase1-card-head::before{background:#7657a8}
+        .phase1-bottom-grid>article:nth-child(7) .phase1-card-head::before{background:#094074}
+        .phase1-bottom-grid>article:nth-child(8) .phase1-card-head::before{background:#d97706}
+
         @media (max-width:1100px){.phase1-kpis.meal-five-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
-        @media (max-width:720px){.phase1-kpis.meal-five-kpis{grid-template-columns:1fr}}
+        @media (max-width:720px){.phase1-kpis.meal-five-kpis{grid-template-columns:1fr}.phase1-card-head{padding:17px 18px 15px}.phase1-card-head h2{font-size:19px!important}}
       `;
       document.head.appendChild(style);
     }
