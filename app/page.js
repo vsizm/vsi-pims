@@ -1,0 +1,51 @@
+import Link from 'next/link';
+
+export default function HomePage() {
+  return (
+    <main className="landing">
+      <nav className="nav">
+        <div className="brand">
+          <img src="/VSI LOGO white.png" alt="Visionary Students Initiative" />
+          <div><span>VISIONARY STUDENTS INITIATIVE</span><strong>Information Management System</strong></div>
+        </div>
+        <Link className="login" href="/login">Sign in to IMS <span>→</span></Link>
+      </nav>
+
+      <section className="hero">
+        <div className="heroCopy">
+          <div className="eyebrow">VSI · INFORMATION MANAGEMENT SYSTEM</div>
+          <h1>Turning programme data into <em>evidence, accountability and action.</em></h1>
+          <p>A central platform for managing VSI programmes, activities, reporting, monitoring, evaluation, finance and organisational evidence.</p>
+          <div className="actions"><Link className="primary" href="/login">Sign in to IMS <span>→</span></Link><a className="secondary" href="#platform">Explore the platform</a></div>
+        </div>
+        <div className="heroVisual" aria-label="VSI IMS intelligence overview">
+          <div className="orb orbOne" /><div className="orb orbTwo" />
+          <div className="dashboardCard"><div className="miniTop"><span>VSI IMS</span><b>LIVE INTELLIGENCE</b></div><div className="metric"><small>PROGRAMME PERFORMANCE</small><strong>Evidence → Insight</strong><div className="line"><i /></div></div><div className="miniGrid"><div><b>MEAL</b><span>Reporting & outcomes</span></div><div><b>FINANCE</b><span>Budget & expenditure</span></div><div><b>ACTIVITIES</b><span>Approved delivery</span></div><div><b>EVIDENCE</b><span>Accountability record</span></div></div></div>
+        </div>
+      </section>
+
+      <section id="platform" className="platform">
+        <div className="sectionIntro"><div className="eyebrow">THE PLATFORM</div><h2>One connected system for VSI programme intelligence.</h2><p>From the first programme record to approved reporting and organisational learning, IMS keeps the workflow connected.</p></div>
+        <div className="features">
+          <Feature n="01" title="Programme Management" text="Structure programmes, projects and activities around an authoritative organisational data model." />
+          <Feature n="02" title="Activity Reporting" text="Capture approved activity delivery, participants, locations, evidence and results in one workflow." />
+          <Feature n="03" title="MEAL Intelligence" text="Transform approved reports into monitoring, evaluation, accountability and learning signals." />
+          <Feature n="04" title="Finance Intelligence" text="Connect approved activity budgets, expenditure and donor-supported portfolios." />
+          <Feature n="05" title="Evidence & Accountability" text="Maintain a traceable record that supports review, decision-making and organisational accountability." />
+        </div>
+      </section>
+
+      <section className="workflow"><div><div className="eyebrow">CONNECTED WORKFLOW</div><h2>From programme design to organisational intelligence.</h2></div><div className="flow"><span>Programme</span><b>→</b><span>Project</span><b>→</b><span>Activity</span><b>→</b><span>Approval</span><b>→</b><span>Report</span><b>→</b><span>MEAL</span><b>→</b><span>Finance</span><b>→</b><span>Evidence</span></div></section>
+
+      <section className="cta"><div><div className="eyebrow">VSI IMS</div><h2>Ready to access the system?</h2><p>Authorised VSI users can sign in to continue to the administration workspace.</p></div><Link className="primary" href="/login">Sign in to IMS <span>→</span></Link></section>
+
+      <footer><span>© {new Date().getFullYear()} Visionary Students Initiative</span><span>VSI Information Management System</span></footer>
+
+      <style jsx>{`
+        .landing{min-height:100vh;background:#06192b;color:#fff;font-family:Arial,Helvetica,sans-serif;overflow:hidden}.nav{height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,5vw,76px);border-bottom:1px solid rgba(255,255,255,.08);background:rgba(3,18,31,.82)}.brand{display:flex;align-items:center;gap:12px}.brand img{width:42px;height:42px;object-fit:contain}.brand span,.brand strong{display:block}.brand span{font-size:9px;letter-spacing:.13em;color:#83bce1;font-weight:800}.brand strong{font-size:13px;margin-top:3px}.login,.primary{display:inline-flex;align-items:center;gap:12px;text-decoration:none}.login{color:#fff;font-size:11px;font-weight:800}.login span,.primary span{font-size:18px;color:#ffc300}.hero{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;max-width:1250px;margin:auto;padding:105px clamp(20px,5vw,76px) 115px}.heroCopy{position:relative;z-index:2;align-self:center}.eyebrow{font-size:10px;letter-spacing:.17em;color:#70b5df;font-weight:900}.hero h1{font-family:Georgia,serif;font-size:clamp(42px,5.5vw,76px);line-height:1.02;letter-spacing:-.045em;margin:18px 0}.hero h1 em{font-style:normal;color:#ffc300}.hero p{max-width:650px;color:#a9bdcc;font-size:16px;line-height:1.7}.actions{display:flex;align-items:center;gap:22px;margin-top:30px}.primary{padding:13px 18px;background:#ffc300;color:#06233d;border-radius:9px;font-size:11px;font-weight:900}.primary span{color:#06233d}.secondary{color:#b9cbd7;text-decoration:none;font-size:11px;font-weight:800}.heroVisual{position:relative;min-height:460px;display:grid;place-items:center}.heroVisual:before{content:"";position:absolute;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(20,127,180,.26),transparent 68%);filter:blur(4px)}.dashboardCard{position:relative;width:min(470px,90%);padding:22px;border:1px solid rgba(157,191,214,.25);border-radius:22px;background:linear-gradient(145deg,rgba(16,54,82,.9),rgba(5,26,45,.94));box-shadow:0 35px 80px rgba(0,0,0,.35);transform:rotate(1deg)}.miniTop{display:flex;justify-content:space-between;font-size:10px;color:#fff}.miniTop b{font-size:7px;color:#6fd1a0;letter-spacing:.1em}.metric{margin-top:42px}.metric small{display:block;color:#7fa5bd;font-size:8px;letter-spacing:.12em}.metric strong{display:block;font-family:Georgia,serif;font-size:28px;margin-top:6px}.line{height:7px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:16px;overflow:hidden}.line i{display:block;width:82%;height:100%;background:linear-gradient(90deg,#3c6997,#ffc300);border-radius:inherit}.miniGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:32px}.miniGrid div{padding:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:10px}.miniGrid b,.miniGrid span{display:block}.miniGrid b{font-size:8px;color:#ffc300;letter-spacing:.1em}.miniGrid span{font-size:9px;color:#91aabd;margin-top:5px}.orb{position:absolute;border-radius:50%;filter:blur(1px)}.orbOne{width:16px;height:16px;background:#ffc300;top:15%;right:10%}.orbTwo{width:9px;height:9px;background:#4d9ac5;bottom:18%;left:12%}.platform{background:#f4f7f9;color:#06233d;padding:100px clamp(20px,5vw,76px)}.sectionIntro{max-width:720px}.platform .eyebrow{color:#397ca4}.sectionIntro h2,.workflow h2,.cta h2{font-family:Georgia,serif;font-size:clamp(30px,4vw,48px);line-height:1.08;margin:12px 0}.sectionIntro p{color:#607789;line-height:1.65}.features{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:55px}.features>div{min-height:220px;padding:20px;border-radius:15px;background:#fff;border:1px solid #dbe5eb}.featureNo{display:flex;width:34px;height:34px;align-items:center;justify-content:center;border-radius:8px;background:#ffc107;color:#002d62;font-weight:900;font-size:10px}.features h3{font-family:Georgia,serif;font-size:18px;margin:30px 0 10px}.features p{color:#6b8090;font-size:10px;line-height:1.6}.workflow{padding:92px clamp(20px,5vw,76px);background:#002d62}.workflow .eyebrow{color:#8cc7e7}.workflow h2{max-width:600px}.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:55px}.flow span{padding:11px 15px;border:1px solid rgba(255,255,255,.2);border-radius:9px;background:rgba(255,255,255,.06);font-size:10px;font-weight:800}.flow b{color:#ffc300}.cta{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:75px clamp(20px,5vw,76px);background:#ffc300;color:#06233d}.cta .eyebrow{color:#45677d}.cta h2{margin-bottom:5px}.cta p{margin:0;color:#31546b;font-size:12px}.cta .primary{background:#06233d;color:#fff}.cta .primary span{color:#ffc300}footer{display:flex;justify-content:space-between;padding:25px clamp(20px,5vw,76px);font-size:9px;color:#7892a5;background:#041321}@media(max-width:1000px){.hero{grid-template-columns:1fr}.heroVisual{min-height:360px}.features{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.nav{height:68px}.brand strong{font-size:11px}.login{padding:9px}.hero{padding-top:65px}.hero h1{font-size:43px}.actions{flex-direction:column;align-items:flex-start}.heroVisual{min-height:300px}.dashboardCard{width:100%}.features{grid-template-columns:1fr}.flow{justify-content:flex-start}.cta{align-items:flex-start;flex-direction:column}footer{flex-direction:column;gap:8px}}
+      `}</style>
+    </main>
+  );
+}
+
+function Feature({ n, title, text }) { return <article><div className="featureNo">{n}</div><h3>{title}</h3><p>{text}</p></article>; }
