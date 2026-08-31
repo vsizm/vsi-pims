@@ -41,9 +41,9 @@ export default function MealDemographicBar() {
           } catch { return r; }
         }));
         const next = full.map((r, i) => ({
-          code: first(r, ['programme_code','programmeCode','program_code','programCode'], 'PROGRAMME'),
+          code: first(r, ['programme_code','programmeCode','program_code','programCode'], ''),
           reached: num(first(r, ['reached_participant_total','participant_total','participants_reached'])) || breakdown(r),
-        }));
+        })).filter(r => r.code);
         if (!cancelled) setActivities(next);
       } catch { /* existing dashboard remains the source of truth */ }
     })();
