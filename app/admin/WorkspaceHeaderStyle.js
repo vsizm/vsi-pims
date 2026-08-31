@@ -24,7 +24,11 @@ export default function WorkspaceHeaderStyle() {
         .vsi-workspace-header .vsi-workspace-copy p{margin:0!important;color:#CBD5E1!important;font-size:12px!important;font-weight:400;line-height:1.45;text-align:left!important}
         .vsi-workspace-header .vsi-workspace-action{margin-left:auto;flex:0 0 auto}
         .vsi-workspace-header .vsi-workspace-action>*{border-color:rgba(255,255,255,.22)!important;background:rgba(255,255,255,.08)!important;color:#fff!important}
-        @media(max-width:720px){.vsi-workspace-header{padding:17px 18px!important;gap:12px!important}.vsi-workspace-header .vsi-workspace-badge{width:36px;height:36px;min-width:36px}.vsi-workspace-header .vsi-workspace-copy h1{font-size:19px!important}}
+        .register-section .workspace-register-head{display:flex!important;align-items:center!important;gap:16px!important;padding:20px 24px!important;background:#002D62!important;border-bottom:0!important;border-radius:16px 16px 0 0!important;text-align:left!important}
+        .register-section .workspace-register-head>div{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:4px!important;text-align:left!important}
+        .register-section .workspace-register-head h2{margin:0!important;color:#fff!important;font-size:21px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:-.02em;text-align:left!important}
+        .register-section .workspace-register-head p{margin:0!important;color:#CBD5E1!important;font-size:12px!important;font-weight:400!important;line-height:1.45!important;text-align:left!important}
+        @media(max-width:720px){.vsi-workspace-header{padding:17px 18px!important;gap:12px!important}.vsi-workspace-header .vsi-workspace-badge{width:36px;height:36px;min-width:36px}.vsi-workspace-header .vsi-workspace-copy h1{font-size:19px!important}.register-section .workspace-register-head{padding:17px 18px!important}}
       `;
       document.head.appendChild(style);
     }
