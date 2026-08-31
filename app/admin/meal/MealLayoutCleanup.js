@@ -74,6 +74,97 @@ export default function MealLayoutCleanup() {
       box-shadow: 0 18px 35px rgba(0,0,0,.12);
     }
 
+    /* Activity Report-style section headers: presentation only, no content or behaviour changes. */
+    .footprint-panel > .phase1-card-head,
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head,
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head,
+    .phase1-card:has(.alert-grid) > .phase1-card-head,
+    .phase1-card:has(.assessment) > .phase1-card-head,
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head,
+    .meal-followup-actions > .phase1-card-head {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      column-gap: 12px;
+      align-items: start;
+      margin-bottom: 20px;
+    }
+
+    .footprint-panel > .phase1-card-head::before,
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head::before,
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head::before,
+    .phase1-card:has(.alert-grid) > .phase1-card-head::before,
+    .phase1-card:has(.assessment) > .phase1-card-head::before,
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head::before,
+    .meal-followup-actions > .phase1-card-head::before {
+      grid-column: 1;
+      color: #3c6997;
+      font-size: 13px;
+      line-height: 1.3;
+      font-weight: 900;
+      letter-spacing: .08em;
+      padding-top: 2px;
+    }
+    .footprint-panel > .phase1-card-head::before { content: '01'; }
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head::before { content: '02'; }
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head::before { content: '03'; }
+    .phase1-card:has(.alert-grid) > .phase1-card-head::before { content: '04'; }
+    .phase1-card:has(.assessment) > .phase1-card-head::before { content: '05'; }
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head::before { content: '06'; }
+    .meal-followup-actions > .phase1-card-head::before { content: '07'; }
+
+    .footprint-panel > .phase1-card-head > div,
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head > div,
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head > div,
+    .phase1-card:has(.alert-grid) > .phase1-card-head > div,
+    .phase1-card:has(.assessment) > .phase1-card-head > div,
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head > div,
+    .meal-followup-actions > .phase1-card-head > div {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    .footprint-panel > .phase1-card-head span,
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head span,
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head span,
+    .phase1-card:has(.alert-grid) > .phase1-card-head span,
+    .phase1-card:has(.assessment) > .phase1-card-head span,
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head span,
+    .meal-followup-actions > .phase1-card-head span {
+      display: block;
+      margin: 0 0 5px;
+      color: #3c6997;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .14em;
+    }
+
+    .footprint-panel > .phase1-card-head h2,
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head h2,
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head h2,
+    .phase1-card:has(.alert-grid) > .phase1-card-head h2,
+    .phase1-card:has(.assessment) > .phase1-card-head h2,
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head h2,
+    .meal-followup-actions > .phase1-card-head h2 {
+      margin: 0;
+      color: #003566;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+
+    .footprint-panel > .phase1-card-head p,
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head p,
+    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head p,
+    .phase1-card:has(.alert-grid) > .phase1-card-head p,
+    .phase1-card:has(.assessment) > .phase1-card-head p,
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head p,
+    .meal-followup-actions > .phase1-card-head p {
+      margin: 5px 0 0;
+      color: #65717d;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
     /* The activity panel is intentionally hidden; footprint becomes the full-width demographic intelligence panel. */
     .phase1-bottom-grid {
       grid-template-columns: 1fr !important;
