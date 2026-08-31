@@ -61,10 +61,12 @@ export default function MealLayoutCleanup() {
     .phase1-kpis.meal-five-kpis > div > strong,
     .phase1-kpis.meal-five-kpis > div > small,
     .phase1-kpis.meal-five-kpis > div .kpi-footer,
+    .phase1-kpis.meal-five-kpis > div .kpi-footer > *,
     .phase1-kpis.meal-five-kpis > a > span,
     .phase1-kpis.meal-five-kpis > a > strong,
     .phase1-kpis.meal-five-kpis > a > small,
-    .phase1-kpis.meal-five-kpis > a .kpi-footer {
+    .phase1-kpis.meal-five-kpis > a .kpi-footer,
+    .phase1-kpis.meal-five-kpis > a .kpi-footer > * {
       color: #fff !important;
     }
     .phase1-kpis.meal-five-kpis > div,
