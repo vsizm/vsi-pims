@@ -34,6 +34,20 @@ export default function MealLayoutCleanup() {
       grid-row: auto !important;
     }
 
+    /* Keep the MEAL intelligence sequence explicit without changing component markup. */
+    .phase1-bottom-grid > .footprint-panel {
+      order: -4;
+    }
+    .phase1-bottom-grid > .meal-programme-host {
+      order: -3;
+    }
+    .phase1-bottom-grid > .meal-compliance-host {
+      order: -2;
+    }
+    .phase1-bottom-grid > .meal-followup-actions {
+      order: -1;
+    }
+
     /* Combined demographic panel: live six-metric breakdown on the left, existing donut on the right. */
     .demographic-intelligence {
       display: grid;
