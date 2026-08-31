@@ -6,7 +6,7 @@ export default function HomePage() {
       {/* Top Yellow Accent Bar */}
       <div className="topLine" />
 
-      {/* Hero Section */}
+      {/* Hero Section Container */}
       <section className="hero">
         <div className="content">
           {/* Main Title */}
@@ -52,12 +52,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Embedded CSS Styling */}
+      {/* Embedded CSS Styling with Global Override */}
       <style jsx>{`
+        /* Global Reset to Force Navy Background Across Browser Window */
+        :global(html),
         :global(body) {
-          margin: 0;
-          padding: 0;
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          min-height: 100vh !important;
+          background-color: #003566 !important;
+        }
+
+        .page {
+          position: relative;
+          width: 100%;
+          min-height: 100vh;
           background-color: #003566;
+          color: #ffffff;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          box-sizing: border-box;
         }
 
         .topLine {
@@ -74,6 +90,14 @@ export default function HomePage() {
           justify-content: center;
           padding: 40px 24px;
           text-align: center;
+        }
+
+        .content {
+          max-width: 900px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .title {
