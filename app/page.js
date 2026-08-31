@@ -60,18 +60,6 @@ export default function HomePage() {
           background-color: #003566;
         }
 
-        .page {
-          position: relative;
-          width: 100%;
-          min-height: 100vh;
-          background-color: #003566;
-          color: #ffffff;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          display: flex;
-          flex-direction: column;
-          box-sizing: border-box;
-        }
-
         .topLine {
           height: 12px;
           background-color: #ffc300;
