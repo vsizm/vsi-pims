@@ -7,9 +7,12 @@
   grid-row: auto !important;
 }
 
-/* Agreed reading order: activity reach → demographic reach → programme performance → audit/results. */
+/* Agreed MEAL reading order after removing the redundant activity panel. */
+.phase1-bottom-grid > article { order: 10; }
 .phase1-bottom-grid > article.footprint-panel { order: 1; }
-.phase1-bottom-grid > article.wide:not(.activity-panel):not(.footprint-panel) { order: 2; }
+.phase1-bottom-grid > article:nth-child(3) { order: 2; }
 .phase1-bottom-grid > article:nth-child(6) { order: 3; }
 .phase1-bottom-grid > article:nth-child(4) { order: 4; }
 .phase1-bottom-grid > article:nth-child(5) { order: 5; }
+.phase1-bottom-grid > article:nth-child(7) { order: 6; }
+.phase1-bottom-grid > article:nth-child(8) { order: 7; }
