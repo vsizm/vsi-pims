@@ -33,10 +33,10 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="hero">
-        {/* Left Column: Portrait & Floating Feature Icons */}
+        {/* Left Column: Direct Circular Portrait & Floating Feature Icons */}
         <div className="left">
           <div className="visualContainer">
-            {/* Circular Profile Portrait */}
+            {/* Direct Circular Cut-out Portrait */}
             <div className="portraitCircle">
               <img 
                 src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
@@ -196,7 +196,6 @@ export default function HomePage() {
           height: 320px;
           border-radius: 50%;
           overflow: hidden;
-          background: #392f75;
           display: flex;
           align-items: center;
           justify-content: center;
