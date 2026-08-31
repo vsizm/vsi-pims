@@ -1,0 +1,100 @@
+.scope .phase1-card-head,
+.scope .meal-pp-head,
+.scope .meal-compliance-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 78px;
+  padding: 20px 24px;
+  background: #002D62;
+  border: 0;
+  border-radius: 16px 16px 0 0;
+  color: #fff;
+  overflow: hidden;
+}
+
+.scope .phase1-card-head::before,
+.scope .meal-pp-head::before,
+.scope .meal-compliance-head::before {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #FFC107;
+  color: #002D62;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.scope .phase1-card-head > div,
+.scope .meal-pp-head > div,
+.scope .meal-compliance-head > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scope .phase1-card-head span,
+.scope .meal-pp-head span,
+.scope .meal-compliance-head span {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.scope .phase1-card-head h2,
+.scope .meal-pp-head h2,
+.scope .meal-compliance-head h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+
+.scope .phase1-card-head p,
+.scope .meal-pp-head p,
+.scope .meal-compliance-head p {
+  margin: 0;
+  color: #CBD5E1;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.scope .footprint-panel .phase1-card-head::before { content: '01'; }
+.scope .meal-programme-host .meal-pp-head::before { content: '02'; }
+.scope .meal-compliance-host .meal-compliance-head::before { content: '03'; }
+.scope .phase1-lower > .phase1-card:nth-child(2) .phase1-card-head::before { content: '04'; }
+.scope .phase1-lower > .phase1-card:nth-child(3) .phase1-card-head::before { content: '05'; }
+.scope .phase1-lower > .phase1-card:nth-child(4) .phase1-card-head::before { content: '06'; }
+
+/* Programme Performance already shows an activity count; the new 02 badge is the only section number. */
+.scope .meal-programme-host .meal-pp-head > b { display: none; }
+
+/* Keep the existing card hover/content behaviour; only the header treatment changes. */
+.scope .phase1-card-head::after,
+.scope .meal-pp-head::after,
+.scope .meal-compliance-head::after { pointer-events: none; }
+
+@media (max-width: 700px) {
+  .scope .phase1-card-head,
+  .scope .meal-pp-head,
+  .scope .meal-compliance-head {
+    padding: 16px 18px;
+    gap: 12px;
+  }
+  .scope .phase1-card-head::before,
+  .scope .meal-pp-head::before,
+  .scope .meal-compliance-head::before {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+}
