@@ -6,6 +6,7 @@ import MealProgrammePerformance from './MealProgrammePerformance';
 import MealReportingCompliance from './MealReportingCompliance';
 import MealFollowupActions from './MealFollowupActions';
 import styles from './meal-overrides.module.css';
+import './meal-section-header-theme.css';
 import './meal-activity-layout-fixes.module.css';
 import './meal-hide-activity.css';
 import './meal-donut-fix.module.css';
