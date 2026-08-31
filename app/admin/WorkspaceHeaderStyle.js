@@ -16,7 +16,7 @@ export default function WorkspaceHeaderStyle() {
       style.id = styleId;
       style.textContent = `
         .vsi-workspace-header{width:100%;display:flex!important;align-items:center!important;gap:16px!important;padding:20px 24px!important;border-radius:16px 16px 0 0!important;background:#002D62!important;box-shadow:0 8px 22px rgba(0,45,98,.12)!important;box-sizing:border-box!important;margin:0 0 18px!important}
-        .vsi-workspace-header .vsi-workspace-badge{width:40px;height:40px;min-width:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#FFC107;color:#002D62;font-size:13px;font-weight:900;line-height:1}
+        .vsi-workspace-header .vsi-workspace-badge,.workspace-register-head .vsi-workspace-badge{width:40px;height:40px;min-width:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#FFC107;color:#002D62;font-size:13px;font-weight:900;line-height:1}
         .vsi-workspace-header .vsi-workspace-copy{min-width:0;display:flex;flex-direction:column;gap:4px;flex:1;align-items:flex-start!important;text-align:left!important}
         .vsi-workspace-header .vsi-workspace-copy>*{width:auto!important;max-width:100%;text-align:left!important}
         .vsi-workspace-header .vsi-workspace-copy .admin-kicker{margin:0!important;color:#CBD5E1!important;font-size:10px!important;font-weight:800!important;letter-spacing:.11em;text-transform:uppercase;line-height:1.2;text-align:left!important}
@@ -28,7 +28,7 @@ export default function WorkspaceHeaderStyle() {
         .register-section .workspace-register-head>div{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:4px!important;text-align:left!important}
         .register-section .workspace-register-head h2{margin:0!important;color:#fff!important;font-size:21px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:-.02em;text-align:left!important}
         .register-section .workspace-register-head p{margin:0!important;color:#CBD5E1!important;font-size:12px!important;font-weight:400!important;line-height:1.45!important;text-align:left!important}
-        @media(max-width:720px){.vsi-workspace-header{padding:17px 18px!important;gap:12px!important}.vsi-workspace-header .vsi-workspace-badge{width:36px;height:36px;min-width:36px}.vsi-workspace-header .vsi-workspace-copy h1{font-size:19px!important}.register-section .workspace-register-head{padding:17px 18px!important}}
+        @media(max-width:720px){.vsi-workspace-header{padding:17px 18px!important;gap:12px!important}.vsi-workspace-header .vsi-workspace-badge,.workspace-register-head .vsi-workspace-badge{width:36px;height:36px;min-width:36px}.vsi-workspace-header .vsi-workspace-copy h1{font-size:19px!important}.register-section .workspace-register-head{padding:17px 18px!important}}
       `;
       document.head.appendChild(style);
     }
@@ -62,8 +62,23 @@ export default function WorkspaceHeaderStyle() {
       }
     };
 
+    const applyRegister = () => {
+      if (window.location.pathname !== '/admin/reports') return;
+      const head = document.querySelector('.register-section .section-head');
+      if (!head || head.classList.contains('workspace-register-head-styled')) return;
+      const copy = head.querySelector(':scope > div');
+      const title = copy?.querySelector('h2');
+      if (!copy || !title) return;
+      head.classList.add('workspace-register-head', 'workspace-register-head-styled');
+      const badge = document.createElement('div');
+      badge.className = 'vsi-workspace-badge';
+      badge.textContent = '02';
+      head.prepend(badge);
+    };
+
     apply();
-    const observer = new MutationObserver(apply);
+    applyRegister();
+    const observer = new MutationObserver(() => { apply(); applyRegister(); });
     observer.observe(document.body, { childList: true, subtree: true });
     return () => { observer.disconnect(); document.getElementById(styleId)?.remove(); };
   }, []);
