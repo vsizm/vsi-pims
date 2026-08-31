@@ -76,14 +76,6 @@ export default function HomePage() {
           text-align: center;
         }
 
-        .content {
-          max-width: 900px;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
         .title {
           margin: 0 0 16px 0;
           line-height: 1.15;
