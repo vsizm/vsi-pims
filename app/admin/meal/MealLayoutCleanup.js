@@ -21,42 +21,17 @@ export default function MealLayoutCleanup() {
       align-items: stretch;
     }
 
-    /* Borrow the Finance Intelligence card colour treatment for MEAL KPI cards only. */
+    /* Finance colour treatment — MEAL KPI cards only. */
     .phase1-kpis.meal-five-kpis > div:nth-child(1),
-    .phase1-kpis.meal-five-kpis > a:nth-child(1) {
-      background: linear-gradient(135deg, #0a9fd4, #1477b4) !important;
-      border-color: transparent !important;
-      border-top-color: transparent !important;
-      color: #fff !important;
-    }
+    .phase1-kpis.meal-five-kpis > a:nth-child(1) { background:linear-gradient(135deg,#0a9fd4,#1477b4)!important;border-color:transparent!important;color:#fff!important; }
     .phase1-kpis.meal-five-kpis > div:nth-child(2),
-    .phase1-kpis.meal-five-kpis > a:nth-child(2) {
-      background: linear-gradient(135deg, #245e96, #183f6f) !important;
-      border-color: transparent !important;
-      border-top-color: transparent !important;
-      color: #fff !important;
-    }
+    .phase1-kpis.meal-five-kpis > a:nth-child(2) { background:linear-gradient(135deg,#245e96,#183f6f)!important;border-color:transparent!important;color:#fff!important; }
     .phase1-kpis.meal-five-kpis > div:nth-child(3),
-    .phase1-kpis.meal-five-kpis > a:nth-child(3) {
-      background: linear-gradient(135deg, #c99b16, #80610a) !important;
-      border-color: transparent !important;
-      border-top-color: transparent !important;
-      color: #fff !important;
-    }
+    .phase1-kpis.meal-five-kpis > a:nth-child(3) { background:linear-gradient(135deg,#c99b16,#80610a)!important;border-color:transparent!important;color:#fff!important; }
     .phase1-kpis.meal-five-kpis > div:nth-child(4),
-    .phase1-kpis.meal-five-kpis > a:nth-child(4) {
-      background: linear-gradient(135deg, #0a9fd4, #1477b4) !important;
-      border-color: transparent !important;
-      border-top-color: transparent !important;
-      color: #fff !important;
-    }
+    .phase1-kpis.meal-five-kpis > a:nth-child(4) { background:linear-gradient(135deg,#0a9fd4,#1477b4)!important;border-color:transparent!important;color:#fff!important; }
     .phase1-kpis.meal-five-kpis > div:nth-child(5),
-    .phase1-kpis.meal-five-kpis > a:nth-child(5) {
-      background: linear-gradient(135deg, #245e96, #183f6f) !important;
-      border-color: transparent !important;
-      border-top-color: transparent !important;
-      color: #fff !important;
-    }
+    .phase1-kpis.meal-five-kpis > a:nth-child(5) { background:linear-gradient(135deg,#245e96,#183f6f)!important;border-color:transparent!important;color:#fff!important; }
     .phase1-kpis.meal-five-kpis > div > span,
     .phase1-kpis.meal-five-kpis > div > strong,
     .phase1-kpis.meal-five-kpis > div > small,
@@ -66,27 +41,31 @@ export default function MealLayoutCleanup() {
     .phase1-kpis.meal-five-kpis > a > strong,
     .phase1-kpis.meal-five-kpis > a > small,
     .phase1-kpis.meal-five-kpis > a .kpi-footer,
-    .phase1-kpis.meal-five-kpis > a .kpi-footer > * {
-      color: #fff !important;
-    }
+    .phase1-kpis.meal-five-kpis > a .kpi-footer > * { color:#fff!important; }
     .phase1-kpis.meal-five-kpis > div,
-    .phase1-kpis.meal-five-kpis > a {
-      box-shadow: 0 18px 35px rgba(0,0,0,.12);
-    }
+    .phase1-kpis.meal-five-kpis > a { box-shadow:0 18px 35px rgba(0,0,0,.12); }
 
-    /* Activity Report-style section headers: presentation only, no content or behaviour changes. */
+    /* Activity Report-style section banners — presentation only. */
     .footprint-panel > .phase1-card-head,
     .meal-programme-host > .meal-programme-performance > .meal-pp-head,
     .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head,
     .phase1-card:has(.alert-grid) > .phase1-card-head,
     .phase1-card:has(.assessment) > .phase1-card-head,
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head,
-    .meal-followup-actions > .phase1-card-head {
-      display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
-      column-gap: 12px;
-      align-items: start;
-      margin-bottom: 20px;
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head {
+      display:grid!important;
+      grid-template-columns:40px minmax(0,1fr)!important;
+      column-gap:16px!important;
+      align-items:center!important;
+      position:relative!important;
+      overflow:hidden!important;
+      min-height:92px!important;
+      margin:0!important;
+      padding:20px 24px!important;
+      background:#002D62!important;
+      border:0!important;
+      border-bottom:0!important;
+      border-radius:20px 20px 0 0!important;
+      box-shadow:none!important;
     }
 
     .footprint-panel > .phase1-card-head::before,
@@ -94,33 +73,38 @@ export default function MealLayoutCleanup() {
     .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head::before,
     .phase1-card:has(.alert-grid) > .phase1-card-head::before,
     .phase1-card:has(.assessment) > .phase1-card-head::before,
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head::before,
-    .meal-followup-actions > .phase1-card-head::before {
-      grid-column: 1;
-      color: #3c6997;
-      font-size: 13px;
-      line-height: 1.3;
-      font-weight: 900;
-      letter-spacing: .08em;
-      padding-top: 2px;
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head::before {
+      grid-column:1!important;
+      grid-row:1!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      width:40px!important;
+      height:40px!important;
+      padding:0!important;
+      border-radius:10px!important;
+      background:#FFC107!important;
+      color:#002D62!important;
+      font-size:14px!important;
+      line-height:1!important;
+      font-weight:900!important;
+      letter-spacing:.02em!important;
+      box-sizing:border-box!important;
+      position:relative!important;
+      z-index:2!important;
     }
-    .footprint-panel > .phase1-card-head::before { content: '01'; }
-    .meal-programme-host > .meal-programme-performance > .meal-pp-head::before { content: '02'; }
-    .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head::before { content: '03'; }
-    .phase1-card:has(.alert-grid) > .phase1-card-head::before { content: '04'; }
-    .phase1-card:has(.assessment) > .phase1-card-head::before { content: '05'; }
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head::before { content: '06'; }
-    .meal-followup-actions > .phase1-card-head::before { content: '07'; }
 
     .footprint-panel > .phase1-card-head > div,
     .meal-programme-host > .meal-programme-performance > .meal-pp-head > div,
     .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head > div,
     .phase1-card:has(.alert-grid) > .phase1-card-head > div,
     .phase1-card:has(.assessment) > .phase1-card-head > div,
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head > div,
-    .meal-followup-actions > .phase1-card-head > div {
-      grid-column: 2;
-      min-width: 0;
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head > div {
+      grid-column:2!important;
+      grid-row:1!important;
+      min-width:0!important;
+      position:relative!important;
+      z-index:2!important;
     }
 
     .footprint-panel > .phase1-card-head span,
@@ -128,14 +112,15 @@ export default function MealLayoutCleanup() {
     .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head span,
     .phase1-card:has(.alert-grid) > .phase1-card-head span,
     .phase1-card:has(.assessment) > .phase1-card-head span,
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head span,
-    .meal-followup-actions > .phase1-card-head span {
-      display: block;
-      margin: 0 0 5px;
-      color: #3c6997;
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: .14em;
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head span {
+      display:block!important;
+      margin:0 0 4px!important;
+      color:#CBD5E1!important;
+      font-size:9px!important;
+      line-height:1.2!important;
+      font-weight:800!important;
+      letter-spacing:.14em!important;
+      text-transform:uppercase!important;
     }
 
     .footprint-panel > .phase1-card-head h2,
@@ -143,13 +128,13 @@ export default function MealLayoutCleanup() {
     .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head h2,
     .phase1-card:has(.alert-grid) > .phase1-card-head h2,
     .phase1-card:has(.assessment) > .phase1-card-head h2,
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head h2,
-    .meal-followup-actions > .phase1-card-head h2 {
-      margin: 0;
-      color: #003566;
-      font-size: 20px;
-      line-height: 1.2;
-      letter-spacing: -.02em;
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head h2 {
+      margin:0!important;
+      color:#FFFFFF!important;
+      font-size:20px!important;
+      line-height:1.2!important;
+      font-weight:700!important;
+      letter-spacing:.01em!important;
     }
 
     .footprint-panel > .phase1-card-head p,
@@ -157,133 +142,47 @@ export default function MealLayoutCleanup() {
     .meal-compliance-host > .meal-reporting-compliance > .meal-compliance-head p,
     .phase1-card:has(.alert-grid) > .phase1-card-head p,
     .phase1-card:has(.assessment) > .phase1-card-head p,
-    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head p,
-    .meal-followup-actions > .phase1-card-head p {
-      margin: 5px 0 0;
-      color: #65717d;
-      font-size: 11px;
-      line-height: 1.5;
+    .phase1-card:has(.assessment) + .phase1-card > .phase1-card-head p {
+      margin:4px 0 0!important;
+      color:#CBD5E1!important;
+      font-size:12px!important;
+      line-height:1.45!important;
+      font-weight:400!important;
     }
 
-    /* The activity panel is intentionally hidden; footprint becomes the full-width demographic intelligence panel. */
-    .phase1-bottom-grid {
-      grid-template-columns: 1fr !important;
-      align-items: start;
-    }
-    .activity-panel {
-      display: none !important;
-    }
-    .footprint-panel {
-      grid-column: 1 / -1 !important;
-      grid-row: auto !important;
-    }
+    /* Remove the existing Programme Performance activity-count badge so the section has one number only. */
+    .meal-programme-host > .meal-programme-performance > .meal-pp-head > b { display:none!important; }
 
-    /* Keep the MEAL intelligence sequence explicit without changing component markup. */
-    .phase1-bottom-grid > .footprint-panel {
-      order: -4;
-    }
-    .phase1-bottom-grid > .meal-programme-host {
-      order: -3;
-    }
-    .phase1-bottom-grid > .meal-compliance-host {
-      order: -2;
-    }
-    .phase1-bottom-grid > .meal-followup-actions {
-      order: -1;
-    }
+    /* Keep the existing MEAL section sequence unchanged. */
+    .phase1-bottom-grid { grid-template-columns:1fr!important; align-items:start; }
+    .activity-panel { display:none!important; }
+    .footprint-panel { grid-column:1 / -1!important; grid-row:auto!important; }
+    .phase1-bottom-grid > .footprint-panel { order:-4; }
+    .phase1-bottom-grid > .meal-programme-host { order:-3; }
+    .phase1-bottom-grid > .meal-compliance-host { order:-2; }
+    .phase1-bottom-grid > .meal-followup-actions { order:-1; }
 
-    /* Combined demographic panel: live six-metric breakdown on the left, existing donut on the right. */
-    .demographic-intelligence {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, .85fr);
-      gap: 28px;
-      align-items: center;
-      margin-top: 18px;
-    }
-    .demographic-metrics {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      min-width: 0;
-    }
-    .demographic-metric {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-      padding: 12px 14px;
-      border: 1px solid rgba(60,105,151,.12);
-      border-radius: 12px;
-      background: rgba(248,250,252,.78);
-    }
-    .demographic-metric .demo-icon {
-      flex: 0 0 auto;
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border-radius: 10px;
-      background: #eef4f8;
-      font-size: 18px;
-    }
-    .demographic-metric > div:last-child {
-      min-width: 0;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      column-gap: 10px;
-      align-items: baseline;
-    }
-    .demographic-metric small {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: #64748b;
-    }
-    .demographic-metric strong {
-      font-size: 20px;
-      line-height: 1;
-      font-weight: 800;
-      color: #123b5d;
-    }
-    .demographic-metric em {
-      grid-column: 1 / -1;
-      font-size: 10px;
-      font-style: normal;
-      color: #94a3b8;
-    }
-    .demographic-donut {
-      min-width: 0;
-      display: grid;
-      justify-items: center;
-      align-content: center;
-    }
-    .demographic-donut .donut-wrap {
-      text-align: center;
-    }
-    .demographic-donut .donut {
-      margin-inline: auto;
-    }
+    /* Combined demographic panel. */
+    .demographic-intelligence { display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.85fr);gap:28px;align-items:center;margin-top:18px; }
+    .demographic-metrics { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0; }
+    .demographic-metric { display:flex;align-items:center;gap:12px;min-width:0;padding:12px 14px;border:1px solid rgba(60,105,151,.12);border-radius:12px;background:rgba(248,250,252,.78); }
+    .demographic-metric .demo-icon { flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#eef4f8;font-size:18px; }
+    .demographic-metric > div:last-child { min-width:0;display:grid;grid-template-columns:1fr auto;column-gap:10px;align-items:baseline; }
+    .demographic-metric small { font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#64748b; }
+    .demographic-metric strong { font-size:20px;line-height:1;font-weight:800;color:#123b5d; }
+    .demographic-metric em { grid-column:1 / -1;font-size:10px;font-style:normal;color:#94a3b8; }
+    .demographic-donut { min-width:0;display:grid;justify-items:center;align-content:center; }
+    .demographic-donut .donut-wrap { text-align:center; }
+    .demographic-donut .donut { margin-inline:auto; }
 
-    @media (max-width: 1100px) {
-      .phase1-kpis.meal-five-kpis {
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      }
-      .demographic-intelligence {
-        grid-template-columns: 1fr;
-      }
-      .demographic-donut {
-        padding-top: 8px;
-      }
+    @media (max-width:1100px) {
+      .phase1-kpis.meal-five-kpis { grid-template-columns:repeat(3,minmax(0,1fr))!important; }
+      .demographic-intelligence { grid-template-columns:1fr; }
+      .demographic-donut { padding-top:8px; }
     }
-
-    @media (max-width: 720px) {
-      .phase1-kpis.meal-five-kpis {
-        grid-template-columns: 1fr !important;
-      }
-      .demographic-metrics {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width:720px) {
+      .phase1-kpis.meal-five-kpis { grid-template-columns:1fr!important; }
+      .demographic-metrics { grid-template-columns:1fr; }
     }
   `}</style>;
 }
