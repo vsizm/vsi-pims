@@ -1,0 +1,2 @@
+/* Surgical MEAL layout cleanup: hide the legacy activity-detail block only. */
+.activity-panel { display: none !important; }
