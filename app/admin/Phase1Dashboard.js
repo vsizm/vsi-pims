@@ -116,7 +116,9 @@ export default function Phase1Dashboard() {
           padding-top: 10px;
         }
 
-        nav a {
+        nav a,
+        nav a:visited,
+        nav a:link {
           display: flex;
           align-items: center;
           gap: 10px;
@@ -131,16 +133,22 @@ export default function Phase1Dashboard() {
           transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
         }
 
-        nav a strong {
+        nav a strong,
+        nav a:visited strong,
+        nav a:link strong {
           font-size: 12px;
           line-height: 1.2;
           font-weight: 800;
           color: #fff !important;
+          text-decoration: none !important;
         }
 
         nav a:hover,
-        nav a:hover strong {
+        nav a:hover:visited,
+        nav a:hover strong,
+        nav a:hover:visited strong {
           color: #fff !important;
+          text-decoration: none !important;
         }
 
         nav a:hover {
@@ -163,14 +171,19 @@ export default function Phase1Dashboard() {
           transition: background 0.18s ease, color 0.18s ease;
         }
 
-        nav a.active {
+        nav a.active,
+        nav a.active:visited,
+        nav a.active:link {
           background: #ffc300;
           color: #003566 !important;
           box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
         }
 
-        nav a.active strong {
+        nav a.active strong,
+        nav a.active:visited strong,
+        nav a.active:link strong {
           color: #003566 !important;
+          text-decoration: none !important;
         }
 
         nav a.active span {
