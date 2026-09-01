@@ -1,7 +1,4 @@
 import './admin.css';
-import './phase1.css';
-import AdminNavLearningLink from './AdminNavLearningLink';
-import WorkspaceHeaderStyle from './WorkspaceHeaderStyle';
 
 export const metadata = {
   title: 'VSI IMS Admin',
@@ -9,5 +6,5 @@ export const metadata = {
 };
 
 export default function AdminLayout({ children }) {
-  return <><AdminNavLearningLink /><WorkspaceHeaderStyle />{children}</>;
+  return children;
 }
