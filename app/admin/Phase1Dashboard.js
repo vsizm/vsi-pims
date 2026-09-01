@@ -33,7 +33,7 @@ export default function Phase1Dashboard() {
               href={href}
               className={label === 'Executive Dashboard' ? 'active' : ''}
             >
-              {label}
+              <span>{label}</span>
             </Link>
           ))}
         </nav>
@@ -70,23 +70,31 @@ export default function Phase1Dashboard() {
         .sidebar {
           position: sticky;
           top: 0;
-          width: 190px;
-          min-width: 190px;
+          width: 224px;
+          min-width: 224px;
           height: 100vh;
-          padding: 20px 12px;
-          background: #063b73;
+          padding: 18px 12px 16px;
+          display: flex;
+          flex-direction: column;
+          background: linear-gradient(180deg, #063b73 0%, #052f5d 100%);
           color: #fff;
+          border-right: 1px solid rgba(0, 0, 0, .08);
+          box-shadow: 4px 0 18px rgba(6, 59, 115, .08);
         }
 
         .brand {
-          padding: 4px 7px 20px;
-          border-bottom: 1px solid rgba(255,255,255,.14);
-          margin-bottom: 18px;
-          text-align: center;
+          height: 74px;
+          padding: 2px 6px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-bottom: 1px solid rgba(255,255,255,.13);
+          margin-bottom: 16px;
         }
 
         .logo-wrap {
-          height: 52px;
+          width: 100%;
+          height: 56px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -94,38 +102,61 @@ export default function Phase1Dashboard() {
 
         .logo-wrap img {
           width: auto;
-          height: 48px;
-          max-width: 165px;
+          height: 50px;
+          max-width: 190px;
           object-fit: contain;
+          display: block;
         }
 
         nav {
           display: flex;
           flex-direction: column;
-          gap: 5px;
+          gap: 3px;
+          flex: 1;
         }
 
         nav a {
+          position: relative;
           display: flex;
           align-items: center;
-          min-height: 38px;
-          padding: 9px 11px;
-          border-radius: 8px;
-          color: rgba(255,255,255,.78);
+          min-height: 42px;
+          padding: 0 14px;
+          border-radius: 7px;
+          color: rgba(255,255,255,.76);
           text-decoration: none;
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 700;
+          letter-spacing: .005em;
+          transition: background .15s ease, color .15s ease, transform .15s ease;
+        }
+
+        nav a span {
+          position: relative;
+          z-index: 1;
         }
 
         nav a:hover {
-          background: rgba(255,255,255,.08);
+          background: rgba(255,255,255,.075);
           color: #fff;
+          transform: translateX(2px);
         }
 
         nav a.active {
           background: #ffc300;
           color: #063b73;
           font-weight: 900;
+          box-shadow: 0 5px 14px rgba(0,0,0,.10);
+        }
+
+        nav a.active::before {
+          content: "";
+          position: absolute;
+          left: -12px;
+          top: 7px;
+          bottom: 7px;
+          width: 3px;
+          border-radius: 0 3px 3px 0;
+          background: #ffd60a;
         }
 
         .main {
