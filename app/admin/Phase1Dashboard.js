@@ -135,12 +135,17 @@ export default function Phase1Dashboard() {
           font-size: 12px;
           line-height: 1.2;
           font-weight: 800;
+          color: inherit;
         }
 
         nav a:hover {
           background: rgba(255, 255, 255, 0.11);
-          color: #ffd60a;
+          color: #fff;
           transform: translateX(3px);
+        }
+
+        nav a:hover strong {
+          color: #fff;
         }
 
         nav a span {
