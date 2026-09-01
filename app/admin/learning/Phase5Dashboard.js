@@ -28,41 +28,51 @@ export default function Phase5Dashboard(){
       <div className="stat-card"><span>CHALLENGES CAPTURED</span><strong>{learning.challenges}</strong><small>Reports recording challenges</small></div>
       <div className="stat-card"><span>IMPROVEMENTS RECORDED</span><strong>{learning.improvements}</strong><small>Future improvements captured</small></div>
     </section>
-
     <section className="dashboard-grid">
       <article className="dash-panel wide learning-panel"><div className="panel-head learning-head"><div><span>PROGRAMME LEARNING PROFILE</span><h2>Where learning is being captured</h2></div></div>{programmeLearning.length?<div className="programme-list learning-body">{programmeLearning.map(p=><div className="programme-row" key={p.name}><div><strong>{p.name}</strong><small>{p.reports} approved report{p.reports===1?'':'s'}</small></div><div className="p5-programme-metrics"><span>Challenges <b>{p.challenges}</b></span><span>Lessons <b>{p.lessons}</b></span><span>Improvements <b>{p.improvements}</b></span></div></div>)}</div>:<div className="empty learning-body">Programme learning profiles will populate as approved reports are available.</div>}</article>
-
       <article className="dash-panel learning-panel"><div className="panel-head learning-head"><div><span>SECTION 08 · RESULTS &amp; LESSONS</span><h2>Institutional learning coverage</h2></div></div><div className="p5-bars learning-body">{[['Challenges captured',learning.challenges],['Challenges addressed',learning.addressed],['Lessons learned',learning.lessons],['Future improvements',learning.improvements]].map(([label,value])=><div key={label}><div><span>{label}</span><strong>{value}</strong></div><div className="p5-bar"><i style={{width:`${coverage(value)}%`}}/></div></div>)}</div></article>
-
       <article className="dash-panel learning-panel"><div className="panel-head learning-head"><div><span>LEARNING SIGNALS</span><h2>Recent lessons learned</h2></div></div>{lessonReports.length?<div className="p5-feed learning-body">{lessonReports.slice(0,6).map(r=><div className="p5-feed-row" key={r.reference}><strong>{first(r,['activity_title','activityTitle'],'Activity')}</strong><p>{text(first(r,['lessons_learned','lessonsLearned']))}</p><small>{first(r,['programme','programme_name'],'Unspecified')} · {r.reference}</small></div>)}</div>:<div className="empty learning-body">Lessons learned will appear here as approved reports capture Section 08 learning.</div>}</article>
-
       <article className="dash-panel wide learning-panel"><div className="panel-head learning-head"><div><span>ADAPTIVE PROGRAMMING</span><h2>Future improvements recorded by officers</h2></div></div>{improvementReports.length?<div className="p5-improvement-grid learning-body">{improvementReports.slice(0,8).map(r=><div className="p5-improvement" key={r.reference}><strong>{first(r,['activity_title','activityTitle'],'Activity')}</strong><p>{text(first(r,['future_improvements','futureImprovements']))}</p><small>Programme: {first(r,['programme','programme_name'],'Unspecified')}</small></div>)}</div>:<div className="empty learning-body">Future improvements will appear here after officers record Section 08 recommendations.</div>}</article>
-
       <article className="dash-panel wide learning-panel"><div className="panel-head learning-head"><div><span>MANAGEMENT INTERPRETATION</span><h2>Learning-to-action signal</h2></div></div><div className="p5-callout learning-body"><strong>{learning.lessons?`${learning.lessons} approved report${learning.lessons===1?'':'s'} contain lessons learned.`:'No lessons learned have been captured yet.'}</strong><p>{learning.lessons?`These lessons provide an evidence base for future programme decisions and accountability.`:'Institutional learning will strengthen as officers record lessons learned and future improvements in Section 08.'}</p><Link href="/admin/reports?status=APPROVED">Open approved reports →</Link></div></article>
     </section>
    </>}
  </main><style jsx>{`
 .learning-page .p5-stat-grid{margin-bottom:20px}
-.learning-page .learning-panel{background:#fff;border:1px solid #e2e8ee;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,45,98,.04)}
-.learning-page .learning-head{position:relative;display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 22px;background:#002D62;border:0;border-radius:16px 16px 0 0;color:#fff;overflow:hidden}
-.learning-page .learning-head::before{content:'◆';width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;border-radius:7px;background:#FFC107;color:#002D62;font-size:10px;font-weight:900;line-height:1}
+.learning-page .learning-panel{background:#fff;border:1px solid #e2e8ee;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,45,98,.05)}
+.learning-page .learning-head{position:relative;display:flex;align-items:center;gap:12px;min-height:68px;padding:15px 20px;background:#003566;border:0;border-radius:14px 14px 0 0;color:#fff;overflow:hidden}
+.learning-page .learning-head::before{content:'◆';width:32px;height:32px;flex:0 0 32px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#ffc300;color:#003566;font-size:9px;font-weight:900;line-height:1}
 .learning-page .learning-head>div{min-width:0;display:flex;flex-direction:column;gap:3px}
-.learning-page .learning-head span{color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;line-height:1.2}
-.learning-page .learning-head h2{margin:0;color:#fff;font-size:19px;font-weight:700;line-height:1.25;letter-spacing:0}
-.learning-page .learning-body{padding:20px 22px}
-.learning-page .programme-list.learning-body{padding-top:4px;padding-bottom:4px}
-.learning-page .programme-row{padding:16px 0;border-bottom:1px solid #e7edf1}
+.learning-page .learning-head span{color:#fff;font-size:10px;font-weight:800;letter-spacing:.14em;line-height:1.2}
+.learning-page .learning-head h2{margin:0;color:#fff;font-size:18px;font-weight:700;line-height:1.25;letter-spacing:-.01em}
+.learning-page .learning-body{padding:18px 20px}
+.learning-page .programme-list.learning-body{padding-top:2px;padding-bottom:2px}
+.learning-page .programme-row{padding:15px 0;border-bottom:1px solid #e7edf1}
 .learning-page .programme-row:last-child{border-bottom:0}
-.learning-page .p5-bars.learning-body{gap:18px}
-.learning-page .p5-feed.learning-body{padding-top:8px;padding-bottom:8px}
+.learning-page .programme-row>div:first-child strong{font-size:15px;color:#17324d}
+.learning-page .programme-row>div:first-child small{display:block;margin-top:3px;color:#71808f;font-size:12px}
+.learning-page .p5-programme-metrics{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.learning-page .p5-programme-metrics span{font-size:11px;color:#667684;background:#f5f8fa;border:1px solid #e4ebf0;border-radius:999px;padding:5px 9px}
+.learning-page .p5-programme-metrics b{color:#003566;margin-left:3px}
+.learning-page .p5-bars.learning-body{display:grid;gap:18px}
+.learning-page .p5-bars.learning-body>div>div:first-child{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;color:#526574;font-size:13px}
+.learning-page .p5-bars.learning-body strong{color:#003566;font-size:15px}
+.learning-page .p5-bar{height:7px;background:#edf1f4;border-radius:99px;overflow:hidden}
+.learning-page .p5-bar i{display:block;height:100%;background:#ffc300;border-radius:99px}
+.learning-page .p5-feed.learning-body{padding-top:5px;padding-bottom:5px}
 .learning-page .p5-feed-row{padding:14px 0;border-bottom:1px solid #e7edf1}
-.learning-page .p5-improvement-grid.learning-body{padding-top:20px}
-.learning-page .p5-improvement{background:#f6f9fb;border:1px solid #e8eef3;border-radius:10px}
-.learning-page .p5-callout.learning-body{margin:20px 22px;padding:18px;border-left:4px solid #FFC107;background:#f6f9fb;border-radius:0 10px 10px 0}
-.learning-page .p5-callout.learning-body{padding-left:18px}
-.learning-page .p5-bar{background:#edf1f4;height:8px}
-.learning-page .p5-bar i{background:#FFC107}
-.learning-page .p5-programme-metrics b{color:#002D62}
-@media(max-width:700px){.learning-page .learning-head{padding:14px 16px;gap:10px;min-height:64px}.learning-page .learning-head::before{width:32px;height:32px;flex-basis:32px}.learning-page .learning-head span{font-size:10px}.learning-page .learning-head h2{font-size:17px}.learning-page .learning-body{padding:16px}.learning-page .p5-callout.learning-body{margin:16px}}
+.learning-page .p5-feed-row:last-child{border-bottom:0}
+.learning-page .p5-feed-row strong{display:block;color:#17324d;font-size:14px;margin-bottom:6px}
+.learning-page .p5-feed-row p{margin:0;color:#596b79;font-size:13px;line-height:1.6}
+.learning-page .p5-feed-row small{display:block;margin-top:8px;color:#87939d;font-size:11px}
+.learning-page .p5-improvement-grid.learning-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.learning-page .p5-improvement{background:#f7f9fb;border:1px solid #e3eaf0;border-radius:10px;padding:15px}
+.learning-page .p5-improvement strong{color:#17324d;font-size:14px}
+.learning-page .p5-improvement p{margin:8px 0;color:#596b79;font-size:13px;line-height:1.55}
+.learning-page .p5-improvement small{color:#7b8994;font-size:11px}
+.learning-page .p5-callout.learning-body{margin:18px 20px;padding:17px 18px;border-left:4px solid #ffc300;background:#f6f9fb;border-radius:0 10px 10px 0}
+.learning-page .p5-callout strong{color:#17324d;font-size:14px}
+.learning-page .p5-callout p{margin:7px 0 10px;color:#647582;font-size:13px;line-height:1.55}
+.learning-page .p5-callout a{color:#003566;font-size:13px;font-weight:700;text-decoration:none}
+@media(max-width:700px){.learning-page .learning-head{padding:13px 15px;gap:9px;min-height:62px}.learning-page .learning-head::before{width:30px;height:30px;flex-basis:30px}.learning-page .learning-head span{font-size:9px}.learning-page .learning-head h2{font-size:16px}.learning-page .learning-body{padding:15px}.learning-page .p5-improvement-grid.learning-body{grid-template-columns:1fr}.learning-page .p5-callout.learning-body{margin:15px}}
 `}</style></div>;
 }
