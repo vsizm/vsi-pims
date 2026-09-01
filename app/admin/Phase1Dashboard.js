@@ -24,7 +24,6 @@ export default function Phase1Dashboard() {
           <div className="logo-wrap">
             <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
           </div>
-          <span>Intelligence Behind Our Work</span>
         </div>
 
         <nav aria-label="Administration">
@@ -98,16 +97,6 @@ export default function Phase1Dashboard() {
           height: 48px;
           max-width: 165px;
           object-fit: contain;
-        }
-
-        .brand span {
-          display: block;
-          margin-top: 10px;
-          color: #dceaf6;
-          font-size: 8px;
-          line-height: 1.5;
-          letter-spacing: .08em;
-          text-transform: uppercase;
         }
 
         nav {
