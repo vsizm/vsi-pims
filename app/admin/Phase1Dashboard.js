@@ -24,8 +24,6 @@ export default function Phase1Dashboard() {
           <div className="logo-wrap">
             <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
           </div>
-          <div className="sidebar-title">VSI ADMINISTRATION</div>
-          <div className="sidebar-subtitle">Management workspace</div>
         </div>
 
         <nav aria-label="Administration">
@@ -76,55 +74,46 @@ export default function Phase1Dashboard() {
           width: 250px;
           min-width: 250px;
           height: calc(100vh - 56px);
+          max-height: calc(100vh - 56px);
           margin: 28px 0 28px 24px;
-          background: linear-gradient(180deg, #003566 0 118px, #094074 118px 100%);
-          border-radius: 16px;
           padding: 0 10px 14px;
+          background: linear-gradient(180deg, #003566 0 78px, #094074 78px 100%);
+          border: 0;
+          border-radius: 16px;
           box-shadow: 0 10px 28px rgba(0, 53, 102, 0.16);
           color: #fff;
           overflow: auto;
         }
 
         .brand {
-          padding: 14px 10px 14px;
-          text-align: left;
-        }
-
-        .logo-wrap {
-          height: 54px;
+          height: 78px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 5px;
+          padding: 10px;
+        }
+
+        .logo-wrap {
+          width: 100%;
+          height: 58px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .logo-wrap img {
           width: auto;
-          height: 48px;
+          height: 52px;
           max-width: 205px;
           object-fit: contain;
           display: block;
-        }
-
-        .sidebar-title {
-          font-size: 12px;
-          font-weight: 900;
-          letter-spacing: .12em;
-          color: #fff;
-          padding-top: 5px;
-        }
-
-        .sidebar-subtitle {
-          font-size: 12px;
-          color: rgba(255,255,255,.72);
-          padding-top: 2px;
-          padding-bottom: 8px;
         }
 
         nav {
           display: flex;
           flex-direction: column;
           gap: 0;
+          padding-top: 10px;
         }
 
         nav a {
@@ -138,11 +127,11 @@ export default function Phase1Dashboard() {
           padding: 10px;
           border-radius: 10px;
           margin: 3px 0;
-          transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+          transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
         }
 
         nav a:hover {
-          background: rgba(255,255,255,.11);
+          background: rgba(255, 255, 255, 0.11);
           color: #ffd60a;
           transform: translateX(3px);
         }
@@ -158,13 +147,13 @@ export default function Phase1Dashboard() {
           font-size: 10px;
           font-weight: 900;
           flex: 0 0 29px;
-          transition: background .18s ease, color .18s ease;
+          transition: background 0.18s ease, color 0.18s ease;
         }
 
         nav a.active {
           background: #ffc300;
           color: #003566;
-          box-shadow: 0 5px 14px rgba(0,0,0,.16);
+          box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
         }
 
         nav a.active span {
@@ -175,7 +164,7 @@ export default function Phase1Dashboard() {
         .main {
           flex: 1;
           min-width: 0;
-          padding: 34px 40px 60px;
+          padding: 34px 40px 60px 26px;
         }
 
         .header {
@@ -231,6 +220,7 @@ export default function Phase1Dashboard() {
 
         @media (max-width: 900px) {
           .dashboard-shell { display: block; }
+
           .sidebar {
             position: sticky;
             top: 78px;
@@ -239,22 +229,41 @@ export default function Phase1Dashboard() {
             min-width: 0;
             height: auto;
             max-height: none;
-            margin: 0;
-            border-radius: 0;
+            margin: 0 14px;
             display: flex;
             gap: 6px;
             overflow-x: auto;
+            overflow-y: hidden;
             padding: 10px;
+            border-radius: 16px;
             background: #003566;
           }
+
           .brand { display: none; }
-          nav { flex-direction: row; gap: 6px; }
-          nav a { white-space: nowrap; margin: 0; padding: 7px 8px; }
-          nav a span { width: 26px; height: 26px; flex-basis: 26px; }
+
+          nav {
+            flex-direction: row;
+            gap: 6px;
+            padding-top: 0;
+          }
+
+          nav a {
+            white-space: nowrap;
+            margin: 0;
+            padding: 7px 8px;
+          }
+
+          nav a span {
+            width: 26px;
+            height: 26px;
+            flex-basis: 26px;
+          }
+
           .main { padding: 22px 18px 40px; }
         }
 
         @media (max-width: 520px) {
+          .sidebar { margin: 0 10px; }
           .main { padding: 18px 13px 32px; }
           h1 { font-size: 27px; }
           .canvas { min-height: 420px; padding: 18px; }
