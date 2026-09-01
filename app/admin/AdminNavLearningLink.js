@@ -17,8 +17,10 @@ export default function AdminNavLearningLink() {
     if (!link) {
       link = document.createElement('a');
       link.href = '/admin/learning';
-      link.innerHTML = '<span class="nav-dot intel-dot"></span>Learning & Follow-up';
+      link.innerHTML = '<span class="nav-dot intel-dot"></span>Accountability and Learning';
       intelligenceNav.appendChild(link);
+    } else {
+      link.innerHTML = '<span class="nav-dot intel-dot"></span>Accountability and Learning';
     }
 
     link.className = pathname === '/admin/learning' ? 'active' : '';
