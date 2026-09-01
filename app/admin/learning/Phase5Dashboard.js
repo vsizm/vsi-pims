@@ -44,13 +44,13 @@ export default function Phase5Dashboard(){
  </main><style jsx>{`
 .learning-page .p5-stat-grid{margin-bottom:20px}
 .learning-page .learning-panel{background:#fff;border:1px solid #e2e8ee;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,45,98,.04)}
-.learning-page .learning-head{position:relative;display:flex;align-items:center;gap:16px;min-height:78px;padding:20px 24px;background:#002D62;border:0;border-radius:16px 16px 0 0;color:#fff;overflow:hidden}
-.learning-page .learning-head::before{content:'◆';width:40px;height:40px;flex:0 0 40px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#FFC107;color:#002D62;font-size:12px;font-weight:900;line-height:1}
-.learning-page .learning-head>div{min-width:0;display:flex;flex-direction:column;gap:4px}
-.learning-page .learning-head span{color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em}
-.learning-page .learning-head h2{margin:0;color:#fff;font-size:20px;font-weight:700;letter-spacing:.01em}
-.learning-page .learning-body{padding:20px 24px}
-.learning-page .programme-list.learning-body{padding-top:6px;padding-bottom:6px}
+.learning-page .learning-head{position:relative;display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 22px;background:#002D62;border:0;border-radius:16px 16px 0 0;color:#fff;overflow:hidden}
+.learning-page .learning-head::before{content:'◆';width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;border-radius:7px;background:#FFC107;color:#002D62;font-size:10px;font-weight:900;line-height:1}
+.learning-page .learning-head>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.learning-page .learning-head span{color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;line-height:1.2}
+.learning-page .learning-head h2{margin:0;color:#fff;font-size:19px;font-weight:700;line-height:1.25;letter-spacing:0}
+.learning-page .learning-body{padding:20px 22px}
+.learning-page .programme-list.learning-body{padding-top:4px;padding-bottom:4px}
 .learning-page .programme-row{padding:16px 0;border-bottom:1px solid #e7edf1}
 .learning-page .programme-row:last-child{border-bottom:0}
 .learning-page .p5-bars.learning-body{gap:18px}
@@ -58,11 +58,11 @@ export default function Phase5Dashboard(){
 .learning-page .p5-feed-row{padding:14px 0;border-bottom:1px solid #e7edf1}
 .learning-page .p5-improvement-grid.learning-body{padding-top:20px}
 .learning-page .p5-improvement{background:#f6f9fb;border:1px solid #e8eef3;border-radius:10px}
-.learning-page .p5-callout.learning-body{margin:20px 24px;padding:18px;border-left:4px solid #FFC107;background:#f6f9fb;border-radius:0 10px 10px 0}
+.learning-page .p5-callout.learning-body{margin:20px 22px;padding:18px;border-left:4px solid #FFC107;background:#f6f9fb;border-radius:0 10px 10px 0}
 .learning-page .p5-callout.learning-body{padding-left:18px}
 .learning-page .p5-bar{background:#edf1f4;height:8px}
 .learning-page .p5-bar i{background:#FFC107}
 .learning-page .p5-programme-metrics b{color:#002D62}
-@media(max-width:700px){.learning-page .learning-head{padding:16px 18px;gap:12px}.learning-page .learning-head::before{width:36px;height:36px;flex-basis:36px}.learning-page .learning-body{padding:16px 18px}.learning-page .p5-callout.learning-body{margin:16px 18px}}
+@media(max-width:700px){.learning-page .learning-head{padding:14px 16px;gap:10px;min-height:64px}.learning-page .learning-head::before{width:32px;height:32px;flex-basis:32px}.learning-page .learning-head span{font-size:10px}.learning-page .learning-head h2{font-size:17px}.learning-page .learning-body{padding:16px}.learning-page .p5-callout.learning-body{margin:16px}}
 `}</style></div>;
 }
