@@ -1,4 +1,5 @@
 import './admin.css';
+import './phase1.css';
 
 export const metadata = {
   title: 'VSI IMS Admin',
