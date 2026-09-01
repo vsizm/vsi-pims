@@ -34,7 +34,7 @@ export default function Phase1Dashboard() {
               className={label === 'Executive Dashboard' ? 'active' : ''}
             >
               <span>{number}</span>
-              {label}
+              <strong>{label}</strong>
             </Link>
           ))}
         </nav>
@@ -120,6 +120,7 @@ export default function Phase1Dashboard() {
           display: flex;
           align-items: center;
           gap: 10px;
+          min-height: 49px;
           text-decoration: none;
           color: #fff;
           font-size: 12px;
@@ -128,6 +129,12 @@ export default function Phase1Dashboard() {
           border-radius: 10px;
           margin: 3px 0;
           transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+        }
+
+        nav a strong {
+          font-size: 12px;
+          line-height: 1.2;
+          font-weight: 800;
         }
 
         nav a:hover {
@@ -145,6 +152,7 @@ export default function Phase1Dashboard() {
           background: #3c6997;
           color: #ffd60a;
           font-size: 10px;
+          line-height: 1;
           font-weight: 900;
           flex: 0 0 29px;
           transition: background 0.18s ease, color 0.18s ease;
@@ -248,6 +256,7 @@ export default function Phase1Dashboard() {
           }
 
           nav a {
+            min-height: 40px;
             white-space: nowrap;
             margin: 0;
             padding: 7px 8px;
@@ -258,6 +267,8 @@ export default function Phase1Dashboard() {
             height: 26px;
             flex-basis: 26px;
           }
+
+          nav a strong { font-size: 12px; }
 
           .main { padding: 22px 18px 40px; }
         }
