@@ -8,7 +8,7 @@ export default function HomePage() {
       <div style={{height:10,background:'#ffc300',width:'100%',position:'relative',zIndex:20}} />
       <header style={{position:'absolute',top:10,left:0,right:0,zIndex:10,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'24px 34px',boxSizing:'border-box'}}>
         <a href="https://www.vsizambia.org" aria-label="Visionary Students Initiative" style={{display:'flex',alignItems:'center',textDecoration:'none'}}>
-          <img src="/VSI%20LOGO%20white.png" alt="Visionary Students Initiative" style={{height:52,width:'auto',display:'block',objectFit:'contain'}} />
+          <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" style={{height:52,width:'auto',display:'block',objectFit:'contain'}} />
         </a>
         <a href="/login" style={{display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'11px 22px',border:'1px solid rgba(255,255,255,.75)',borderRadius:9999,background:'rgba(0,53,102,.32)',color:'#fff',fontSize:14,fontWeight:700,textDecoration:'none',backdropFilter:'blur(8px)',boxShadow:'0 6px 24px rgba(0,0,0,.14)'}}>Sign in</a>
       </header>
