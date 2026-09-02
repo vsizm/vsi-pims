@@ -1,0 +1,27 @@
+.scope :global(.phase1-kpis.meal-four-kpis){padding-bottom:16px!important;gap:16px!important}
+.scope :global(.phase1-kpis.meal-four-kpis>div){min-height:auto!important;padding-bottom:16px!important}
+
+.scope :global(.demographic-intelligence){align-items:stretch!important}
+.scope :global(.demographic-metrics){display:flex!important;flex-direction:column!important;justify-content:space-between!important;gap:10px!important;min-height:100%!important}
+.scope :global(.demographic-metric){padding:8px 12px!important;min-height:0!important}
+
+.scope :global(.meal-compliance-legend>div){height:auto!important;min-height:fit-content!important;padding:10px 14px!important;align-items:start!important}
+.scope :global(.meal-compliance-legend span){line-height:1.4!important}
+
+.scope :global(.meal-compliance-row){grid-template-columns:280px repeat(3,minmax(0,1fr)) 160px!important;gap:12px!important;align-items:center!important}
+.scope :global(.meal-compliance-checks){display:contents!important}
+.scope :global(.meal-compliance-check){min-width:0!important;height:auto!important}
+.scope :global(.meal-compliance-status){display:grid!important;min-width:0!important}
+.scope :global(.meal-compliance-status strong){line-height:1.4!important}
+.scope :global(.meal-compliance-status span){line-height:1.4!important}
+.scope :global(.meal-compliance-link){min-width:0!important;justify-self:end!important}
+
+@media(max-width:1200px){
+  .scope :global(.meal-compliance-row){grid-template-columns:280px repeat(3,minmax(0,1fr)) 160px!important}
+  .scope :global(.meal-compliance-checks){display:contents!important;grid-column:auto!important}
+}
+@media(max-width:760px){
+  .scope :global(.meal-compliance-row){grid-template-columns:38px minmax(0,1fr)!important}
+  .scope :global(.meal-compliance-checks){display:grid!important;grid-template-columns:1fr!important;grid-column:1/-1!important}
+  .scope :global(.meal-compliance-link){grid-column:1/-1!important;justify-self:start!important}
+}
