@@ -1,5 +1,6 @@
 import './admin.css';
 import './phase1.css';
+import AdminWorkspaceShell from './AdminWorkspaceShell';
 
 export const metadata = {
   title: 'VSI IMS Admin',
@@ -7,5 +8,5 @@ export const metadata = {
 };
 
 export default function AdminLayout({ children }) {
-  return children;
+  return <AdminWorkspaceShell>{children}</AdminWorkspaceShell>;
 }
