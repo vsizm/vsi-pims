@@ -10,5 +10,6 @@
 .scope :global(.phase1-signal){margin-top:16px!important}
 .scope :global(.meal-activity){margin-bottom:11px!important}
 
-/* Keep the gap between DISAGGREGATED REACH and REPORTING COMPLIANCE at 16px. */
+/* Section rhythm: 16px between each major MEAL section in the visual sequence. */
 .scope :global(.footprint-panel){margin-bottom:16px!important}
+.scope :global(.meal-programme-host){margin-bottom:16px!important}
