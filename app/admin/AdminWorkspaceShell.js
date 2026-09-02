@@ -54,7 +54,7 @@ export default function AdminWorkspaceShell({ children }) {
         .admin-workspace-sidebar nav a:hover,.admin-workspace-sidebar nav a:focus-visible{background:rgba(255,255,255,.09);color:#fff!important}
         .admin-workspace-sidebar nav a.active{background:#ffc300;color:#003566!important;box-shadow:0 5px 14px rgba(0,0,0,.12)}
         .admin-workspace-content{min-width:0;flex:1}
-        .admin-workspace-content > .admin-reports-app > .admin-sidebar,.admin-workspace-content > .admin-app > .admin-sidebar,.admin-workspace-content > .phase1-app > .admin-sidebar,.admin-workspace-content > .dashboard-shell > .sidebar{display:none!important}
+        .admin-workspace-content > .admin-reports-app > .admin-sidebar,.admin-workspace-content > .admin-app > .admin-sidebar,.admin-workspace-content > .phase1-app > .admin-sidebar,.admin-workspace-content > .dashboard-shell > .sidebar,.admin-workspace-content > div > .phase1-app > .admin-sidebar,.admin-workspace-content > div > .app > .sidebar{display:none!important}
         @media(max-width:900px){.admin-workspace-shell{display:block}.admin-workspace-sidebar{position:sticky;top:0;width:auto;min-width:0;height:auto;padding:10px;overflow-x:auto}.admin-workspace-brand,.admin-workspace-label{display:none}.admin-workspace-sidebar nav{flex-direction:row;gap:6px}.admin-workspace-sidebar nav a{white-space:nowrap;min-height:40px;margin:0}}
       `}</style>
     </div>
