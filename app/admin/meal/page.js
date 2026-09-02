@@ -18,6 +18,9 @@ import './meal-section-spacing.css';
 import './meal-page-spacing.css';
 import './meal-dashboard-spacing-fixes.css';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function MealPage() {
   return <div className={styles.scope}><MealLayoutCleanup /><MealKpiEnhancer /><MealDemographicBar /><MealProgrammePerformance /><MealReportingCompliance /><Phase4Dashboard /></div>;
 }
