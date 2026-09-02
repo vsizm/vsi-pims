@@ -88,6 +88,31 @@ export default function MealKpiEnhancer() {
             <div class="kpi-footer"><span>⌘</span><b>${directorates.length ? directorates.join(' · ') : 'Not specified'}</b></div>
           `;
 
+          const links = {
+            financial: '/admin/finance',
+            locations: '/admin/reports',
+            directorate: '/admin/reports',
+          };
+          [
+            ['financial', links.financial],
+            ['locations', links.locations],
+            ['directorate', links.directorate],
+          ].forEach(([key, href]) => {
+            const card = grid.querySelector(`[data-meal-kpi="${key}"]`);
+            if (!card) return;
+            card.setAttribute('role', 'link');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-label', `Open ${key} intelligence`);
+            card.dataset.kpiHref = href;
+            card.onclick = () => { window.location.href = href; };
+            card.onkeydown = (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                window.location.href = href;
+              }
+            };
+          });
+
           grid.classList.add('meal-four-kpis');
           return true;
         };
@@ -105,24 +130,9 @@ export default function MealKpiEnhancer() {
       const style = document.createElement('style');
       style.id = styleId;
       style.textContent = `
-        /* MEAL KPI row: four equal-width cards, balanced left-to-right. */
-        .phase1-kpis.meal-four-kpis{
-          display:grid!important;
-          grid-template-columns:repeat(4,minmax(0,1fr))!important;
-          gap:14px!important;
-          width:100%!important;
-          max-width:none!important;
-          align-items:stretch!important;
-        }
-        .phase1-kpis.meal-four-kpis>div{
-          min-width:0!important;
-          width:auto!important;
-          max-width:none!important;
-          height:100%!important;
-          min-height:142px!important;
-          margin:0!important;
-        }
-        /* Finance KPI palette: blue, navy, gold. Colour only; layout/typography preserved. */
+        .phase1-kpis.meal-four-kpis{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;width:100%!important;max-width:none!important;align-items:stretch!important}
+        .phase1-kpis.meal-four-kpis>div{min-width:0!important;width:auto!important;max-width:none!important;height:100%!important;min-height:142px!important;margin:0!important;cursor:pointer!important}
+        .phase1-kpis.meal-four-kpis>div:focus-visible{outline:3px solid rgba(255,195,0,.9)!important;outline-offset:3px!important}
         .phase1-kpis.meal-four-kpis>div:nth-child(1){background:linear-gradient(135deg,#0a9fd4,#1477b4)!important;border-color:transparent!important;color:#fff!important}
         .phase1-kpis.meal-four-kpis>div:nth-child(2){background:linear-gradient(135deg,#245e96,#183f6f)!important;border-color:transparent!important;color:#fff!important}
         .phase1-kpis.meal-four-kpis>div:nth-child(3){background:linear-gradient(135deg,#c99b16,#80610a)!important;border-color:transparent!important;color:#fff!important}
@@ -132,12 +142,8 @@ export default function MealKpiEnhancer() {
         .phase1-kpis.meal-four-kpis span,.phase1-kpis.meal-four-kpis strong,.phase1-kpis.meal-four-kpis small{color:#fff!important}
         .phase1-kpis.meal-four-kpis .kpi-footer{border-top-color:rgba(255,255,255,.2)}
         .phase1-kpis.meal-four-kpis .kpi-footer span,.phase1-kpis.meal-four-kpis .kpi-footer b{color:rgba(255,255,255,.82)!important}
-        @media (max-width:1100px){
-          .phase1-kpis.meal-four-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-        }
-        @media (max-width:720px){
-          .phase1-kpis.meal-four-kpis{grid-template-columns:1fr!important}
-        }
+        @media (max-width:1100px){.phase1-kpis.meal-four-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+        @media (max-width:720px){.phase1-kpis.meal-four-kpis{grid-template-columns:1fr!important}}
       `;
       document.head.appendChild(style);
     }
