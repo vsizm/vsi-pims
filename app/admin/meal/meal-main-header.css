@@ -1,0 +1,25 @@
+.scope .phase1-header{
+  position:relative!important;
+  overflow:hidden!important;
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:flex-start!important;
+  gap:20px!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0 0 24px!important;
+  padding:26px 30px!important;
+  background:linear-gradient(135deg,#ffffff 0%,#f4f8fc 100%)!important;
+  border:1px solid #dbe5ef!important;
+  border-radius:22px!important;
+  box-shadow:0 8px 24px rgba(0,45,98,.06)!important;
+  box-sizing:border-box!important;
+  color:#003566!important;
+}
+.scope .phase1-header::before{content:none!important;display:none!important}
+.scope .phase1-header::after{content:""!important;position:absolute!important;right:-70px!important;top:-95px!important;width:260px!important;height:260px!important;border:1px solid rgba(9,64,116,.1)!important;border-radius:50%!important;box-shadow:0 0 0 22px rgba(9,64,116,.025),0 0 0 44px rgba(9,64,116,.018)!important;pointer-events:none!important}
+.scope .phase1-header>div{position:relative;z-index:1}
+.scope .phase1-header .phase1-kicker{margin:0 0 8px!important;color:#3c6997!important;font:800 10px/1.2 Arial,Helvetica,sans-serif!important;letter-spacing:.14em!important;text-transform:uppercase!important}
+.scope .phase1-header h1{margin:0!important;color:#003566!important;font:800 32px/1.1 Arial,Helvetica,sans-serif!important;letter-spacing:-.02em!important}
+.scope .phase1-header p{margin:10px 0 0!important;color:#5d6b7a!important;max-width:760px!important;font:400 14px/1.55 Arial,Helvetica,sans-serif!important}
+@media(max-width:700px){.scope .phase1-header{padding:20px 18px!important;border-radius:18px!important;gap:14px!important}.scope .phase1-header h1{font-size:30px!important}.scope .phase1-header p{font-size:13px!important}}
