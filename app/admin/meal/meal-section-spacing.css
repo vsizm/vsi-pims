@@ -1,15 +1,31 @@
-.scope :global(.phase1-main){padding-bottom:55px}
-.scope :global(.phase1-header){margin-bottom:18px!important}
-.scope :global(.phase1-kpis){margin-bottom:16px!important}
-.scope :global(.phase1-micro){margin-bottom:16px!important}
-.scope :global(.phase1-card){margin-bottom:16px!important}
-.scope :global(.phase1-demographics){margin-top:16px!important;margin-bottom:16px!important}
-.scope :global(.phase1-bottom-grid){margin-top:16px!important;margin-bottom:16px!important}
-.scope :global(.phase1-lower){margin-top:16px!important;margin-bottom:16px!important}
-.scope :global(.phase1-programmes){margin-bottom:16px!important}
-.scope :global(.phase1-signal){margin-top:16px!important}
-.scope :global(.meal-activity){margin-bottom:11px!important}
+.scope :global(.phase1-main){padding-bottom:40px}
+.scope :global(.phase1-header){margin-bottom:20px!important}
+.scope :global(.phase1-kpis){margin-bottom:20px!important}
 
-/* Section rhythm: 16px between each major MEAL section in the visual sequence. */
-.scope :global(.footprint-panel){margin-bottom:16px!important}
-.scope :global(.meal-programme-host){margin-bottom:16px!important}
+/* One consistent 20px vertical rhythm for the major MEAL sections. */
+.scope :global(.phase1-bottom-grid){
+  margin-top:0!important;
+  margin-bottom:0!important;
+  row-gap:20px!important;
+}
+.scope :global(.phase1-bottom-grid > .phase1-card){margin-top:0!important;margin-bottom:0!important}
+.scope :global(.phase1-bottom-grid > .footprint-panel){margin:0!important}
+.scope :global(.phase1-bottom-grid > .meal-programme-host){margin:0!important}
+.scope :global(.phase1-bottom-grid > .meal-compliance-host){margin:0!important}
+
+/* Force the intended visual sequence after the portal hosts are attached. */
+.scope :global(.phase1-bottom-grid > .phase1-card){order:99!important}
+.scope :global(.phase1-bottom-grid > .footprint-panel){order:1!important}
+.scope :global(.phase1-bottom-grid > .meal-programme-host){order:2!important}
+.scope :global(.phase1-bottom-grid > .meal-compliance-host){order:3!important}
+.scope :global(.phase1-bottom-grid > .phase1-card:has(.alert-grid)){order:4!important}
+
+/* The old duplicate demographic card remains hidden; keep its spacing from affecting the page. */
+.scope :global(.phase1-card:has(.phase1-demographics)){display:none!important;margin:0!important}
+
+@media (max-width:720px){
+  .scope :global(.phase1-main){padding-bottom:28px}
+  .scope :global(.phase1-header){margin-bottom:16px!important}
+  .scope :global(.phase1-kpis){margin-bottom:16px!important}
+  .scope :global(.phase1-bottom-grid){row-gap:16px!important}
+}
