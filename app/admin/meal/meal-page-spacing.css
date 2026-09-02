@@ -1,0 +1,2 @@
+.scope :global(.phase1-main){padding-left:28px!important;padding-right:28px!important}
+@media (max-width:720px){.scope :global(.phase1-main){padding-left:14px!important;padding-right:14px!important}}
