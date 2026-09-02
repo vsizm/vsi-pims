@@ -9,3 +9,6 @@
 .scope :global(.phase1-programmes){margin-bottom:16px!important}
 .scope :global(.phase1-signal){margin-top:16px!important}
 .scope :global(.meal-activity){margin-bottom:11px!important}
+
+/* Section-specific spacing: give DISAGGREGATED REACH more separation from REPORTING COMPLIANCE. */
+.scope :global(.footprint-panel){margin-bottom:32px!important}
