@@ -24,6 +24,9 @@
 .phase1-bottom-grid > .meal-programme-host{order:2!important}
 .phase1-bottom-grid > .meal-compliance-host{order:3!important}
 
+/* RESULTS & OUTCOMES is redundant with the stronger MEAL intelligence above it. */
+.phase1-bottom-grid > .phase1-card:has(.alert-grid){display:none!important}
+
 /* Keep remaining legacy cards out of the intended intelligence sequence. */
 .phase1-bottom-grid > .phase1-card:not(.footprint-panel):not(.meal-programme-host):not(.meal-compliance-host):not(.activity-panel):has(.phase1-footprint){order:97!important}
 
