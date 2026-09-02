@@ -54,7 +54,7 @@ export default function AdminWorkspaceShell({ children }) {
         .admin-workspace-sidebar nav a:hover,.admin-workspace-sidebar nav a:focus-visible{background:rgba(255,255,255,.09);color:#fff!important}
         .admin-workspace-sidebar nav a.active{background:#ffc300;color:#003566!important;box-shadow:0 5px 14px rgba(0,0,0,.12)}
         .admin-workspace-content{min-width:0;flex:1}
-        .admin-workspace-content > .admin-reports-app > .admin-sidebar,.admin-workspace-content > .admin-app > .admin-sidebar,.admin-workspace-content > .phase1-app > .admin-sidebar,.admin-workspace-content > .dashboard-shell > .sidebar{display:none!important}
+        .admin-workspace-content > .admin-reports-app > .admin-sidebar,.admin-workspace-content > .admin-app > .admin-sidebar,.admin-workspace-content > .phase1-app > .admin-sidebar,.admin-workspace-content > .dashboard-shell > .sidebar,.admin-workspace-content .phase1-app > .admin-sidebar{display:none!important}
         @media(min-width:901px){
           .admin-workspace-content .phase1-main .phase1-header{position:relative}
           .admin-workspace-content .phase1-main .phase1-header .phase1-action{position:absolute;right:0;bottom:-86px;margin:0;z-index:2}
