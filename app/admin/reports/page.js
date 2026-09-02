@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { isAdminSession } from '../../api/admin/login/route';
 import ReportsClient from './ReportsClient';
+import './activity-report-kpi-colors.module.css';
 
 export const dynamic = 'force-dynamic';
 
