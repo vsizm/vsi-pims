@@ -15,6 +15,7 @@ import './meal-reporting-compliance.css';
 import './meal-followup-actions.css';
 import './meal-section-spacing.css';
 import './meal-page-spacing.css';
+import './meal-dashboard-spacing-fixes.css';
 
 export default function MealPage() {
   return <div className={styles.scope}><MealLayoutCleanup /><MealKpiEnhancer /><MealDemographicBar /><MealProgrammePerformance /><MealReportingCompliance /><Phase4Dashboard /></div>;
