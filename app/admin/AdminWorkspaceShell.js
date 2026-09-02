@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const NAV = [
   ['Dashboard', '/admin'],
@@ -14,8 +15,15 @@ const NAV = [
 
 export default function AdminWorkspaceShell({ children }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const status = searchParams.get('status');
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    const readStatus = () => setStatus(new URLSearchParams(window.location.search).get('status'));
+    readStatus();
+    window.addEventListener('popstate', readStatus);
+    return () => window.removeEventListener('popstate', readStatus);
+  }, [pathname]);
+
   if (pathname === '/admin/login' || pathname === '/admin/forgot-password') return children;
 
   return (
