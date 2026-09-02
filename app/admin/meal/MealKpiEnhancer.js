@@ -38,8 +38,6 @@ export default function MealKpiEnhancer() {
         if (cancelled) return;
 
         const directorates = unique(full.flatMap(r => collectByKey(r, /^(directorate|directorate_name|directorateName)$/i)));
-        const provinces = unique(full.flatMap(r => collectByKey(r, /^(province|province_name|provinceName)$/i)));
-        const districts = unique(full.flatMap(r => collectByKey(r, /^(district|district_name|districtName)$/i)));
         const locations = unique(full.flatMap(r => {
           const p = collectByKey(r, /^(province|province_name|provinceName)$/i)[0] || '';
           const d = collectByKey(r, /^(district|district_name|districtName)$/i)[0] || '';
@@ -74,12 +72,31 @@ export default function MealKpiEnhancer() {
       const style = document.createElement('style');
       style.id = styleId;
       style.textContent = `
-        .phase1-kpis.meal-three-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
-        .phase1-kpis.meal-three-kpis>div{min-width:0}
+        /* MEAL KPI row: three equal-width cards, always horizontal on desktop/tablet. */
+        .phase1-kpis.meal-three-kpis{
+          display:grid!important;
+          grid-template-columns:repeat(3,minmax(0,1fr))!important;
+          gap:14px!important;
+          width:100%!important;
+          max-width:none!important;
+          align-items:stretch!important;
+        }
+        .phase1-kpis.meal-three-kpis>div{
+          min-width:0!important;
+          width:auto!important;
+          max-width:none!important;
+          height:100%!important;
+          min-height:142px!important;
+          margin:0!important;
+        }
         .phase1-kpis.meal-three-kpis>div:nth-child(3)::before{background:#d9a400}
         .phase1-kpis.meal-three-kpis>div:nth-child(3) .kpi-footer b{color:#094074}
-        @media (max-width:900px){.phase1-kpis.meal-three-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
-        @media (max-width:720px){.phase1-kpis.meal-three-kpis{grid-template-columns:1fr}}
+        @media (max-width:900px){
+          .phase1-kpis.meal-three-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+        }
+        @media (max-width:720px){
+          .phase1-kpis.meal-three-kpis{grid-template-columns:1fr!important}
+        }
       `;
       document.head.appendChild(style);
     }
