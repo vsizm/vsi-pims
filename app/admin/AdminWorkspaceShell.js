@@ -5,10 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const NAV = [
-  ['Dashboard', '/admin'],
   ['Activity Reports', '/admin/reports'],
-  ['Pending Review', '/admin/reports?status=PENDING_REVIEW'],
-  ['Approved Reports', '/admin/reports?status=APPROVED'],
   ['Finance Intelligence', '/admin/finance'],
   ['MEAL Intelligence', '/admin/meal'],
   ['Follow-up Actions', '/admin/follow-up-actions'],
@@ -34,11 +31,7 @@ export default function AdminWorkspaceShell({ children }) {
         <div className="admin-workspace-label">WORKSPACE</div>
         <nav aria-label="VSI IMS Workspace">
           {NAV.map(([label, href]) => {
-            const active = label === 'Dashboard' ? pathname === '/admin'
-              : label === 'Activity Reports' ? pathname === '/admin/reports' && !status
-              : label === 'Pending Review' ? pathname === '/admin/reports' && status === 'PENDING_REVIEW'
-              : label === 'Approved Reports' ? pathname === '/admin/reports' && status === 'APPROVED'
-              : pathname === href;
+            const active = label === 'Activity Reports' ? pathname === '/admin/reports' && !status : pathname === href;
             return <Link key={label} href={href} className={active ? 'active' : ''}>{label}</Link>;
           })}
         </nav>
