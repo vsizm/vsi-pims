@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const NAV = [
   ['Dashboard', '/admin'],
@@ -14,27 +14,23 @@ const NAV = [
 
 export default function AdminWorkspaceShell({ children }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
   if (pathname === '/admin/login' || pathname === '/admin/forgot-password') return children;
 
   return (
     <div className="admin-workspace-shell">
       <aside className="admin-workspace-sidebar">
-        <div className="admin-workspace-brand">
-          <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
-        </div>
+        <div className="admin-workspace-brand"><img src="/vsi-logo-white.png" alt="Visionary Students Initiative" /></div>
         <div className="admin-workspace-label">WORKSPACE</div>
         <nav aria-label="VSI IMS Workspace">
           {NAV.map(([label, href]) => {
-            const active = label === 'Dashboard'
-              ? pathname === '/admin'
-              : label === 'Activity Reports'
-                ? pathname === '/admin/reports' && !window.location.search.includes('status=')
-                : label === 'Pending Review'
-                  ? pathname === '/admin/reports' && window.location.search.includes('status=PENDING_REVIEW')
-                  : label === 'Approved Reports'
-                    ? pathname === '/admin/reports' && window.location.search.includes('status=APPROVED')
-                    : pathname === href;
-            return <Link key={label} href={href} className={active ? 'active' : ''}><span>{label}</span></Link>;
+            const active = label === 'Dashboard' ? pathname === '/admin'
+              : label === 'Activity Reports' ? pathname === '/admin/reports' && !status
+              : label === 'Pending Review' ? pathname === '/admin/reports' && status === 'PENDING_REVIEW'
+              : label === 'Approved Reports' ? pathname === '/admin/reports' && status === 'APPROVED'
+              : pathname === href;
+            return <Link key={label} href={href} className={active ? 'active' : ''}>{label}</Link>;
           })}
         </nav>
       </aside>
@@ -49,8 +45,8 @@ export default function AdminWorkspaceShell({ children }) {
         .admin-workspace-sidebar nav a,.admin-workspace-sidebar nav a:link,.admin-workspace-sidebar nav a:visited{display:flex;align-items:center;min-height:42px;box-sizing:border-box;padding:10px 11px;border-radius:9px;text-decoration:none;color:#fff!important;font-size:12px;font-weight:800;line-height:1.25}
         .admin-workspace-sidebar nav a:hover,.admin-workspace-sidebar nav a:focus-visible{background:rgba(255,255,255,.09);color:#fff!important}
         .admin-workspace-sidebar nav a.active{background:#ffc300;color:#003566!important;box-shadow:0 5px 14px rgba(0,0,0,.12)}
-        .admin-workspace-sidebar nav a.active span{color:#003566!important}
         .admin-workspace-content{min-width:0;flex:1}
+        .admin-workspace-content > .admin-reports-app > .admin-sidebar,.admin-workspace-content > .admin-app > .admin-sidebar,.admin-workspace-content > .phase1-app > .admin-sidebar,.admin-workspace-content > .dashboard-shell > .sidebar{display:none!important}
         @media(max-width:900px){.admin-workspace-shell{display:block}.admin-workspace-sidebar{position:sticky;top:0;width:auto;min-width:0;height:auto;padding:10px;overflow-x:auto}.admin-workspace-brand,.admin-workspace-label{display:none}.admin-workspace-sidebar nav{flex-direction:row;gap:6px}.admin-workspace-sidebar nav a{white-space:nowrap;min-height:40px;margin:0}}
       `}</style>
     </div>
