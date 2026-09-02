@@ -25,6 +25,7 @@ function formatAlignment(value) {
 
 export default function DirectoratesPage() {
   const [reports, setReports] = useState([]);
+  const [approvedActivities, setApprovedActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
@@ -33,10 +34,16 @@ export default function DirectoratesPage() {
     let alive = true;
     (async () => {
       try {
-        const response = await fetch('/api/admin/activity-reports', { cache: 'no-store' });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Unable to load activity reports.');
-        const approved = (data.reports || []).filter(r => r.review_status === 'APPROVED');
+        const [reportsResponse, activitiesResponse] = await Promise.all([
+          fetch('/api/admin/activity-reports', { cache: 'no-store' }),
+          fetch('/api/approved-activities', { cache: 'no-store' }),
+        ]);
+        const reportsData = await reportsResponse.json();
+        const activitiesData = await activitiesResponse.json();
+        if (!reportsResponse.ok) throw new Error(reportsData.error || 'Unable to load activity reports.');
+        if (!activitiesResponse.ok) throw new Error(activitiesData.error || 'Unable to load approved activities.');
+
+        const approved = (reportsData.reports || []).filter(r => r.review_status === 'APPROVED');
         const full = await Promise.all(approved.map(async r => {
           try {
             const detail = await fetch(`/api/admin/activity-reports/${encodeURIComponent(r.reference)}`, { cache: 'no-store' });
@@ -44,7 +51,10 @@ export default function DirectoratesPage() {
             return body.report || r;
           } catch { return r; }
         }));
-        if (alive) setReports(full);
+        if (alive) {
+          setReports(full);
+          setApprovedActivities(activitiesData.activities || []);
+        }
       } catch (err) {
         if (alive) setError(err.message);
       } finally {
@@ -54,19 +64,28 @@ export default function DirectoratesPage() {
     return () => { alive = false; };
   }, []);
 
-  const rows = useMemo(() => reports.map((r) => ({
-    reference: findValue(r, ['reference', 'report_reference']),
-    directorate: findValue(r, ['directorate', 'directorate_name', 'directorateName']) || 'Not specified',
-    activity: findValue(r, ['activity_title', 'activity_name', 'activityName']) || 'Untitled activity',
-    location: (() => {
-      const province = findValue(r, ['province', 'province_name', 'provinceName']);
-      const district = findValue(r, ['district', 'district_name', 'districtName']);
-      return province && district ? `${province} · ${district}` : province || district || 'Not specified';
-    })(),
-    budget: Number(findValue(r, ['approved_budget', 'approvedBudget', 'budget'])) || 0,
-    un: formatAlignment(findValue(r, ['un_sdgs_alignment', 'unSdgsAlignment', 'un_sdg_alignment', 'unSDGAlignment', 'un_sdgs', 'unSdgs', 'un_sdg', 'unSdg', 'sdg_alignment', 'sdgs_alignment', 'sdg', 'un_alignment', 'unAlignment'])),
-    au: formatAlignment(findValue(r, ['au_agenda_2063_alignment', 'auAgenda2063Alignment', 'auAgenda2063', 'au_agenda_2063', 'agenda_2063_alignment', 'agenda2063Alignment', 'agenda2063', 'au_alignment', 'auAlignment'])),
-  })), [reports]);
+  const rows = useMemo(() => reports.map((r) => {
+    const activityCode = findValue(r, ['activity_code', 'activityCode', 'code']);
+    const activityName = findValue(r, ['activity_title', 'activity_name', 'activityName']) || 'Untitled activity';
+    const approvedActivity = approvedActivities.find((a) => {
+      const code = String(a.activityCode ?? a.code ?? '').trim();
+      const name = String(a.activityName ?? a.name ?? '').trim();
+      return (activityCode && code && code === activityCode) || (name && name.toLowerCase() === activityName.toLowerCase());
+    });
+    return {
+      reference: findValue(r, ['reference', 'report_reference']),
+      directorate: findValue(r, ['directorate', 'directorate_name', 'directorateName']) || approvedActivity?.directorate || 'Not specified',
+      activity: activityName,
+      location: (() => {
+        const province = findValue(r, ['province', 'province_name', 'provinceName']);
+        const district = findValue(r, ['district', 'district_name', 'districtName']);
+        return province && district ? `${province} · ${district}` : province || district || 'Not specified';
+      })(),
+      budget: Number(findValue(r, ['approved_budget', 'approvedBudget', 'budget'])) || 0,
+      un: formatAlignment(approvedActivity?.unSdgsAlignment ?? approvedActivity?.sdgsAlignment ?? ''),
+      au: formatAlignment(approvedActivity?.auAgenda2063Alignment ?? ''),
+    };
+  }), [reports, approvedActivities]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
