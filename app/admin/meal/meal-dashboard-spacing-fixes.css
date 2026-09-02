@@ -12,5 +12,11 @@
 .scope :global(.meal-compliance-status strong){line-height:1.4!important}
 .scope :global(.meal-compliance-status span){line-height:1.4!important}
 .scope :global(.meal-compliance-link){min-width:0!important;justify-self:end!important}
+
+/* The admin workspace shell already supplies the sidebar. Phase4Dashboard has a legacy inner shell; keep its content but remove the duplicate navigation and padding. */
+.scope :global(.phase1-app > .admin-sidebar){display:none!important}
+.scope :global(.phase1-app){display:block!important;min-height:0!important;background:transparent!important}
+.scope :global(.phase1-app > .phase1-main){width:100%!important;max-width:none!important;padding-left:0!important;padding-right:0!important}
+
 @media(max-width:1200px){.scope :global(.meal-compliance-row){grid-template-columns:280px repeat(3,minmax(0,1fr)) 160px!important}.scope :global(.meal-compliance-checks){display:contents!important;grid-column:auto!important}}
 @media(max-width:760px){.scope :global(.meal-compliance-row){grid-template-columns:38px minmax(0,1fr)!important}.scope :global(.meal-compliance-checks){display:grid!important;grid-template-columns:1fr!important;grid-column:1/-1!important}.scope :global(.meal-compliance-link){grid-column:1/-1!important;justify-self:start!important}}
