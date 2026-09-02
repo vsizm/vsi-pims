@@ -104,10 +104,16 @@ export default function MealKpiEnhancer() {
           min-height:142px!important;
           margin:0!important;
         }
-        .phase1-kpis.meal-four-kpis>div:nth-child(3)::before{background:#d9a400}
-        .phase1-kpis.meal-four-kpis>div:nth-child(4)::before{background:#7657a8}
-        .phase1-kpis.meal-four-kpis>div:nth-child(3) .kpi-footer b,
-        .phase1-kpis.meal-four-kpis>div:nth-child(4) .kpi-footer b{color:#094074}
+        /* Finance KPI palette: blue, navy, gold. Colour only; layout/typography preserved. */
+        .phase1-kpis.meal-four-kpis>div:nth-child(1){background:linear-gradient(135deg,#0a9fd4,#1477b4)!important;border-color:transparent!important;color:#fff!important}
+        .phase1-kpis.meal-four-kpis>div:nth-child(2){background:linear-gradient(135deg,#245e96,#183f6f)!important;border-color:transparent!important;color:#fff!important}
+        .phase1-kpis.meal-four-kpis>div:nth-child(3){background:linear-gradient(135deg,#c99b16,#80610a)!important;border-color:transparent!important;color:#fff!important}
+        .phase1-kpis.meal-four-kpis>div:nth-child(4){background:linear-gradient(135deg,#0a9fd4,#1477b4)!important;border-color:transparent!important;color:#fff!important}
+        .phase1-kpis.meal-four-kpis>div::before{background:rgba(255,255,255,.22)!important}
+        .phase1-kpis.meal-four-kpis>div::after{border-color:rgba(255,255,255,.18);box-shadow:0 0 0 17px rgba(255,255,255,.04),0 0 0 34px rgba(255,255,255,.035)}
+        .phase1-kpis.meal-four-kpis span,.phase1-kpis.meal-four-kpis strong,.phase1-kpis.meal-four-kpis small{color:#fff!important}
+        .phase1-kpis.meal-four-kpis .kpi-footer{border-top-color:rgba(255,255,255,.2)}
+        .phase1-kpis.meal-four-kpis .kpi-footer span,.phase1-kpis.meal-four-kpis .kpi-footer b{color:rgba(255,255,255,.82)!important}
         @media (max-width:1100px){
           .phase1-kpis.meal-four-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
         }
