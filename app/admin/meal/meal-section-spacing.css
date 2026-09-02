@@ -1,38 +1,36 @@
-.scope :global(.phase1-main){padding-bottom:40px}
-.scope :global(.phase1-header){margin-bottom:20px!important}
-.scope :global(.phase1-kpis){margin-bottom:20px!important}
+.phase1-main{padding-bottom:40px}
+.phase1-header{margin-bottom:20px!important}
+.phase1-kpis{margin-bottom:20px!important}
 
-/* MEAL major sections use one vertical stack. Do not rely on the legacy two-column
-   placement rules or explicit grid rows; those were preventing the intended spacing
-   from being visible between the portal-mounted sections. */
-.scope :global(.phase1-bottom-grid){
+/* The page imports this as a global stylesheet, so these selectors must be global. */
+.phase1-bottom-grid{
   display:grid!important;
   grid-template-columns:minmax(0,1fr)!important;
   gap:20px!important;
   row-gap:20px!important;
   align-items:start!important;
 }
-.scope :global(.phase1-bottom-grid > *){
+.phase1-bottom-grid > *{
   grid-column:1 / -1!important;
   grid-row:auto!important;
   width:100%!important;
   margin:0!important;
 }
 
-/* Visual sequence: reach → programme performance → reporting compliance → results. */
-.scope :global(.phase1-bottom-grid > .activity-panel){order:99!important}
-.scope :global(.phase1-bottom-grid > .phase1-card:has(.phase1-demographics)){order:98!important;display:none!important}
-.scope :global(.phase1-bottom-grid > .footprint-panel){order:1!important}
-.scope :global(.phase1-bottom-grid > .meal-programme-host){order:2!important}
-.scope :global(.phase1-bottom-grid > .meal-compliance-host){order:3!important}
-.scope :global(.phase1-bottom-grid > .phase1-card:has(.alert-grid)){order:4!important}
+/* Exact MEAL section rhythm: 20px between each major section. */
+.phase1-bottom-grid > .activity-panel{order:99!important}
+.phase1-bottom-grid > .phase1-card:has(.phase1-demographics){order:98!important;display:none!important}
+.phase1-bottom-grid > .footprint-panel{order:1!important}
+.phase1-bottom-grid > .meal-programme-host{order:2!important}
+.phase1-bottom-grid > .meal-compliance-host{order:3!important}
+.phase1-bottom-grid > .phase1-card:has(.alert-grid){order:4!important}
 
-/* Keep any remaining legacy cards out of the middle of the intelligence sequence. */
-.scope :global(.phase1-bottom-grid > .phase1-card:not(.footprint-panel):not(.meal-programme-host):not(.meal-compliance-host):not(.activity-panel):has(.phase1-footprint)){order:97!important}
+/* Keep remaining legacy cards out of the intended intelligence sequence. */
+.phase1-bottom-grid > .phase1-card:not(.footprint-panel):not(.meal-programme-host):not(.meal-compliance-host):not(.activity-panel):has(.phase1-footprint){order:97!important}
 
 @media (max-width:720px){
-  .scope :global(.phase1-main){padding-bottom:28px}
-  .scope :global(.phase1-header){margin-bottom:16px!important}
-  .scope :global(.phase1-kpis){margin-bottom:16px!important}
-  .scope :global(.phase1-bottom-grid){gap:16px!important;row-gap:16px!important}
+  .phase1-main{padding-bottom:28px}
+  .phase1-header{margin-bottom:16px!important}
+  .phase1-kpis{margin-bottom:16px!important}
+  .phase1-bottom-grid{gap:16px!important;row-gap:16px!important}
 }
