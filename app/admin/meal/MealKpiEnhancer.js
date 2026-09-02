@@ -44,27 +44,42 @@ export default function MealKpiEnhancer() {
           return p && d ? [`${p} · ${d}`] : p ? [p] : d ? [d] : [];
         }));
 
-        const updateCard = () => {
+        const updateCards = () => {
           const grid = document.querySelector('.phase1-kpis');
           if (!grid || grid.children.length < 3) return false;
-          const card = grid.children[2];
-          card.dataset.mealKpi = 'locations-directorate';
-          card.innerHTML = `
-            <span>LOCATIONS · DIRECTORATE</span>
+
+          const locationCard = grid.children[2];
+          locationCard.dataset.mealKpi = 'locations';
+          locationCard.innerHTML = `
+            <span>LOCATIONS</span>
             <strong>${locations.length.toLocaleString()}</strong>
-            <small>${directorates.length.toLocaleString()} directorates covered</small>
+            <small>Province · District coverage</small>
             <div class="kpi-footer"><span>⌖</span><b>${locations.length ? locations.join(' · ') : 'Not specified'}</b></div>
           `;
-          grid.classList.add('meal-three-kpis');
+
+          let directorateCard = grid.querySelector('[data-meal-kpi="directorate"]');
+          if (!directorateCard) {
+            directorateCard = document.createElement('div');
+            directorateCard.dataset.mealKpi = 'directorate';
+            grid.appendChild(directorateCard);
+          }
+          directorateCard.innerHTML = `
+            <span>DIRECTORATE</span>
+            <strong>${directorates.length.toLocaleString()}</strong>
+            <small>Approved report coverage</small>
+            <div class="kpi-footer"><span>⌘</span><b>${directorates.length ? directorates.join(' · ') : 'Not specified'}</b></div>
+          `;
+
+          grid.classList.add('meal-four-kpis');
           return true;
         };
 
-        if (!updateCard()) {
-          observer = new MutationObserver(() => { if (updateCard()) observer?.disconnect(); });
+        if (!updateCards()) {
+          observer = new MutationObserver(() => { if (updateCards()) observer?.disconnect(); });
           observer.observe(document.body, { childList: true, subtree: true });
         }
       } catch {
-        // Keep the base MEAL dashboard functional if location/directorate enhancement cannot load.
+        // Keep the base MEAL dashboard functional if the enhancement cannot load.
       }
     };
 
@@ -72,16 +87,16 @@ export default function MealKpiEnhancer() {
       const style = document.createElement('style');
       style.id = styleId;
       style.textContent = `
-        /* MEAL KPI row: three equal-width cards, always horizontal on desktop/tablet. */
-        .phase1-kpis.meal-three-kpis{
+        /* MEAL KPI row: four equal-width cards, balanced left-to-right. */
+        .phase1-kpis.meal-four-kpis{
           display:grid!important;
-          grid-template-columns:repeat(3,minmax(0,1fr))!important;
+          grid-template-columns:repeat(4,minmax(0,1fr))!important;
           gap:14px!important;
           width:100%!important;
           max-width:none!important;
           align-items:stretch!important;
         }
-        .phase1-kpis.meal-three-kpis>div{
+        .phase1-kpis.meal-four-kpis>div{
           min-width:0!important;
           width:auto!important;
           max-width:none!important;
@@ -89,13 +104,15 @@ export default function MealKpiEnhancer() {
           min-height:142px!important;
           margin:0!important;
         }
-        .phase1-kpis.meal-three-kpis>div:nth-child(3)::before{background:#d9a400}
-        .phase1-kpis.meal-three-kpis>div:nth-child(3) .kpi-footer b{color:#094074}
-        @media (max-width:900px){
-          .phase1-kpis.meal-three-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+        .phase1-kpis.meal-four-kpis>div:nth-child(3)::before{background:#d9a400}
+        .phase1-kpis.meal-four-kpis>div:nth-child(4)::before{background:#7657a8}
+        .phase1-kpis.meal-four-kpis>div:nth-child(3) .kpi-footer b,
+        .phase1-kpis.meal-four-kpis>div:nth-child(4) .kpi-footer b{color:#094074}
+        @media (max-width:1100px){
+          .phase1-kpis.meal-four-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
         }
         @media (max-width:720px){
-          .phase1-kpis.meal-three-kpis{grid-template-columns:1fr!important}
+          .phase1-kpis.meal-four-kpis{grid-template-columns:1fr!important}
         }
       `;
       document.head.appendChild(style);
@@ -106,7 +123,7 @@ export default function MealKpiEnhancer() {
       cancelled = true;
       observer?.disconnect();
       document.getElementById(styleId)?.remove();
-      document.querySelectorAll('[data-meal-kpi="locations-directorate"]').forEach(el => el.removeAttribute('data-meal-kpi'));
+      document.querySelectorAll('[data-meal-kpi="locations"],[data-meal-kpi="directorate"]').forEach(el => el.remove());
     };
   }, []);
 
