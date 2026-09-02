@@ -6,9 +6,11 @@ const money = (v) => `ZMW ${(Number(v ?? 0) || 0).toLocaleString(undefined, { ma
 
 function findValue(value, keys) {
   if (!value || typeof value !== 'object') return '';
+  const wanted = new Set(keys.map(k => k.toLowerCase().replace(/[^a-z0-9]/g, '')));
   if (Array.isArray(value)) return value.map(v => findValue(v, keys)).find(Boolean) || '';
   for (const [key, val] of Object.entries(value)) {
-    if (keys.some(k => key.toLowerCase() === k.toLowerCase()) && (typeof val === 'string' || typeof val === 'number')) return String(val);
+    const normalized = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (wanted.has(normalized) && (typeof val === 'string' || typeof val === 'number')) return String(val);
     const nested = findValue(val, keys);
     if (nested) return nested;
   }
@@ -62,8 +64,8 @@ export default function DirectoratesPage() {
       return province && district ? `${province} · ${district}` : province || district || 'Not specified';
     })(),
     budget: Number(findValue(r, ['approved_budget', 'approvedBudget', 'budget'])) || 0,
-    un: formatAlignment(findValue(r, ['un_sdgs_alignment', 'unSdgsAlignment', 'un_sdg_alignment', 'sdg_alignment', 'sdgs_alignment', 'un_alignment'])),
-    au: formatAlignment(findValue(r, ['au_agenda_2063_alignment', 'auAgenda2063Alignment', 'agenda_2063_alignment', 'au_alignment'])),
+    un: formatAlignment(findValue(r, ['un_sdgs_alignment', 'unSdgsAlignment', 'un_sdg_alignment', 'unSDGAlignment', 'un_sdgs', 'unSdgs', 'un_sdg', 'unSdg', 'sdg_alignment', 'sdgs_alignment', 'sdg', 'un_alignment', 'unAlignment'])),
+    au: formatAlignment(findValue(r, ['au_agenda_2063_alignment', 'auAgenda2063Alignment', 'auAgenda2063', 'au_agenda_2063', 'agenda_2063_alignment', 'agenda2063Alignment', 'agenda2063', 'au_alignment', 'auAlignment'])),
   })), [reports]);
 
   const filtered = useMemo(() => {
