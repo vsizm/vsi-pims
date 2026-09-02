@@ -1,4 +1,5 @@
 import Phase4Dashboard from './Phase4Dashboard';
+import MealKpiEnhancer from './MealKpiEnhancer';
 import MealLayoutCleanup from './MealLayoutCleanup';
 import MealDemographicBar from './MealDemographicBar';
 import MealProgrammePerformance from './MealProgrammePerformance';
@@ -15,5 +16,5 @@ import './meal-reporting-compliance.css';
 import './meal-followup-actions.css';
 
 export default function MealPage() {
-  return <div className={styles.scope}><MealLayoutCleanup /><MealDemographicBar /><MealProgrammePerformance /><MealReportingCompliance /><MealFollowupActions /><Phase4Dashboard /></div>;
+  return <div className={styles.scope}><MealLayoutCleanup /><MealKpiEnhancer /><MealDemographicBar /><MealProgrammePerformance /><MealReportingCompliance /><MealFollowupActions /><Phase4Dashboard /></div>;
 }
