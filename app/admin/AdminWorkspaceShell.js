@@ -11,6 +11,7 @@ const NAV = [
   ['Approved Reports', '/admin/reports?status=APPROVED'],
   ['Finance Intelligence', '/admin/finance'],
   ['MEAL Intelligence', '/admin/meal'],
+  ['Follow-up Actions', '/admin/follow-up-actions'],
 ];
 
 export default function AdminWorkspaceShell({ children }) {
