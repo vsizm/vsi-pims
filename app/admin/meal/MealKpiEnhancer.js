@@ -16,6 +16,9 @@ function unique(values) {
   return [...new Set(values.map(v => String(v).trim()).filter(Boolean))];
 }
 
+const num = (v) => Number(v ?? 0) || 0;
+const money = (v) => `ZMW ${num(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
 export default function MealKpiEnhancer() {
   useEffect(() => {
     let cancelled = false;
@@ -43,10 +46,25 @@ export default function MealKpiEnhancer() {
           const d = collectByKey(r, /^(district|district_name|districtName)$/i)[0] || '';
           return p && d ? [`${p} · ${d}`] : p ? [p] : d ? [d] : [];
         }));
+        const financials = full.reduce((totals, r) => {
+          totals.budget += num(r.approved_budget ?? r.approvedBudget);
+          totals.spent += num(r.actual_spent ?? r.actualSpent);
+          return totals;
+        }, { budget: 0, spent: 0 });
+        const utilisation = financials.budget ? Math.round((financials.spent / financials.budget) * 100) : 0;
 
         const updateCards = () => {
           const grid = document.querySelector('.phase1-kpis');
           if (!grid || grid.children.length < 3) return false;
+
+          const financialCard = grid.children[1];
+          financialCard.dataset.mealKpi = 'financial';
+          financialCard.innerHTML = `
+            <span>FINANCIAL FOOTPRINT</span>
+            <strong>${money(financials.spent)}</strong>
+            <small>Approved expenditure across activities</small>
+            <div class="kpi-footer"><span>◉ ${full.length} activities</span><b>${utilisation}% of approved budget</b></div>
+          `;
 
           const locationCard = grid.children[2];
           locationCard.dataset.mealKpi = 'locations';
@@ -129,7 +147,7 @@ export default function MealKpiEnhancer() {
       cancelled = true;
       observer?.disconnect();
       document.getElementById(styleId)?.remove();
-      document.querySelectorAll('[data-meal-kpi="locations"],[data-meal-kpi="directorate"]').forEach(el => el.remove());
+      document.querySelectorAll('[data-meal-kpi="locations"],[data-meal-kpi="directorate"],[data-meal-kpi="financial"]').forEach(el => el.remove());
     };
   }, []);
 
