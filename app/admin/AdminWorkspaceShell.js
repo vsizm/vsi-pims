@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 
 const NAV = [
   ['Activity Reports', '/admin/reports'],
-  ['Directorates', '/admin/directorates'],
-  ['Finance Intelligence', '/admin/finance'],
   ['MEAL Intelligence', '/admin/meal'],
+  ['Finance Intelligence', '/admin/finance'],
+  ['Directorates', '/admin/directorates'],
   ['Follow-up Actions', '/admin/follow-up-actions'],
 ];
 
