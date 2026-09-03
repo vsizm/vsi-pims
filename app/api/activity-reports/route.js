@@ -1,7 +1,11 @@
 import { neon } from '@neondatabase/serverless';
 
-// TEST MODE: all report fields are optional so the end-to-end workflow can be tested.
-const required = [];
+// Activity reports are intentionally public-facing for field officers, so abuse controls
+// are applied here instead of requiring the admin session.
+const WINDOW_MS = 60 * 60 * 1000;
+const MAX_SUBMISSIONS = 10;
+const MAX_BODY_BYTES = 1024 * 1024;
+const rateLimit = new Map();
 const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const participantFields = [
   'plannedMaleChildren','plannedMaleYouth','plannedMaleAdult','plannedFemaleChildren','plannedFemaleYouth','plannedFemaleAdult',
@@ -9,6 +13,23 @@ const participantFields = [
   'reachedMaleChildren','reachedMaleYouth','reachedMaleAdult','reachedFemaleChildren','reachedFemaleYouth','reachedFemaleAdult',
   'reachedPwdMaleChildren','reachedPwdMaleYouth','reachedPwdMaleAdult','reachedPwdFemaleChildren','reachedPwdFemaleYouth','reachedPwdFemaleAdult',
 ];
+
+function clientKey(request) {
+  const forwarded = request.headers.get('x-forwarded-for');
+  return (forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown').slice(0, 128);
+}
+
+function rateLimited(key) {
+  const now = Date.now();
+  const entry = rateLimit.get(key);
+  if (!entry || now - entry.startedAt >= WINDOW_MS) {
+    rateLimit.set(key, { startedAt: now, count: 1 });
+    return false;
+  }
+  if (entry.count >= MAX_SUBMISSIONS) return true;
+  entry.count += 1;
+  return false;
+}
 
 async function sendReportEmail({ recipient, reference, activityTitle, reporterName }) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -29,9 +50,14 @@ async function sendReportEmail({ recipient, reference, activityTitle, reporterNa
 }
 
 export async function POST(request) {
+  const key = clientKey(request);
+  if (rateLimited(key)) return Response.json({ error: 'Too many report submissions. Please try again later.' }, { status: 429, headers: { 'Retry-After': '3600' } });
   try {
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > MAX_BODY_BYTES) return Response.json({ error: 'Submission is too large.' }, { status: 413 });
+
     const body = await request.json();
-    if (!body || typeof body !== 'object') return Response.json({ error: 'Invalid submission.' }, { status: 400 });
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return Response.json({ error: 'Invalid submission.' }, { status: 400 });
 
     if ((body.reporterEmail && !email.test(body.reporterEmail)) || (body.grantEmail && !email.test(body.grantEmail)) || (body.supervisorEmail && !email.test(body.supervisorEmail))) {
       return Response.json({ error: 'Please provide valid email address(es).' }, { status: 400 });
@@ -55,15 +81,15 @@ export async function POST(request) {
     const total = reachedTotal;
     if (total !== female + male + pwdMale + pwdFemale) return Response.json({ error: 'Reached participant total does not match the male + female + PWD breakdown.' }, { status: 400 });
 
-    const budgetItems = Array.isArray(body.budgetItems) ? body.budgetItems : [];
-    const followUps = Array.isArray(body.followUpActions) ? body.followUpActions : [];
+    const budgetItems = Array.isArray(body.budgetItems) ? body.budgetItems.slice(0, 100) : [];
+    const followUps = Array.isArray(body.followUpActions) ? body.followUpActions.slice(0, 100) : [];
     const approvedBudget = budgetItems.reduce((s, x) => s + (Number(x.approved) || 0), 0);
     const actualSpent = budgetItems.reduce((s, x) => s + (Number(x.actual) || 0), 0);
     const budgetStatus = actualSpent > approvedBudget ? 'Overspent' : actualSpent < approvedBudget ? 'Underspent' : 'Within approved budget';
     if (budgetItems.some((x) => (Number(x.approved) || 0) < 0 || (Number(x.actual) || 0) < 0)) return Response.json({ error: 'Budget amounts cannot be negative.' }, { status: 400 });
     if (budgetStatus === 'Overspent' && !body.overspendCause) return Response.json({ error: 'Please provide the reason for the overspend.' }, { status: 400 });
 
-    const attachments = Array.isArray(body.attachments) ? [...body.attachments] : [];
+    const attachments = Array.isArray(body.attachments) ? body.attachments.slice(0, 20) : [];
     attachments.push({ category: 'participant-breakdown', plannedTotal, reachedTotal, performance: participantPerformance, achievementPercent: participantPerformancePercent, variance: reachedTotal - plannedTotal, justification: body.participantPerformanceJustification || null, breakdown: participantData });
 
     const reference = `VSI-AR-${new Date().getFullYear()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
@@ -71,7 +97,7 @@ export async function POST(request) {
     await sql`INSERT INTO activity_reports (
       reference, activity_title, activity_date, start_time, end_time, activity_type, activity_type_other, directorate, programme, project, activity_code, activity_description, province, district, constituency, ward_community, venue, reporter_full_name, reporter_position, reporter_phone, reporter_email, supervisor_full_name, supervisor_position, supervisor_phone, supervisor_email, donor_name, grant_title, grant_reference, grant_manager, grant_phone, grant_email, funding_source, funding_source_other, lead_facilitator, other_staff_volunteers, partner_organisations, partner_contact, target_group, participant_total, participant_female, participant_male, participant_other, age_groups, participants_with_disabilities, attendance_status, objectives, activity_delivered, implementation_status, implementation_change, knowledge_skills, key_issues, participant_feedback, immediate_outcomes, notable_achievements, results_evidence, budget_items, approved_budget, actual_spent, budget_status, overspend_reason, overspend_cause, prior_approval, overspend_approved_by, overspend_approval_date, financial_documents, challenges, challenges_addressed, lessons_learned, future_improvements, safeguarding_status, follow_up_actions, evidence_available, evidence_uploaded, photo_media_consent, overall_assessment, assessment_explanation, attachments, declaration
     ) VALUES (
-      ${reference}, ${body.activityTitle || ''}, ${body.activityDate || null}, ${body.startTime || null}, ${body.endTime || null}, ${body.activityType || ''}, ${body.activityTypeOther || null}, ${body.directorate || ''}, ${body.programme || ''}, ${body.project || ''}, ${body.activityCode || null}, ${body.activityDescription || ''}, ${body.province || ''}, ${body.district || ''}, ${body.constituency || null}, ${body.wardCommunity || null}, ${body.venue || ''}, ${body.reporterFullName || ''}, ${body.reporterPosition || ''}, ${body.reporterPhone || ''}, ${body.reporterEmail || ''}, ${body.supervisorFullName || null}, ${body.supervisorPosition || null}, ${body.supervisorPhone || null}, ${body.supervisorEmail || null}, ${body.donorName || null}, ${body.grantTitle || null}, ${body.grantReference || null}, ${body.grantManager || null}, ${body.grantPhone || null}, ${body.grantEmail || null}, ${body.fundingSource || ''}, ${body.fundingSourceOther || null}, ${body.leadFacilitator || null}, ${body.otherStaffVolunteers || null}, ${body.partnerOrganisations || null}, ${body.partnerContact || null}, ${body.targetGroup || ''}, ${total}, ${female + pwdFemale}, ${male + pwdMale}, ${other}, ${body.ageGroups || null}, ${body.participantsWithDisabilities || null}, ${body.attendanceStatus || ''}, ${body.objectives || ''}, ${body.activityDelivered || ''}, ${body.implementationStatus || ''}, ${body.implementationChange || null}, ${body.knowledgeSkills || null}, ${body.keyIssues || null}, ${body.participantFeedback || null}, ${body.immediateOutcomes || null}, ${body.notableAchievements || null}, ${body.resultsEvidence || null}, ${JSON.stringify(budgetItems)}::jsonb, ${approvedBudget}, ${actualSpent}, ${budgetStatus}, ${budgetStatus === 'Overspent' ? Math.abs(approvedBudget - actualSpent).toFixed(2) : null}, ${body.overspendCause || null}, ${body.priorApproval || null}, ${body.overspendApprovedBy || null}, ${body.overspendApprovalDate || null}, ${body.financialDocuments || null}, ${body.challenges || null}, ${body.challengesAddressed || null}, ${body.lessonsLearned || null}, ${body.futureImprovements || null}, ${body.safeguardingStatus || ''}, ${JSON.stringify(followUps)}::jsonb, ${Array.isArray(body.evidenceAvailable) ? body.evidenceAvailable : []}, ${body.evidenceUploaded || ''}, ${body.photoMediaConsent || ''}, ${body.overallAssessment || ''}, ${body.assessmentExplanation || ''}, ${JSON.stringify(attachments)}::jsonb, true
+      ${reference}, ${body.activityTitle || ''}, ${body.activityDate || null}, ${body.startTime || null}, ${body.endTime || null}, ${body.activityType || ''}, ${body.activityTypeOther || null}, ${body.directorate || ''}, ${body.programme || ''}, ${body.project || ''}, ${body.activityCode || null}, ${body.activityDescription || ''}, ${body.province || ''}, ${body.district || ''}, ${body.constituency || null}, ${body.wardCommunity || null}, ${body.venue || ''}, ${body.reporterFullName || ''}, ${body.reporterPosition || ''}, ${body.reporterPhone || ''}, ${body.reporterEmail || ''}, ${body.supervisorFullName || null}, ${body.supervisorPosition || null}, ${body.supervisorPhone || null}, ${body.supervisorEmail || null}, ${body.donorName || null}, ${body.grantTitle || null}, ${body.grantReference || null}, ${body.grantManager || null}, ${body.grantPhone || null}, ${body.grantEmail || null}, ${body.fundingSource || ''}, ${body.fundingSourceOther || null}, ${body.leadFacilitator || null}, ${body.otherStaffVolunteers || null}, ${body.partnerOrganisations || null}, ${body.partnerContact || null}, ${body.targetGroup || ''}, ${total}, ${female + pwdFemale}, ${male + pwdMale}, ${other}, ${body.ageGroups || null}, ${body.participantsWithDisabilities || null}, ${body.attendanceStatus || ''}, ${body.objectives || ''}, ${body.activityDelivered || ''}, ${body.implementationStatus || ''}, ${body.implementationChange || null}, ${body.knowledgeSkills || null}, ${body.keyIssues || null}, ${body.participantFeedback || null}, ${body.immediateOutcomes || null}, ${body.notableAchievements || null}, ${body.resultsEvidence || null}, ${JSON.stringify(budgetItems)}::jsonb, ${approvedBudget}, ${actualSpent}, ${budgetStatus}, ${budgetStatus === 'Overspent' ? Math.abs(approvedBudget - actualSpent).toFixed(2) : null}, ${body.overspendCause || null}, ${body.priorApproval || null}, ${body.overspendApprovedBy || null}, ${body.overspendApprovalDate || null}, ${body.financialDocuments || null}, ${body.challenges || null}, ${body.challengesAddressed || null}, ${body.lessonsLearned || null}, ${body.futureImprovements || null}, ${body.safeguardingStatus || ''}, ${JSON.stringify(followUps)}::jsonb, ${Array.isArray(body.evidenceAvailable) ? body.evidenceAvailable.slice(0, 30) : []}, ${body.evidenceUploaded || ''}, ${body.photoMediaConsent || ''}, ${body.overallAssessment || ''}, ${body.assessmentExplanation || ''}, ${JSON.stringify(attachments)}::jsonb, true
     )`;
 
     try { await sendReportEmail({ recipient: body.reporterEmail, reference, activityTitle: body.activityTitle, reporterName: body.reporterFullName }); } catch (emailError) { console.error('activity report email notification failed', emailError); }
