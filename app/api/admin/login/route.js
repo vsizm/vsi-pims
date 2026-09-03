@@ -71,18 +71,23 @@ export async function DELETE() {
   return Response.json({ ok: true });
 }
 
-export function isAdminSession(token) {
-  if (!token || !process.env.VSI_SESSION_SECRET) return false;
+export function getAdminSessionUsername(token) {
+  if (!token || !process.env.VSI_SESSION_SECRET) return null;
   const [encoded, signature] = token.split('.');
-  if (!encoded || !signature) return false;
+  if (!encoded || !signature) return null;
   try {
     const payload = Buffer.from(encoded, 'base64url').toString('utf8');
     const expected = sign(payload);
-    if (signature.length !== expected.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return false;
+    if (signature.length !== expected.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
     const [username, timestamp] = payload.split('|');
-    if (!sameSecret(username, process.env.VSI_AUTH_USERNAME)) return false;
-    return Number.isFinite(Number(timestamp)) && Date.now() - Number(timestamp) < 8 * 60 * 60 * 1000;
+    if (!sameSecret(username, process.env.VSI_AUTH_USERNAME)) return null;
+    if (!Number.isFinite(Number(timestamp)) || Date.now() - Number(timestamp) >= 8 * 60 * 60 * 1000) return null;
+    return username || null;
   } catch {
-    return false;
+    return null;
   }
+}
+
+export function isAdminSession(token) {
+  return Boolean(getAdminSessionUsername(token));
 }
