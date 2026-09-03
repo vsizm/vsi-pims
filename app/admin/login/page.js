@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: mfaRequired ? { code } : { username, password },
+        body: JSON.stringify(mfaRequired ? { code } : { username, password }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to sign in.');
