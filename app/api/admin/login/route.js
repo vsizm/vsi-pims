@@ -114,14 +114,15 @@ export async function POST(request) {
     const totpSecret = process.env.VSI_ADMIN_TOTP_SECRET;
     if (!expectedUsername || !expectedPassword || !secret) return Response.json({ error: 'Admin authentication is not configured.' }, { status: 503 });
 
-    if (body?.mfaToken) {
-      const pending = readSignedToken(body.mfaToken, 'mfa');
+    const store = await cookies();
+    const mfaCookie = store.get(MFA_COOKIE)?.value;
+    if (mfaCookie) {
+      const pending = readSignedToken(mfaCookie, 'mfa');
       if (!pending || Date.now() - pending.timestamp >= MFA_TTL_MS || !sameSecret(pending.username, expectedUsername) || !totpSecret || !verifyTotp(totpSecret, code)) {
         recordFailure(key);
         return Response.json({ error: 'Invalid verification code.' }, { status: 401 });
       }
       attempts.delete(key);
-      const store = await cookies();
       store.delete(MFA_COOKIE);
       store.set(COOKIE, createToken(pending.username), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 8 });
       return Response.json({ ok: true });
@@ -133,14 +134,11 @@ export async function POST(request) {
     }
 
     if (totpSecret) {
-      const store = await cookies();
-      const mfaToken = createMfaToken(username);
-      store.set(MFA_COOKIE, mfaToken, { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 5 });
-      return Response.json({ ok: true, requiresMfa: true, mfaToken });
+      store.set(MFA_COOKIE, createMfaToken(username), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 5 });
+      return Response.json({ ok: true, requiresMfa: true });
     }
 
     attempts.delete(key);
-    const store = await cookies();
     store.set(COOKIE, createToken(username), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 8 });
     return Response.json({ ok: true });
   } catch {
