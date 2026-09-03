@@ -7,13 +7,6 @@ export async function GET() {
   if (!isAdminSession(token)) return Response.json({ error: 'Unauthorised.' }, { status: 401 });
   try {
     const sql = neon(process.env.DATABASE_URL);
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ`;
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS deleted_by TEXT`;
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS last_edited_by TEXT`;
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS review_status TEXT NOT NULL DEFAULT 'PENDING_REVIEW'`;
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS reviewed_by TEXT`;
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ`;
-    await sql`ALTER TABLE activity_reports ADD COLUMN IF NOT EXISTS review_comment TEXT`;
     const reports = await sql`SELECT reference, activity_title, activity_date, directorate, programme, project, reporter_full_name, reporter_position, reporter_email, funding_source, participant_total, overall_assessment, created_at AS received_at, review_status, reviewed_by, reviewed_at, review_comment, deleted_at, deleted_by, last_edited_by FROM activity_reports WHERE deleted_at IS NULL ORDER BY created_at DESC, reference DESC LIMIT 100`;
     return Response.json({ reports });
   } catch (error) {
