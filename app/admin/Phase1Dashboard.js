@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 const nav = [
   ['01', 'Executive Dashboard', '/admin'],
@@ -18,6 +19,10 @@ const nav = [
 ];
 
 export default function Phase1Dashboard() {
+  const [role, setRole] = useState('admin');
+  useEffect(() => { fetch('/api/admin/me', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(data => setRole(data?.role || 'admin')).catch(() => {}); }, []);
+  const showProgrammes = role === 'admin' || role === 'programmes';
+  const showFinanceHR = role === 'admin' || role === 'finance';
   return (
     <div className="dashboard-shell">
       <aside className="sidebar">
@@ -28,7 +33,7 @@ export default function Phase1Dashboard() {
         </div>
 
         <nav aria-label="Administration">
-          {nav.map(([number, label, href]) => (
+          {nav.filter(([, label]) => label === 'Finance & HR' ? showFinanceHR : label === 'Finance' || label === 'Donors' ? showProgrammes : showProgrammes).map(([number, label, href]) => (
             <Link
               key={label}
               href={href}
@@ -54,10 +59,12 @@ export default function Phase1Dashboard() {
           <div className="canvas-title">Executive Dashboard</div>
           <div className="canvas-note">Organisation-wide operational control centre.</div>
           <div className="module-grid">
-            <Link className="module-card" href="/admin/finance-hr"><span>FINANCE & HR</span><strong>People, Payroll & Operations</strong><small>Employees · Contracts · Leave · Payroll · Finance · Accounting · Procurement · Projects & Donors · Assets · Approvals · Reports · Controls</small></Link>
-            <Link className="module-card" href="/admin/reports"><span>REPORTING</span><strong>Activity Reports</strong><small>Review, verify, approve and manage submitted reports.</small></Link>
-            <Link className="module-card" href="/admin/meal"><span>MEAL</span><strong>MEAL Intelligence</strong><small>Programme performance, participant reach and reporting intelligence.</small></Link>
-            <Link className="module-card" href="/admin/finance"><span>FINANCE INTELLIGENCE</span><strong>Organisational Finance</strong><small>Approved activity finance and financial intelligence.</small></Link>
+            {showFinanceHR && <Link className="module-card" href="/admin/finance-hr"><span>FINANCE & HR</span><strong>People, Payroll & Operations</strong><small>Employees · Contracts · Leave · Payroll · Finance · Accounting · Procurement · Projects & Donors · Assets · Approvals · Reports · Controls</small></Link>}
+            {showProgrammes && <>
+              <Link className="module-card" href="/admin/reports"><span>REPORTING</span><strong>Activity Reports</strong><small>Review, verify, approve and manage submitted reports.</small></Link>
+              <Link className="module-card" href="/admin/meal"><span>MEAL</span><strong>MEAL Intelligence</strong><small>Programme performance, participant reach and reporting intelligence.</small></Link>
+              <Link className="module-card" href="/admin/finance"><span>FINANCE INTELLIGENCE</span><strong>Organisational Finance</strong><small>Approved activity finance and financial intelligence.</small></Link>
+            </>}
           </div>
         </section>
       </main>
