@@ -29,7 +29,12 @@ export default function AdminLoginPage() {
         setCode('');
         return;
       }
-      router.push('/admin/reports');
+      const destination =
+        data.role === 'finance'
+          ? '/admin/finance-hr'
+          : '/admin/reports';
+
+      router.push(destination);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to sign in.');
