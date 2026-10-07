@@ -10,6 +10,7 @@ export async function DELETE(request) { return forward(request); }
 
 async function forward(request) {
   const url = new URL(request.url);
-  url.pathname = '/api' + url.pathname.replace(/^\/api\/finance-hr/, '');
+  const forwardedPath = url.pathname.replace(/^\/api\/finance-hr/, '');
+  url.pathname = forwardedPath.startsWith('/api/') ? forwardedPath : '/api' + forwardedPath;
   return handler(new Request(url, request));
 }
