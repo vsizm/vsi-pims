@@ -118,13 +118,9 @@ export default function App() {
     );
   if (!user)
     return (
-      <Login
-        onLogin={async (username,password) => {
-          const r = await auth.signIn(username,password);
-          setUser(r.user as User);
-          await load();
-        }}
-      />
+      <div className="finance-hr-root accessDenied">
+        <div className="loginCard"><div className="brandmark large">VSI</div><p className="eyebrow">VSI IMS</p><h1>Finance & HR access required</h1><p>Please sign in to the IMS administration workspace first, then open Finance & HR.</p></div>
+      </div>
     );
   const role = (data.currentUser?.role || user.role || 'staff').toLowerCase();
   const canFinance = ['admin', 'finance', 'director'].includes(role);
@@ -258,7 +254,7 @@ export default function App() {
         {page === 'assets' && <Assets data={data.assets || []} role={role} action={action} />}
         {page === 'settings' && <SettingsPage data={data} role={role} action={action} />}
       </main>
-    </div>
+    </div></div>
   );
 }
 
