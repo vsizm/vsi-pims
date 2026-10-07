@@ -30,6 +30,11 @@ export default function AdminWorkspaceShell({ children }) {
 
   if (pathname === '/admin/login' || pathname === '/admin/forgot-password') return children;
 
+  if (!role) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'Inter,system-ui,sans-serif',color:'#063b73'}}>Checking IMS access…</div>;
+  const financeRoute = pathname === '/admin/finance-hr' || pathname.startsWith('/admin/finance-hr/');
+  const allowed = financeRoute ? ROLE_ACCESS[role]?.includes('finance') : ROLE_ACCESS[role]?.includes('programmes');
+  if (!allowed) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',padding:24,fontFamily:'Inter,system-ui,sans-serif',background:'#f4f7fa'}}><div style={{maxWidth:520,padding:32,border:'1px solid #dce5ed',borderRadius:14,background:'#fff',textAlign:'center'}}><div style={{fontSize:12,fontWeight:900,letterSpacing:'.12em',color:'#1677c8'}}>VSI IMS</div><h1 style={{color:'#063b73',margin:'10px 0'}}>Access restricted</h1><p style={{color:'#718091',fontSize:14,lineHeight:1.6}}>Your IMS role does not have access to this workspace.</p></div></div>;
+
   return (
     <div className="admin-workspace-shell">
       <aside className="admin-workspace-sidebar">
