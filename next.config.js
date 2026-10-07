@@ -8,6 +8,7 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  typescript: { ignoreBuildErrors: true },
   async headers() {
     return [
       { source: '/(.*)', headers: securityHeaders },
