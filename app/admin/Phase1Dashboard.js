@@ -6,14 +6,15 @@ const nav = [
   ['01', 'Executive Dashboard', '/admin'],
   ['02', 'Reports', '/admin/reports'],
   ['03', 'Finance', '/admin/finance'],
-  ['04', 'MEAL', '/admin/meal'],
-  ['05', 'Activities', '/admin/reports'],
-  ['06', 'Participants', '/admin/reports/intelligence'],
-  ['07', 'Donors', '/admin/finance'],
-  ['08', 'Compliance', '/admin/reports'],
-  ['09', 'Safeguarding', '/admin/reports/intelligence'],
-  ['10', 'Learning', '/admin/learning'],
-  ['11', 'Settings', '/admin'],
+  ['04', 'Finance & HR', '/admin/finance-hr'],
+  ['05', 'MEAL', '/admin/meal'],
+  ['06', 'Activities', '/admin/reports'],
+  ['07', 'Participants', '/admin/reports/intelligence'],
+  ['08', 'Donors', '/admin/finance'],
+  ['09', 'Compliance', '/admin/reports'],
+  ['10', 'Safeguarding', '/admin/reports/intelligence'],
+  ['11', 'Learning', '/admin/learning'],
+  ['12', 'Settings', '/admin'],
 ];
 
 export default function Phase1Dashboard() {
@@ -51,8 +52,12 @@ export default function Phase1Dashboard() {
 
         <section className="canvas" aria-label="Executive Dashboard workspace">
           <div className="canvas-title">Executive Dashboard</div>
-          <div className="canvas-note">
-            Dashboard workspace cleared. Sections will be added one at a time.
+          <div className="canvas-note">Organisation-wide operational control centre.</div>
+          <div className="module-grid">
+            <Link className="module-card" href="/admin/finance-hr"><span>FINANCE & HR</span><strong>People, Payroll & Operations</strong><small>Employees · Contracts · Leave · Payroll · Finance · Accounting · Procurement · Projects & Donors · Assets · Approvals · Reports · Controls</small></Link>
+            <Link className="module-card" href="/admin/reports"><span>REPORTING</span><strong>Activity Reports</strong><small>Review, verify, approve and manage submitted reports.</small></Link>
+            <Link className="module-card" href="/admin/meal"><span>MEAL</span><strong>MEAL Intelligence</strong><small>Programme performance, participant reach and reporting intelligence.</small></Link>
+            <Link className="module-card" href="/admin/finance"><span>FINANCE INTELLIGENCE</span><strong>Organisational Finance</strong><small>Approved activity finance and financial intelligence.</small></Link>
           </div>
         </section>
       </main>
@@ -242,11 +247,14 @@ export default function Phase1Dashboard() {
           font-weight: 900;
         }
 
-        .canvas-note {
-          margin-top: 8px;
-          color: #8795a2;
-          font-size: 10px;
-        }
+        .canvas-note { margin-top: 8px; color: #8795a2; font-size: 10px; }
+        .module-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:20px; }
+        .module-card { display:block; text-decoration:none; color:#17212b; padding:20px; border:1px solid #dce5ed; border-radius:14px; background:#fbfdff; transition:.18s ease; }
+        .module-card:hover { transform:translateY(-2px); border-color:#9bb6cf; box-shadow:0 10px 24px rgba(0,53,102,.08); }
+        .module-card span { display:block; color:#1677c8; font-size:9px; font-weight:900; letter-spacing:.13em; }
+        .module-card strong { display:block; margin-top:6px; color:#063b73; font-size:18px; }
+        .module-card small { display:block; margin-top:7px; color:#718091; font-size:11px; line-height:1.5; }
+        @media (max-width: 900px) { .module-grid { grid-template-columns:1fr; } }
 
         @media (max-width: 900px) {
           .dashboard-shell { display: block; }
