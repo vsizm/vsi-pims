@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+const ROLE_ACCESS = { admin: ['programmes', 'finance'], programmes: ['programmes'], finance: ['finance'] };
+
 const NAV = [
   ['Activity Reports', '/admin/reports'],
   ['MEAL Intelligence', '/admin/meal'],
@@ -16,10 +18,12 @@ const NAV = [
 export default function AdminWorkspaceShell({ children }) {
   const pathname = usePathname();
   const [status, setStatus] = useState(null);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const readStatus = () => setStatus(new URLSearchParams(window.location.search).get('status'));
     readStatus();
+    fetch('/api/admin/me', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(data => setRole(data?.role || null)).catch(() => setRole(null));
     window.addEventListener('popstate', readStatus);
     return () => window.removeEventListener('popstate', readStatus);
   }, [pathname]);
@@ -32,7 +36,7 @@ export default function AdminWorkspaceShell({ children }) {
         <div className="admin-workspace-brand"><img src="/vsi-logo-white.png" alt="Visionary Students Initiative" /></div>
         <div className="admin-workspace-label">WORKSPACE</div>
         <nav aria-label="VSI IMS Workspace">
-          {NAV.map(([label, href]) => {
+          {NAV.filter(([label]) => label === 'Finance & HR' ? ROLE_ACCESS[role || 'admin']?.includes('finance') : ROLE_ACCESS[role || 'admin']?.includes('programmes')).map(([label, href]) => {
             const active = label === 'Activity Reports' ? pathname === '/admin/reports' && !status : pathname === href;
             return <Link key={label} href={href} className={active ? 'active' : ''}>{label}</Link>;
           })}
