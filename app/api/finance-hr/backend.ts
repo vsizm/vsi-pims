@@ -1,7 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import { jwtVerify, SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
-import { getAdminRole, getAdminSessionUsername } from '../admin/login/route';
+import { getAdminRole, getAdminSession } from '../admin/login/route';
 
 let sql: ReturnType<typeof neon> | null = null;
 function getSql(){
@@ -21,7 +21,7 @@ const json=(data:any,status=200)=>new Response(JSON.stringify(data),{status,head
 const error=(message:string,status=400)=>json({error:message},status);
 const cookie=(value:string,maxAge:number)=>'vsi_session='+value+'; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age='+maxAge;
 function cookies(req:Request){return Object.fromEntries((req.headers.get('cookie')||'').split(';').filter(Boolean).map(x=>{const i=x.indexOf('=');return [x.slice(0,i).trim(),decodeURIComponent(x.slice(i+1).trim())]}));}
-async function sessionUser(req:Request){const cookieHeader=req.headers.get('cookie')||'';const token=(cookieHeader.split(';').map(x=>x.trim()).find(x=>x.startsWith('vsi_admin_session='))||'').split('=').slice(1).join('=');const username=getAdminSessionUsername(token);if(!username)return null;const users=await list<UserRecord>('users');const existing=users.find((u:any)=>String(u.username||'').toLowerCase()===String(username).toLowerCase()||String(u.email||'').toLowerCase()===String(username).toLowerCase());return {userId:String(existing?.userId||username),username:String(existing?.username||username),email:existing?.email,name:existing?.name||username,role:getAdminRole(username)||existing?.role||'staff'};}
+async function sessionUser(req:Request){const cookieHeader=req.headers.get('cookie')||'';const token=(cookieHeader.split(';').map(x=>x.trim()).find(x=>x.startsWith('vsi_admin_session='))||'').split('=').slice(1).join('=');const session=getAdminSession(token);if(!session)return null;const username=session.username;const users=await list<UserRecord>('users');const existing=users.find((u:any)=>String(u.username||'').toLowerCase()===String(username).toLowerCase()||String(u.email||'').toLowerCase()===String(username).toLowerCase());return {userId:String(existing?.userId||username),username:String(existing?.username||username),email:existing?.email,name:existing?.name||username,role:session.role||getAdminRole(username)||existing?.role||'staff'};}
 const requireAuth=()=>async(ctx:Ctx)=>{const u=await sessionUser(ctx.req);if(!u)throw new HttpErr('Authentication required.',401);ctx.user=u;};
 async function signIn(user:any){return await new SignJWT({username:user.username||'',email:user.email||'',name:user.name||''}).setProtectedHeader({alg:'HS256'}).setSubject(String(user.userId)).setIssuedAt().setExpirationTime('8h').sign(secret());}
 const db={
