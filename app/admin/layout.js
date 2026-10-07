@@ -1,5 +1,6 @@
 import './admin.css';
 import './phase1.css';
+import './finance-hr/finance-hr.css';
 import './reports/reports-meal-header.css';
 import AdminWorkspaceShell from './AdminWorkspaceShell';
 
