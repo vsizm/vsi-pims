@@ -76,12 +76,12 @@ function verifyTotp(secret, code) {
 
 function createToken(username) {
   const payload = `${username}|${Date.now()}`;
-  return `${Buffer.from(payload).toString('base64url')}.${sign(payload)}`;
+  return `${Buffer.from(payload).toString("base64url")}.${sign(payload)}`;
 }
 
 function createMfaToken(username) {
   const payload = `${username}|${Date.now()}`;
-  return `${Buffer.from(payload).toString('base64url')}.${sign(`mfa|${payload}`)}`;
+  return `${Buffer.from(payload).toString("base64url")}.${sign(`mfa|${payload}`)}`;
 }
 
 function readSignedToken(token, prefix = '') {
@@ -90,7 +90,7 @@ function readSignedToken(token, prefix = '') {
   if (!encoded || !signature) return null;
   try {
     const payload = Buffer.from(encoded, 'base64url').toString('utf8');
-    const expected = sign(`${prefix}${prefix ? '|' : ''}${payload}`);
+    const expected = sign(`${prefix}${prefix ? "|" : ""}${payload}`);
     if (signature.length !== expected.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
     const [username, timestamp] = payload.split('|');
     if (!Number.isFinite(Number(timestamp))) return null;
@@ -98,6 +98,23 @@ function readSignedToken(token, prefix = '') {
   } catch {
     return null;
   }
+}
+
+function credentials() {
+  return [
+    { username: process.env.VSI_AUTH_USERNAME, password: process.env.VSI_ADMIN_PASSWORD, role: 'super_admin', mfa: process.env.VSI_ADMIN_TOTP_SECRET },
+    { username: process.env.VSI_PROGRAMMES_USERNAME, password: process.env.VSI_PROGRAMMES_PASSWORD, role: 'programmes_director', mfa: process.env.VSI_PROGRAMMES_TOTP_SECRET },
+    { username: process.env.VSI_FINANCE_HR_USERNAME, password: process.env.VSI_FINANCE_HR_PASSWORD, role: 'finance_hr', mfa: process.env.VSI_FINANCE_HR_TOTP_SECRET },
+  ].filter((x) => x.username && x.password);
+}
+
+export function getAdminRole(username) {
+  const match = credentials().find((x) => sameSecret(x.username, username));
+  return match?.role || null;
+}
+
+function getCredential(username, password) {
+  return credentials().find((x) => sameSecret(x.username, username) && sameSecret(x.password, password)) || null;
 }
 
 export async function POST(request) {
@@ -108,39 +125,37 @@ export async function POST(request) {
     const username = typeof body?.username === 'string' ? body.username : '';
     const password = typeof body?.password === 'string' ? body.password : '';
     const code = typeof body?.code === 'string' ? body.code.replace(/\s/g, '') : '';
-    const expectedUsername = process.env.VSI_AUTH_USERNAME;
-    const expectedPassword = process.env.VSI_ADMIN_PASSWORD;
-    const secret = process.env.VSI_SESSION_SECRET;
-    const totpSecret = process.env.VSI_ADMIN_TOTP_SECRET;
-    if (!expectedUsername || !expectedPassword || !secret) return Response.json({ error: 'Admin authentication is not configured.' }, { status: 503 });
+    if (!process.env.VSI_SESSION_SECRET || credentials().length === 0) return Response.json({ error: 'Admin authentication is not configured.' }, { status: 503 });
 
     const store = await cookies();
     const mfaCookie = store.get(MFA_COOKIE)?.value;
     if (mfaCookie) {
       const pending = readSignedToken(mfaCookie, 'mfa');
-      if (!pending || Date.now() - pending.timestamp >= MFA_TTL_MS || !sameSecret(pending.username, expectedUsername) || !totpSecret || !verifyTotp(totpSecret, code)) {
+      const account = pending && credentials().find((x) => sameSecret(x.username, pending.username));
+      if (!pending || Date.now() - pending.timestamp >= MFA_TTL_MS || !account?.mfa || !verifyTotp(account.mfa, code)) {
         recordFailure(key);
         return Response.json({ error: 'Invalid verification code.' }, { status: 401 });
       }
       attempts.delete(key);
       store.delete(MFA_COOKIE);
       store.set(COOKIE, createToken(pending.username), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 8 });
-      return Response.json({ ok: true });
+      return Response.json({ ok: true, role: account.role });
     }
 
-    if (!sameSecret(username, expectedUsername) || !sameSecret(password, expectedPassword)) {
+    const account = getCredential(username, password);
+    if (!account) {
       recordFailure(key);
       return Response.json({ error: 'Invalid username or password.' }, { status: 401 });
     }
 
-    if (totpSecret) {
+    if (account.mfa) {
       store.set(MFA_COOKIE, createMfaToken(username), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 5 });
       return Response.json({ ok: true, requiresMfa: true });
     }
 
     attempts.delete(key);
     store.set(COOKIE, createToken(username), { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 8 });
-    return Response.json({ ok: true });
+    return Response.json({ ok: true, role: account.role });
   } catch {
     recordFailure(key);
     return Response.json({ error: 'Unable to sign in.' }, { status: 400 });
@@ -156,7 +171,7 @@ export async function DELETE() {
 
 export function getAdminSessionUsername(token) {
   const data = readSignedToken(token);
-  if (!data || Date.now() - data.timestamp >= 8 * 60 * 60 * 1000 || !sameSecret(data.username, process.env.VSI_AUTH_USERNAME)) return null;
+  if (!data || Date.now() - data.timestamp >= 8 * 60 * 60 * 1000 || !getAdminRole(data.username)) return null;
   return data.username || null;
 }
 
