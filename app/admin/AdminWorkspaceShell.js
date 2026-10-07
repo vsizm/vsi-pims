@@ -8,6 +8,7 @@ const NAV = [
   ['Activity Reports', '/admin/reports'],
   ['MEAL Intelligence', '/admin/meal'],
   ['Finance Intelligence', '/admin/finance'],
+  ['Finance & HR', '/admin/finance-hr'],
   ['Directorates', '/admin/directorates'],
   ['Follow-up Actions', '/admin/follow-up-actions'],
 ];
