@@ -1,4 +1,4 @@
-import handler from './backend';
+import handler from './backend.ts';
 
 export const dynamic = 'force-dynamic';
 
