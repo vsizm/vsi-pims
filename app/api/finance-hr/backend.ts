@@ -1,6 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import { jwtVerify, SignJWT } from 'jose';
-import bcrypt from 'bcryptjs';\nimport { getAdminSessionUsername } from '../admin/login/route';
+import bcrypt from 'bcryptjs';
+import { getAdminSessionUsername } from '../admin/login/route';
 
 let sql: ReturnType<typeof neon> | null = null;
 function getSql(){
