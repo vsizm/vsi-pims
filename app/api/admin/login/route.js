@@ -102,9 +102,9 @@ function readSignedToken(token, prefix = '') {
 
 function credentials() {
   return [
-    { username: process.env.VSI_AUTH_USERNAME, password: process.env.VSI_ADMIN_PASSWORD, role: 'super_admin', mfa: process.env.VSI_ADMIN_TOTP_SECRET },
-    { username: process.env.VSI_PROGRAMMES_USERNAME, password: process.env.VSI_PROGRAMMES_PASSWORD, role: 'programmes_director', mfa: process.env.VSI_PROGRAMMES_TOTP_SECRET },
-    { username: process.env.VSI_FINANCE_HR_USERNAME, password: process.env.VSI_FINANCE_HR_PASSWORD, role: 'finance_hr', mfa: process.env.VSI_FINANCE_HR_TOTP_SECRET },
+    { username: process.env.VSI_AUTH_USERNAME, password: process.env.VSI_ADMIN_PASSWORD, role: 'admin', mfa: process.env.VSI_ADMIN_TOTP_SECRET },
+    { username: process.env.VSI_PROGRAMMES_USERNAME, password: process.env.VSI_PROGRAMMES_PASSWORD, role: 'programmes', mfa: process.env.VSI_PROGRAMMES_TOTP_SECRET },
+    { username: process.env.VSI_FINANCE_HR_USERNAME, password: process.env.VSI_FINANCE_HR_PASSWORD, role: 'finance', mfa: process.env.VSI_FINANCE_HR_TOTP_SECRET },
   ].filter((x) => x.username && x.password);
 }
 
