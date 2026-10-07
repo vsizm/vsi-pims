@@ -319,6 +319,24 @@ function Dashboard({
           note="Finance + leave"
         />
       </div>
+      <div className="moduleSection">
+        <div className="moduleSectionHead">
+          <div>
+            <p className="eyebrow">FINANCE & HR WORKSPACE</p>
+            <h3>Modules</h3>
+            <p>Open any Finance & HR function directly from this dashboard.</p>
+          </div>
+        </div>
+        <div className="moduleGrid">
+          {navItems.filter(([key]) => key !== 'dashboard').map(([key, label, Icon]) => (
+            <button key={key} className="moduleCard" onClick={() => setPage(key)}>
+              <span className="moduleIcon"><Icon size={20} /></span>
+              <span className="moduleCopy"><strong>{label}</strong><small>Open module</small></span>
+              <span className="moduleArrow">→</span>
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="panel" style={{marginTop:16}}><div className="panelHead"><div><h3>Management Control Centre</h3><p>Audit and month-end readiness across Finance and HR.</p></div><button className="secondary" onClick={()=>setPage('reports')}>Open reports</button></div>{auditReady?<div className="cards"><Metric title="Readiness" value={auditReady.ready?'Ready':'Action required'} icon={ShieldCheck} note={auditReady.score+'% control score'} /><Metric title="Exceptions" value={auditReady.summary?.exceptions||0} icon={Bell} note="Items requiring resolution" /><Metric title="Bank items" value={auditReady.summary?.unreconciledBank||0} icon={Landmark} note="Unreconciled" /><Metric title="Commitments" value={money(Number(auditReady.summary?.outstandingCommitments||0))} icon={WalletCards} note="Outstanding exposure" /></div>:<p>Control status unavailable.</p>}</div>
       <div className="grid2">
         <div className="panel">
