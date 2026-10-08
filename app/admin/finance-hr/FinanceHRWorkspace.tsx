@@ -112,10 +112,23 @@ export default function App() {
   }, []);
   if (loading)
     return (
-      <div className="splash">
-        <ShieldCheck size={42} />
-        <h1>VSI Finance & HR</h1>
-        <p>Secure operations workspace</p>
+      <div
+        aria-label="Loading Finance & HR"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          display: 'grid',
+          placeItems: 'center',
+          background: '#102b55',
+          color: '#fff',
+          fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+        }}
+      >
+        <div style={{display:'grid',placeItems:'center',gap:10}}>
+          <img src="/vsi-logo-white.png" alt="VSI" style={{width:180,height:'auto',display:'block'}} />
+          <div style={{fontSize:11,letterSpacing:'.14em',fontWeight:800,opacity:.72}}>FINANCE & HR</div>
+        </div>
       </div>
     );
   if (!user)
