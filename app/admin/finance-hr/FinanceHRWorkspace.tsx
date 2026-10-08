@@ -155,12 +155,9 @@ export default function App() {
     <div className="finance-hr-root"><div className="shell">
       <aside className={open ? 'sidebar open' : 'sidebar'}>
         <div className="brand">
-          <div className="brandmark">VSI</div>
-          <div>
-            <strong>VSI</strong>
-            <span>Finance & HR</span>
-          </div>
+          <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
         </div>
+        <div className="financeNavLabel">FINANCE & HR</div>
         <nav>
           {navItems.map(([key, label, Icon]) => (
             <button
