@@ -119,10 +119,10 @@
 }
 .finance-hr-root .main{
   margin-left: 245px;
-  width: calc(100% - 245px);
+  width: auto;
   min-width: 0;
   min-height: 100vh;
-  padding: 0 34px 45px;
+  padding: 0 18px 45px;
 }
 .finance-hr-root header{
   height: 78px;
