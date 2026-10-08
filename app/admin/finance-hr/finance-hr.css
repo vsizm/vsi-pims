@@ -19,7 +19,7 @@
 }
 .finance-hr-root .shell{
   min-height: 100vh;
-  display: flex;
+  display: block;
 }
 .finance-hr-root .sidebar{
   width: 245px;
@@ -119,8 +119,7 @@
 }
 .finance-hr-root .main{
   margin-left: 245px;
-  flex: 1 1 auto;
-  width: auto;
+  width: calc(100% - 245px);
   min-width: 0;
   min-height: 100vh;
   padding: 0 34px 45px;
