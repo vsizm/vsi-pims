@@ -227,6 +227,7 @@ export default function App() {
             totalExpense={totalExpense}
             totalIncome={totalIncome}
             setPage={setPage}
+            navItems={navItems}
           />
         )}
         {page === 'hr' && (
@@ -277,6 +278,7 @@ function Dashboard({
   totalExpense,
   totalIncome,
   setPage,
+  navItems,
 }: any) {
   const [auditReady,setAuditReady]=useState<any>(null);useEffect(()=>{api.get('/api/reports/audit-readiness').then((r:any)=>setAuditReady(r.data)).catch(()=>setAuditReady(null));},[]);
   const recent = finance.slice(-5).reverse();
