@@ -137,7 +137,7 @@
   width: auto;
   min-width: 0;
   min-height: 100vh;
-  padding: 0 18px 45px 0;
+  padding: 0 18px 45px 24px;
 }
 .finance-hr-root .financeHeader{
   height: 78px;
