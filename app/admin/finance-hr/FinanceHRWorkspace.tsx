@@ -172,7 +172,7 @@ export default function App({ approvalsOnly = false }: { approvalsOnly?: boolean
     }
   };
   return (
-    <div className="finance-hr-root"><div className="financeShell">
+    <div className="finance-hr-root"><div className="financeShell" style={approvalsOnly ? { gridTemplateColumns: 'minmax(0, 1fr)' } : undefined}>
       {!approvalsOnly && (
       <aside className={open ? 'financeSidebar open' : 'financeSidebar'}>
         <div className="brand">
