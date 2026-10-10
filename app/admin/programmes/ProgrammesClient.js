@@ -98,7 +98,7 @@ export default function ProgrammesClient() {
   return <div className="pm-page">
     <header className="pm-header"><div><div className="pm-eyebrow">VSI ADMINISTRATION · PROGRAMME OPERATIONS</div><h1>Programme &amp; Project Register</h1><p>Establish a clear programme structure before planning activities, assigning officers and reporting results.</p></div><button className="pm-primary" onClick={startNew}>＋ Add {tab === 'programmes' ? 'Programme' : 'Project'}</button></header>
     <section className="pm-stats">
-      <div className="pm-stat"><span>PROGRAMMES</span><strong>{counts.programmes}</strong><small>Active register records</small></div>
+      <div className="pm-stat"><span>PROGRAMMES</span><strong>{counts.programmes}</strong><small>Registered programmes</small></div>
       <div className="pm-stat"><span>PROJECTS</span><strong>{counts.projects}</strong><small>Linked to programmes</small></div>
       <div className="pm-stat"><span>ACTIVE</span><strong>{counts.active}</strong><small>Currently active records</small></div>
       <div className="pm-stat"><span>DRAFTS</span><strong>{counts.drafts}</strong><small>Not yet active</small></div>
