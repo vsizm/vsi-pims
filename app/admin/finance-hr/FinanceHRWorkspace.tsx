@@ -697,82 +697,57 @@ function Finance({ finance, role, action }: any) {
   );
 }
 
-function Approvals({ finance, leaves, canApprove, action }: any) {
-  const pendingF = finance.filter((x: any) => x.status === 'Pending'),
-    pendingL = leaves.filter((x: any) => x.status === 'Pending');
-  return (
-    <section>
-      <div className="sectionTop">
-        <div>
-          <h1>Approvals</h1>
-          <p>Review finance and HR requests with a clear audit trail.</p>
-        </div>
-      </div>
-      {!canApprove && (
-        <div className="alert">
-          <ShieldCheck size={17} />
-          You can view this queue, but your role does not have approval
-          authority.
-        </div>
-      )}
-      <div className="grid2">
-        <div className="panel">
-          <div className="panelHead">
-            <div>
-              <h3>Finance approvals</h3>
-              <p>{pendingF.length} pending</p>
-            </div>
-          </div>
-          {pendingF.map((x: any) => (
-            <ApprovalCard
-              key={x.id}
-              title={x.description}
-              meta={x.category + ' · ' + x.date}
-              amount={money(x.amount)}
-              onApprove={() =>
-                action('/api/approvals/finance', {
-                  id: x.id,
-                  status: 'Approved',
-                })
-              }
-              onReject={() =>
-                action('/api/approvals/finance', {
-                  id: x.id,
-                  status: 'Rejected',
-                })
-              }
-              disabled={!canApprove}
-            />
-          ))}
-          {!pendingF.length && <Empty text="No finance approvals pending." />}
-        </div>
-        <div className="panel">
-          <div className="panelHead">
-            <div>
-              <h3>Leave approvals</h3>
-              <p>{pendingL.length} pending</p>
-            </div>
-          </div>
-          {pendingL.map((x: any) => (
-            <ApprovalCard
-              key={x.id}
-              title={x.employeeName}
-              meta={x.type + ' · ' + x.startDate + ' to ' + x.endDate}
-              amount={x.days + ' days'}
-              onApprove={() =>
-                action('/api/approvals/leave', { id: x.id, status: 'Approved' })
-              }
-              onReject={() =>
-                action('/api/approvals/leave', { id: x.id, status: 'Rejected' })
-              }
-              disabled={!canApprove}
-            />
-          ))}
-          {!pendingL.length && <Empty text="No leave approvals pending." />}
-        </div>
-      </div>
-    </section>
-  );
+function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, purchaseOrders, programmeReports, setProgrammeReports, role, canApprove, action }: any) {
+  const isSuperAdmin = role === 'admin';
+  const pending = (rows: any[]) => (rows || []).filter((x: any) => x.status === 'Pending');
+  const pendingF = pending(finance), pendingL = pending(leaves), pendingP = pending(payroll), pendingProc = pending(procurement), pendingV = pending(paymentVouchers), pendingPO = pending(purchaseOrders);
+  const pendingReports = (programmeReports || []).filter((x: any) => (x.review_status || 'PENDING_REVIEW') === 'PENDING_REVIEW');
+  const reject = (path: string, x: any) => { const reason = window.prompt('Please provide the reason for rejection (required):'); if (!reason || !reason.trim()) return; action(path, { id: x.id, status: 'Rejected', reason: reason.trim() }); };
+  const edit = (table: string, x: any) => {
+    if (!isSuperAdmin) return;
+    const fields: any = {};
+    const ask = (key: string, label: string, value: any) => { const next = window.prompt(label, String(value ?? '')); if (next === null) return false; fields[key] = next; return true; };
+    if (table === 'finance') { if (!ask('description','Description',x.description)||!ask('category','Category',x.category)||!ask('amount','Amount (ZMW)',x.amount)) return; }
+    else if (table === 'leaves') { if (!ask('startDate','Start date (YYYY-MM-DD)',x.startDate)||!ask('endDate','End date (YYYY-MM-DD)',x.endDate)||!ask('reason','Reason',x.reason)) return; }
+    else if (table === 'payroll') { if (!ask('gross','Gross salary (ZMW)',x.gross)||!ask('basicSalary','Basic salary (ZMW)',x.basicSalary)||!ask('otherDeductions','Other deductions (ZMW)',x.otherDeductions)) return; }
+    else if (table === 'procurement') { if (!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('vendor','Vendor',x.vendor)||!ask('amount','Amount (ZMW)',x.amount)||!ask('justification','Justification',x.justification)) return; }
+    else if (table === 'paymentVouchers') { if (!ask('code','Voucher reference',x.code)||!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('amount','Amount (ZMW)',x.amount)) return; }
+    action('/api/approvals/update', { table, id: x.id, fields });
+  };
+  const reviewProgramme = async (report: any, status: string) => {
+    let comment = '';
+    if (status === 'REJECTED' || status === 'RETURNED') { comment = window.prompt(status === 'REJECTED' ? 'Reason for rejection (required):' : 'Corrections required (required):', report.review_comment || '') || ''; if (!comment.trim()) return; }
+    try {
+      const response = await fetch('/api/admin/activity-reports/manage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, status, comment, actor: 'Super Admin' }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Unable to update programme report.');
+      const listResponse = await fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' }); const listData = await listResponse.json(); if (listResponse.ok) setProgrammeReports(listData.reports || []);
+    } catch (error: any) { window.alert(error?.message || 'Unable to update programme report.'); }
+  };
+  const editProgramme = async (report: any) => {
+    const title = window.prompt('Activity / report title', report.activity_title || ''); if (title === null) return;
+    const programme = window.prompt('Programme', report.programme || ''); if (programme === null) return;
+    const project = window.prompt('Project', report.project || ''); if (project === null) return;
+    try {
+      const response = await fetch('/api/admin/activity-reports/manage', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, fields: { activity_title: title, programme, project } }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Unable to edit programme report.');
+      const listResponse = await fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' }); const listData = await listResponse.json(); if (listResponse.ok) setProgrammeReports(listData.reports || []);
+    } catch (error: any) { window.alert(error?.message || 'Unable to edit programme report.'); }
+  };
+  const queueCount = pendingF.length + pendingL.length + pendingP.length + pendingProc.length + pendingV.length + pendingPO.length + pendingReports.length;
+  const card = (key: string, title: string, meta: string, amount: string, onApprove: any, onReject: any, onEdit?: any) => <ApprovalCard key={key} title={title} meta={meta} amount={amount} onApprove={onApprove} onReject={onReject} onEdit={onEdit} disabled={!canApprove} />;
+  return <section>
+    <div className="sectionTop"><div><h1>Central Approvals</h1><p>One review queue for Finance, HR, Procurement, Payroll and Programmes. Pending items: <strong>{queueCount}</strong>.</p></div></div>
+    {!canApprove && <div className="alert"><ShieldCheck size={17}/>You can view this queue, but your role does not have approval authority.</div>}
+    {[
+      {title:'Programmes', rows:pendingReports.map((x:any)=>card(x.reference,x.activity_title||x.reference,(x.programme||'Programme')+' · '+(x.reporter_full_name||'Submitted report'),x.reference,()=>reviewProgramme(x,'APPROVED'),()=>reviewProgramme(x,'REJECTED'),()=>editProgramme(x)))},
+      {title:'Finance', rows:pendingF.map((x:any)=>card(x.id,x.description||'Finance transaction',(x.category||'Finance')+' · '+(x.date||''),money(x.amount),()=>action('/api/approvals/finance',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/finance',x),()=>edit('finance',x)))},
+      {title:'Human Resources · Leave', rows:pendingL.map((x:any)=>card(x.id,x.employeeName||'Leave request',(x.type||'Leave')+' · '+(x.startDate||'')+' to '+(x.endDate||''),(x.days||0)+' days',()=>action('/api/approvals/leave',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/leave',x),()=>edit('leaves',x)))},
+      {title:'Payroll', rows:pendingP.map((x:any)=>card(x.id,x.employeeName||'Payroll record',(x.period||'')+' · Payroll',money(x.gross),()=>action('/api/approvals/payroll',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/payroll',x),()=>edit('payroll',x)))},
+      {title:'Procurement', rows:pendingProc.map((x:any)=>card(x.id,x.description||'Procurement request',(x.project||'')+' · '+(x.vendor||'Supplier not specified'),money(x.amount),()=>action('/api/procurement/approve',{id:x.id,status:'Approved'}),()=>reject('/api/procurement/approve',x),()=>edit('procurement',x)))},
+      {title:'Payment Vouchers', rows:pendingV.map((x:any)=>card(x.id,x.description||x.code||'Payment voucher',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/payment-voucher',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/payment-voucher',x),()=>edit('paymentVouchers',x)))},
+      {title:'Purchase Orders', rows:pendingPO.map((x:any)=>card(x.id,x.description||x.code||'Purchase order',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/purchase-order',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/purchase-order',x),()=>{}))},
+    ].map(group=><div className="panel" key={group.title} style={{marginBottom:16}}><div className="panelHead"><div><h3>{group.title}</h3><p>{group.rows.length} pending</p></div></div>{group.rows.length?group.rows:<Empty text={'No '+group.title.toLowerCase()+' approvals pending.'}/>}</div>)}
+  </section>;
 }
 
 function ApprovalCard({
@@ -781,6 +756,7 @@ function ApprovalCard({
   amount,
   onApprove,
   onReject,
+  onEdit,
   disabled,
 }: any) {
   return (
@@ -791,6 +767,7 @@ function ApprovalCard({
       </div>
       <b>{amount}</b>
       <div className="approvalBtns">
+        {onEdit && <button disabled={disabled} onClick={onEdit}>Edit</button>}
         <button disabled={disabled} onClick={onReject}>
           Reject
         </button>
