@@ -712,6 +712,7 @@ function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, pur
     else if (table === 'payroll') { if (!ask('gross','Gross salary (ZMW)',x.gross)||!ask('basicSalary','Basic salary (ZMW)',x.basicSalary)||!ask('otherDeductions','Other deductions (ZMW)',x.otherDeductions)) return; }
     else if (table === 'procurement') { if (!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('vendor','Vendor',x.vendor)||!ask('amount','Amount (ZMW)',x.amount)||!ask('justification','Justification',x.justification)) return; }
     else if (table === 'paymentVouchers') { if (!ask('code','Voucher reference',x.code)||!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('amount','Amount (ZMW)',x.amount)) return; }
+    else if (table === 'purchaseOrders') { if (!ask('code','Purchase order reference',x.code)||!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('supplier','Supplier',x.supplier)||!ask('amount','Amount (ZMW)',x.amount)) return; }
     action('/api/approvals/update', { table, id: x.id, fields });
   };
   const reviewProgramme = async (report: any, status: string) => {
@@ -745,7 +746,7 @@ function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, pur
       {title:'Payroll', rows:pendingP.map((x:any)=>card(x.id,x.employeeName||'Payroll record',(x.period||'')+' · Payroll',money(x.gross),()=>action('/api/approvals/payroll',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/payroll',x),()=>edit('payroll',x)))},
       {title:'Procurement', rows:pendingProc.map((x:any)=>card(x.id,x.description||'Procurement request',(x.project||'')+' · '+(x.vendor||'Supplier not specified'),money(x.amount),()=>action('/api/procurement/approve',{id:x.id,status:'Approved'}),()=>reject('/api/procurement/approve',x),()=>edit('procurement',x)))},
       {title:'Payment Vouchers', rows:pendingV.map((x:any)=>card(x.id,x.description||x.code||'Payment voucher',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/payment-voucher',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/payment-voucher',x),()=>edit('paymentVouchers',x)))},
-      {title:'Purchase Orders', rows:pendingPO.map((x:any)=>card(x.id,x.description||x.code||'Purchase order',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/purchase-order',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/purchase-order',x),undefined))},
+      {title:'Purchase Orders', rows:pendingPO.map((x:any)=>card(x.id,x.description||x.code||'Purchase order',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/purchase-order',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/purchase-order',x),()=>edit('purchaseOrders',x)))},
     ].map(group=><div className="panel" key={group.title} style={{marginBottom:16}}><div className="panelHead"><div><h3>{group.title}</h3><p>{group.rows.length} pending</p></div></div>{group.rows.length?group.rows:<Empty text={'No '+group.title.toLowerCase()+' approvals pending.'}/>}</div>)}
   </section>;
 }
