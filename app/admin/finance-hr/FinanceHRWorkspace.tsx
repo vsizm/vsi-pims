@@ -165,8 +165,8 @@ export default function App() {
     }
   };
   return (
-    <div className="finance-hr-root"><div className="shell">
-      <aside className={open ? 'sidebar open' : 'sidebar'}>
+    <div className="finance-hr-root"><div className="financeShell">
+      <aside className={open ? 'financeSidebar open' : 'financeSidebar'}>
         <div className="brand">
           <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
         </div>
@@ -204,8 +204,8 @@ export default function App() {
         </div>
       </aside>
       {open && <div className="backdrop" onClick={() => setOpen(false)} />}
-      <main className="main">
-        <header>
+      <main className="financeMain">
+        <header className="financeHeader">
           <button className="mobileMenu" onClick={() => setOpen(true)}>
             <Menu />
           </button>
