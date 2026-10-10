@@ -8,7 +8,7 @@ const ROLE_ACCESS = { admin: ['programmes', 'finance'], programmes: ['programmes
 
 const NAV = [
   ['Overview', '/admin'],
-  ['Programme Register', '/admin/programmes'],
+  ['Programme Register', '/admin/programme-register'],
   ['Activity Reports', '/admin/reports'],
   ['Finance', '/admin/finance-hr'],
   ['Approvals', '/admin/approvals'],
@@ -82,7 +82,7 @@ export default function AdminWorkspaceShell({ children }) {
         <div className="admin-workspace-label">WORKSPACE</div>
         <nav aria-label="VSI IMS Workspace">
           {NAV.filter(([label]) => label === 'Finance' ? ROLE_ACCESS[role]?.includes('finance') : label === 'Approvals' ? role === 'admin' : ROLE_ACCESS[role]?.includes('programmes')).map(([label, href]) => {
-            const active = label === 'Overview' ? pathname === '/admin' || pathname.startsWith('/admin/meal') : label === 'Programme Register' ? pathname === '/admin/programmes' || pathname.startsWith('/admin/programmes/') : label === 'Activity Reports' ? pathname.startsWith('/admin/reports') : pathname === href;
+            const active = label === 'Overview' ? pathname === '/admin' || pathname.startsWith('/admin/meal') : label === 'Programme Register' ? pathname === '/admin/programme-register' || pathname.startsWith('/admin/programmes/') : label === 'Activity Reports' ? pathname.startsWith('/admin/reports') : pathname === href;
             return <Link key={label} href={href} className={active ? 'active' : ''}>{label}</Link>;
           })}
         </nav>
