@@ -433,7 +433,7 @@ function HR({ employees, leaves, leaveBalances=[], role, action }: any) {
   const [profile,setProfile]=useState<any>(null);
   const [form,setForm]=useState<any>({employeeNo:'',name:'',department:'',position:'',employmentType:'Full-time',status:'Active',email:'',phone:'',startDate:'',salary:'',annualLeaveEntitlement:24,grade:'',supervisor:'',contractType:'Full-time',bankName:'',bankAccountNumber:'',bankBranch:'',paymentMethod:'Bank transfer'});
   const admin=['admin','hr'].includes(role);
-  const openProfile=async(id:string)=>{try{const r=await api.get('/api/hr/employees/profile',{id});setProfile(r.data)}catch(e:any){action('/api/_healthcheck',{});}};
+  const openProfile=async(id:string)=>{try{const r=await api.get('/api/hr/employees/profile',{id});setProfile(r.data)}catch(e:any){setError(e?.response?.data?.error||'Unable to load employee profile.');}};
   const statusChange=(e:any,status:string)=>{if(status===e.status)return;const reason=['On Leave','Suspended','Separated'].includes(status)?window.prompt('Reason for status change to '+status+':',''):'';if(['On Leave','Suspended','Separated'].includes(status)&&!String(reason||'').trim())return;action('/api/hr/employees/status',{id:e.id,status,reason});};
   return <section>
     <div className="sectionTop"><div><h1>People & HR</h1><p>Employee records, master data, leave management and workforce administration.</p></div>{admin&&<button className="primary" onClick={()=>setShow(true)}>+ Add employee</button>}</div>
