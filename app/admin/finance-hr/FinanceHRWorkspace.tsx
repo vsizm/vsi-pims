@@ -719,7 +719,7 @@ function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, pur
     let comment = '';
     if (status === 'REJECTED' || status === 'RETURNED') { comment = window.prompt(status === 'REJECTED' ? 'Reason for rejection (required):' : 'Corrections required (required):', report.review_comment || '') || ''; if (!comment.trim()) return; }
     try {
-      const response = await fetch('/api/admin/activity-reports/manage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, status, comment, actor: 'Super Admin' }) });
+      const response = await fetch('/api/admin/activity-reports/central-review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, status, comment, actor: 'Super Admin' }) });
       const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Unable to update programme report.');
       const listResponse = await fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' }); const listData = await listResponse.json(); if (listResponse.ok) setProgrammeReports(listData.reports || []);
     } catch (error: any) { window.alert(error?.message || 'Unable to update programme report.'); }
@@ -729,7 +729,7 @@ function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, pur
     const programme = window.prompt('Programme', report.programme || ''); if (programme === null) return;
     const project = window.prompt('Project', report.project || ''); if (project === null) return;
     try {
-      const response = await fetch('/api/admin/activity-reports/manage', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, fields: { activity_title: title, programme, project } }) });
+      const response = await fetch('/api/admin/activity-reports/central-review', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, fields: { activity_title: title, programme, project } }) });
       const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Unable to edit programme report.');
       const listResponse = await fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' }); const listData = await listResponse.json(); if (listResponse.ok) setProgrammeReports(listData.reports || []);
     } catch (error: any) { window.alert(error?.message || 'Unable to edit programme report.'); }
