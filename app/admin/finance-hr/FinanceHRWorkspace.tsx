@@ -735,7 +735,7 @@ function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, pur
     } catch (error: any) { window.alert(error?.message || 'Unable to edit programme report.'); }
   };
   const queueCount = pendingF.length + pendingL.length + pendingP.length + pendingProc.length + pendingV.length + pendingPO.length + pendingReports.length;
-  const card = (key: string, title: string, meta: string, amount: string, onApprove: any, onReject: any, onEdit?: any) => <ApprovalCard key={key} title={title} meta={meta} amount={amount} onApprove={onApprove} onReject={onReject} onEdit={onEdit} disabled={!canApprove} />;
+  const card = (key: string, title: string, meta: string, amount: string, onApprove: any, onReject: any, onEdit?: any) => <ApprovalCard key={key} title={title} meta={meta} amount={amount} onApprove={onApprove} onReject={onReject} onEdit={isSuperAdmin ? onEdit : undefined} disabled={!canApprove} />;
   return <section>
     <div className="sectionTop"><div><h1>Central Approvals</h1><p>One review queue for Finance, HR, Procurement, Payroll and Programmes. Pending items: <strong>{queueCount}</strong>.</p></div></div>
     {!canApprove && <div className="alert"><ShieldCheck size={17}/>You can view this queue, but your role does not have approval authority.</div>}
