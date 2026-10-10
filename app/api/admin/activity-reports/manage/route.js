@@ -29,6 +29,7 @@ export async function POST(request) {
   const allowedStatuses = ['PENDING_REVIEW', 'APPROVED', 'RETURNED', 'REJECTED'];
   if (!reference || !allowedStatuses.includes(status)) return Response.json({ error: 'Invalid review decision.' }, { status: 400 });
   if (typeof comment !== 'string' || comment.length > 2000) return Response.json({ error: 'Review comment is too long.' }, { status: 400 });
+  if (['REJECTED', 'RETURNED'].includes(status) && !comment.trim()) return Response.json({ error: status === 'REJECTED' ? 'A rejection reason is required.' : 'Correction instructions are required when returning a report.' }, { status: 400 });
   try {
     const sql = neon(process.env.DATABASE_URL);
     const updated = await sql`UPDATE activity_reports SET review_status = ${status}, reviewed_by = ${actor}, reviewed_at = NOW(), review_comment = ${comment || null}, updated_at = NOW() WHERE reference = ${reference} AND deleted_at IS NULL RETURNING reference`;

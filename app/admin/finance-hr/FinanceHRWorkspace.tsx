@@ -83,12 +83,13 @@ function money(n: number) {
   }).format(n);
 }
 
-export default function App() {
+export default function App({ approvalsOnly = false }: { approvalsOnly?: boolean }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState('dashboard');
+  const [page, setPage] = useState(approvalsOnly ? 'approvals' : 'dashboard');
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<any>({ employees: [], finance: [], leaves: [], users: [], audit: [], suppliers: [] });
+  const [programmeReports, setProgrammeReports] = useState<any[]>([]);
   const [error, setError] = useState('');
   const load = async () => {
     try {
@@ -110,6 +111,12 @@ export default function App() {
       }
     })();
   }, []);
+  useEffect(() => {
+    if (!approvalsOnly || !user) return;
+    fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' })
+      .then(async response => { const result = await response.json().catch(() => ({})); if (response.ok) setProgrammeReports(result.reports || []); })
+      .catch(() => setProgrammeReports([]));
+  }, [approvalsOnly, user]);
   if (loading)
     return (
       <div
@@ -165,7 +172,8 @@ export default function App() {
     }
   };
   return (
-    <div className="finance-hr-root"><div className="financeShell">
+    <div className="finance-hr-root"><div className="financeShell" style={approvalsOnly ? { gridTemplateColumns: 'minmax(0, 1fr)' } : undefined}>
+      {!approvalsOnly && (
       <aside className={open ? 'financeSidebar open' : 'financeSidebar'}>
         <div className="brand">
           <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
@@ -203,12 +211,14 @@ export default function App() {
           </button>
         </div>
       </aside>
-      {open && <div className="backdrop" onClick={() => setOpen(false)} />}
-      <main className="financeMain">
+      )}
+
+      {!approvalsOnly && open && <div className="backdrop" onClick={() => setOpen(false)} />}
+      <main className="financeMain" style={approvalsOnly ? { marginLeft: 0, width: '100%', padding: '0 24px 45px' } : undefined}>
         <header className="financeHeader">
-          <button className="mobileMenu" onClick={() => setOpen(true)}>
+          {!approvalsOnly && <button className="mobileMenu" onClick={() => setOpen(true)}>
             <Menu />
-          </button>
+          </button>}
           <div>
             <p className="eyebrow">VISIONARY STUDENTS INITIATIVE</p>
             <h2>{nav.find(x => x[0] === page)?.[1] || 'Dashboard'}</h2>
@@ -254,6 +264,13 @@ export default function App() {
           <Approvals
             finance={finance}
             leaves={leaves}
+            payroll={data.payroll || []}
+            procurement={data.procurement || []}
+            paymentVouchers={data.paymentVouchers || []}
+            purchaseOrders={data.purchaseOrders || []}
+            programmeReports={programmeReports}
+            setProgrammeReports={setProgrammeReports}
+            role={role}
             canApprove={canApprove}
             action={action}
           />
@@ -680,82 +697,58 @@ function Finance({ finance, role, action }: any) {
   );
 }
 
-function Approvals({ finance, leaves, canApprove, action }: any) {
-  const pendingF = finance.filter((x: any) => x.status === 'Pending'),
-    pendingL = leaves.filter((x: any) => x.status === 'Pending');
-  return (
-    <section>
-      <div className="sectionTop">
-        <div>
-          <h1>Approvals</h1>
-          <p>Review finance and HR requests with a clear audit trail.</p>
-        </div>
-      </div>
-      {!canApprove && (
-        <div className="alert">
-          <ShieldCheck size={17} />
-          You can view this queue, but your role does not have approval
-          authority.
-        </div>
-      )}
-      <div className="grid2">
-        <div className="panel">
-          <div className="panelHead">
-            <div>
-              <h3>Finance approvals</h3>
-              <p>{pendingF.length} pending</p>
-            </div>
-          </div>
-          {pendingF.map((x: any) => (
-            <ApprovalCard
-              key={x.id}
-              title={x.description}
-              meta={x.category + ' · ' + x.date}
-              amount={money(x.amount)}
-              onApprove={() =>
-                action('/api/approvals/finance', {
-                  id: x.id,
-                  status: 'Approved',
-                })
-              }
-              onReject={() =>
-                action('/api/approvals/finance', {
-                  id: x.id,
-                  status: 'Rejected',
-                })
-              }
-              disabled={!canApprove}
-            />
-          ))}
-          {!pendingF.length && <Empty text="No finance approvals pending." />}
-        </div>
-        <div className="panel">
-          <div className="panelHead">
-            <div>
-              <h3>Leave approvals</h3>
-              <p>{pendingL.length} pending</p>
-            </div>
-          </div>
-          {pendingL.map((x: any) => (
-            <ApprovalCard
-              key={x.id}
-              title={x.employeeName}
-              meta={x.type + ' · ' + x.startDate + ' to ' + x.endDate}
-              amount={x.days + ' days'}
-              onApprove={() =>
-                action('/api/approvals/leave', { id: x.id, status: 'Approved' })
-              }
-              onReject={() =>
-                action('/api/approvals/leave', { id: x.id, status: 'Rejected' })
-              }
-              disabled={!canApprove}
-            />
-          ))}
-          {!pendingL.length && <Empty text="No leave approvals pending." />}
-        </div>
-      </div>
-    </section>
-  );
+function Approvals({ finance, leaves, payroll, procurement, paymentVouchers, purchaseOrders, programmeReports, setProgrammeReports, role, canApprove, action }: any) {
+  const isSuperAdmin = role === 'admin';
+  const pending = (rows: any[]) => (rows || []).filter((x: any) => x.status === 'Pending');
+  const pendingF = pending(finance), pendingL = pending(leaves), pendingP = pending(payroll), pendingProc = pending(procurement), pendingV = pending(paymentVouchers), pendingPO = pending(purchaseOrders);
+  const pendingReports = (programmeReports || []).filter((x: any) => (x.review_status || 'PENDING_REVIEW') === 'PENDING_REVIEW');
+  const reject = (path: string, x: any) => { const reason = window.prompt('Please provide the reason for rejection (required):'); if (!reason || !reason.trim()) return; action(path, { id: x.id, status: 'Rejected', reason: reason.trim() }); };
+  const edit = (table: string, x: any) => {
+    if (!isSuperAdmin) return;
+    const fields: any = {};
+    const ask = (key: string, label: string, value: any) => { const next = window.prompt(label, String(value ?? '')); if (next === null) return false; fields[key] = next; return true; };
+    if (table === 'finance') { if (!ask('description','Description',x.description)||!ask('category','Category',x.category)||!ask('amount','Amount (ZMW)',x.amount)) return; }
+    else if (table === 'leaves') { if (!ask('startDate','Start date (YYYY-MM-DD)',x.startDate)||!ask('endDate','End date (YYYY-MM-DD)',x.endDate)||!ask('reason','Reason',x.reason)) return; }
+    else if (table === 'payroll') { if (!ask('gross','Gross salary (ZMW)',x.gross)||!ask('basicSalary','Basic salary (ZMW)',x.basicSalary)||!ask('otherDeductions','Other deductions (ZMW)',x.otherDeductions)) return; }
+    else if (table === 'procurement') { if (!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('vendor','Vendor',x.vendor)||!ask('amount','Amount (ZMW)',x.amount)||!ask('justification','Justification',x.justification)) return; }
+    else if (table === 'paymentVouchers') { if (!ask('code','Voucher reference',x.code)||!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('amount','Amount (ZMW)',x.amount)) return; }
+    else if (table === 'purchaseOrders') { if (!ask('code','Purchase order reference',x.code)||!ask('description','Description',x.description)||!ask('project','Project',x.project)||!ask('supplier','Supplier',x.supplier)||!ask('amount','Amount (ZMW)',x.amount)) return; }
+    action('/api/approvals/update', { table, id: x.id, fields });
+  };
+  const reviewProgramme = async (report: any, status: string) => {
+    let comment = '';
+    if (status === 'REJECTED' || status === 'RETURNED') { comment = window.prompt(status === 'REJECTED' ? 'Reason for rejection (required):' : 'Corrections required (required):', report.review_comment || '') || ''; if (!comment.trim()) return; }
+    try {
+      const response = await fetch('/api/admin/activity-reports/central-review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, status, comment, actor: 'Super Admin' }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Unable to update programme report.');
+      const listResponse = await fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' }); const listData = await listResponse.json(); if (listResponse.ok) setProgrammeReports(listData.reports || []);
+    } catch (error: any) { window.alert(error?.message || 'Unable to update programme report.'); }
+  };
+  const editProgramme = async (report: any) => {
+    const title = window.prompt('Activity / report title', report.activity_title || ''); if (title === null) return;
+    const programme = window.prompt('Programme', report.programme || ''); if (programme === null) return;
+    const project = window.prompt('Project', report.project || ''); if (project === null) return;
+    try {
+      const response = await fetch('/api/admin/activity-reports/central-review', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ reference: report.reference, fields: { activity_title: title, programme, project } }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Unable to edit programme report.');
+      const listResponse = await fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' }); const listData = await listResponse.json(); if (listResponse.ok) setProgrammeReports(listData.reports || []);
+    } catch (error: any) { window.alert(error?.message || 'Unable to edit programme report.'); }
+  };
+  const queueCount = pendingF.length + pendingL.length + pendingP.length + pendingProc.length + pendingV.length + pendingPO.length + pendingReports.length;
+  const card = (key: string, title: string, meta: string, amount: string, onApprove: any, onReject: any, onEdit?: any) => <ApprovalCard key={key} title={title} meta={meta} amount={amount} onApprove={onApprove} onReject={onReject} onEdit={isSuperAdmin ? onEdit : undefined} disabled={!canApprove} />;
+  return <section>
+    <div className="sectionTop"><div><h1>Central Approvals</h1><p>One review queue for Finance, HR, Procurement, Payroll and Programmes. Pending items: <strong>{queueCount}</strong>.</p></div></div>
+    {!canApprove && <div className="alert"><ShieldCheck size={17}/>You can view this queue, but your role does not have approval authority.</div>}
+    {[
+      {title:'Programmes', rows:pendingReports.map((x:any)=>card(x.reference,x.activity_title||x.reference,(x.programme||'Programme')+' · '+(x.reporter_full_name||'Submitted report'),x.reference,()=>reviewProgramme(x,'APPROVED'),()=>reviewProgramme(x,'REJECTED'),()=>editProgramme(x)))},
+      {title:'Finance', rows:pendingF.map((x:any)=>card(x.id,x.description||'Finance transaction',(x.category||'Finance')+' · '+(x.date||''),money(x.amount),()=>action('/api/approvals/finance',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/finance',x),()=>edit('finance',x)))},
+      {title:'Human Resources · Leave', rows:pendingL.map((x:any)=>card(x.id,x.employeeName||'Leave request',(x.type||'Leave')+' · '+(x.startDate||'')+' to '+(x.endDate||''),(x.days||0)+' days',()=>action('/api/approvals/leave',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/leave',x),()=>edit('leaves',x)))},
+      {title:'Payroll', rows:pendingP.map((x:any)=>card(x.id,x.employeeName||'Payroll record',(x.period||'')+' · Payroll',money(x.gross),()=>action('/api/approvals/payroll',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/payroll',x),()=>edit('payroll',x)))},
+      {title:'Procurement', rows:pendingProc.map((x:any)=>card(x.id,x.description||'Procurement request',(x.project||'')+' · '+(x.vendor||'Supplier not specified'),money(x.amount),()=>action('/api/procurement/approve',{id:x.id,status:'Approved'}),()=>reject('/api/procurement/approve',x),()=>edit('procurement',x)))},
+      {title:'Payment Vouchers', rows:pendingV.map((x:any)=>card(x.id,x.description||x.code||'Payment voucher',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/payment-voucher',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/payment-voucher',x),()=>edit('paymentVouchers',x)))},
+      {title:'Purchase Orders', rows:pendingPO.map((x:any)=>card(x.id,x.description||x.code||'Purchase order',(x.project||'')+' · '+(x.code||''),money(x.amount),()=>action('/api/approvals/purchase-order',{id:x.id,status:'Approved'}),()=>reject('/api/approvals/purchase-order',x),()=>edit('purchaseOrders',x)))},
+    ].map(group=><div className="panel" key={group.title} style={{marginBottom:16}}><div className="panelHead"><div><h3>{group.title}</h3><p>{group.rows.length} pending</p></div></div>{group.rows.length?group.rows:<Empty text={'No '+group.title.toLowerCase()+' approvals pending.'}/>}</div>)}
+  </section>;
 }
 
 function ApprovalCard({
@@ -764,6 +757,7 @@ function ApprovalCard({
   amount,
   onApprove,
   onReject,
+  onEdit,
   disabled,
 }: any) {
   return (
@@ -774,6 +768,7 @@ function ApprovalCard({
       </div>
       <b>{amount}</b>
       <div className="approvalBtns">
+        {onEdit && <button disabled={disabled} onClick={onEdit}>Edit</button>}
         <button disabled={disabled} onClick={onReject}>
           Reject
         </button>
@@ -839,10 +834,10 @@ function Accounting({data,role,action}:any){const [tab,setTab]=useState('budget'
 
 function Suppliers({data,role,action}:any){const [show,setShow]=useState(false);const [form,setForm]=useState<any>({name:'',contact:'',taxNo:'',category:''});const can=['admin','finance','director'].includes(role);const rows=data.suppliers||[];return <section><div className="sectionTop"><div><h1>Suppliers & Procurement</h1><p>Supplier register and procurement governance workspace.</p></div>{can&&<button className="primary" onClick={()=>{setForm({name:'',contact:'',taxNo:'',category:''});setShow(true)}}>+ Supplier</button>}</div><div className="panel tableWrap"><table><thead><tr><th>Supplier</th><th>Contact</th><th>Tax / TPIN</th><th>Category</th><th>Status</th></tr></thead><tbody>{rows.map((x:any)=><tr key={x.id}><td><strong>{x.name}</strong></td><td>{x.contact||'—'}</td><td>{x.taxNo||'—'}</td><td>{x.category||'—'}</td><td><span className="badge green">{x.status}</span></td></tr>)}{!rows.length&&<tr><td colSpan={5}><Empty text="No suppliers registered yet."/></td></tr>}</tbody></table></div>{show&&<Modal title="Add supplier" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();action('/api/suppliers',{...form});setShow(false)}}><label>Supplier name<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Contact<input value={form.contact} onChange={e=>setForm({...form,contact:e.target.value})}/></label><label>Tax / TPIN<input value={form.taxNo} onChange={e=>setForm({...form,taxNo:e.target.value})}/></label><label>Category<input value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/></label><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Save supplier</button></div></form></Modal>}</section>}
 
-function Payroll({data,employees,role,action}:any){const [tab,setTab]=useState('register');const [show,setShow]=useState(false);const [period,setPeriod]=useState(new Date().toISOString().slice(0,7));const [summary,setSummary]=useState<any>(null);const [summaryLoading,setSummaryLoading]=useState(false);const [form,setForm]=useState<any>({employeeId:'',period:new Date().toISOString().slice(0,7),gross:'',basicSalary:'',otherDeductions:'0'});const canPrepare=['admin','hr','finance','director'].includes(role);const canControl=['admin','finance','director'].includes(role);const canUnlock=['admin','director'].includes(role);const periods=data.payrollPeriods||[];const status=periods.find((x:any)=>x.period===period)?.status||'Open';const rows=(data||[]).filter((x:any)=>!period||x.period===period);const loadSummary=async()=>{setSummaryLoading(true);try{const r=await api.get('/api/hr/payroll/statutory-summary',{period});setSummary(r.data);}catch(e){setSummary(null)}finally{setSummaryLoading(false)}};const exportCsv=()=>{const header=['Employee','Employee No','Period','Gross','PAYE','Employee NAPSA','Employee NHIMA','Other deductions','Net','Employer NAPSA','Employer NHIMA','Employer cost','Status'];const body=rows.map((x:any)=>[x.employeeName,x.employeeNo||'',x.period,x.gross||0,x.paye||0,x.napsa||0,x.nhima||0,x.otherDeductions||0,x.net||0,x.employerNapsa||0,x.employerNhima||0,x.employerCost||0,x.status]);const csv=[header,...body].map((r:any[])=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download='vsi-payroll-'+period+'.csv';a.click();URL.revokeObjectURL(url)};return <section><div className="sectionTop"><div><h1>Payroll</h1><p>Statutory payroll preparation, approval, register and period controls.</p></div><div className="rowActions">{canPrepare&&status==='Open'&&<button className="primary" onClick={()=>{setForm({employeeId:'',period,gross:'',basicSalary:'',otherDeductions:'0'});setShow(true)}}>+ Prepare payroll</button>}{tab==='register'&&rows.length>0&&<button onClick={exportCsv}>Export CSV</button>}</div></div><div className="cards"><Metric title="Gross payroll" value={money(rows.reduce((s:number,x:any)=>s+Number(x.gross||0),0))} icon={WalletCards} note={period}/><Metric title="PAYE" value={money(rows.reduce((s:number,x:any)=>s+Number(x.paye||0),0))} icon={CircleDollarSign} note="Approved records"/><Metric title="Employee NAPSA" value={money(rows.reduce((s:number,x:any)=>s+Number(x.napsa||0),0))} icon={ShieldCheck} note="5% capped contribution"/><Metric title="Net payroll" value={money(rows.reduce((s:number,x:any)=>s+Number(x.net||0),0))} icon={Users} note="After statutory deductions"/></div><div className="tabs"><button className={tab==='register'?'selected':''} onClick={()=>setTab('register')}>Payroll Register</button><button className={tab==='summary'?'selected':''} onClick={()=>{setTab('summary');loadSummary()}}>Statutory Summary</button><button className={tab==='periods'?'selected':''} onClick={()=>setTab('periods')}>Period Control</button></div><div className="panel" style={{marginBottom:16}}><div className="formGrid"><label>Payroll period<input type="month" value={period} onChange={e=>{setPeriod(e.target.value);setSummary(null)}}/></label><div><span className="eyebrow">PERIOD STATUS</span><div><span className={'badge '+(status==='Locked'?'red':'green')}>{status}</span></div></div></div></div>{tab==='register'&&<div className="panel tableWrap"><table><thead><tr><th>Employee</th><th>Period</th><th>Gross</th><th>PAYE</th><th>NAPSA</th><th>NHIMA</th><th>Other</th><th>Net</th><th>Status</th></tr></thead><tbody>{rows.map((x:any)=><tr key={x.id}><td><strong>{x.employeeName}</strong><span>{x.employeeNo||''}</span></td><td>{x.period}</td><td>{money(x.gross||0)}</td><td>{money(x.paye||0)}</td><td>{money(x.napsa||0)}</td><td>{money(x.nhima||0)}</td><td>{money(x.otherDeductions??x.deductions??0)}</td><td><strong>{money(x.net||0)}</strong></td><td><span className="rowActions">{x.status==='Approved'&&<button onClick={()=>{const w=window.open('','_blank','width=760,height=900');if(w){w.document.write('<html><head><title>VSI Payslip</title></head><body><h1>VSI Finance & HR</h1><p>PAYSLIP — '+x.period+'</p><p><b>Employee:</b> '+(x.employeeName||'')+'<br><b>Employee No:</b> '+(x.employeeNo||'')+'</p><table><tr><td>Gross salary</td><td>'+money(x.gross||0)+'</td></tr><tr><td>PAYE</td><td>'+money(x.paye||0)+'</td></tr><tr><td>NAPSA</td><td>'+money(x.napsa||0)+'</td></tr><tr><td>NHIMA</td><td>'+money(x.nhima||0)+'</td></tr><tr><td>Other deductions</td><td>'+money(x.otherDeductions??x.deductions??0)+'</td></tr><tr><td><b>NET PAY</b></td><td><b>'+money(x.net||0)+'</b></td></tr></table><p>Employer NAPSA: '+money(x.employerNapsa||0)+'<br>Employer NHIMA: '+money(x.employerNhima||0)+'<br>Employer cost: '+money(x.employerCost||0)+'</p><script>window.print()</script></body></html>');w.document.close()}}}>Payslip</button>}{x.status==='Pending'&&canPrepare?<span className="rowActions"><button onClick={()=>action('/api/approvals/payroll',{id:x.id,status:'Rejected'})}>Reject</button><button className="primary" onClick={()=>action('/api/approvals/payroll',{id:x.id,status:'Approved'})}>Approve</button></span>:<span className={'badge '+(x.status==='Approved'?'green':x.status==='Rejected'?'red':'amber')}>{x.status}</span>}</span></td></tr>)}{!rows.length&&<tr><td colSpan={9}><Empty text="No payroll records for this period."/></td></tr>}</tbody></table></div>}{tab==='summary'&&<div className="cards"><Metric title="Approved employees" value={summaryLoading?'…':summary?.employees||0} icon={Users} note={period}/><Metric title="PAYE" value={summaryLoading?'…':money(summary?.paye||0)} icon={CircleDollarSign} note="Tax withheld"/><Metric title="NAPSA total" value={summaryLoading?'…':money((summary?.employeeNapsa||0)+(summary?.employerNapsa||0))} icon={ShieldCheck} note="Employee + employer"/><Metric title="NHIMA total" value={summaryLoading?'…':money((summary?.employeeNhima||0)+(summary?.employerNhima||0))} icon={WalletCards} note="Employee + employer"/><Metric title="Employer cost" value={summaryLoading?'…':money(summary?.employerCost||0)} icon={BriefcaseBusiness} note="Gross + employer contributions"/><Metric title="Net payroll" value={summaryLoading?'…':money(summary?.net||0)} icon={BarChart3} note="Approved payroll"/></div>}{tab==='periods'&&<div className="panel tableWrap"><table><thead><tr><th>Period</th><th>Status</th><th>Locked / updated</th><th>Action</th></tr></thead><tbody>{periods.length?periods.map((x:any)=><tr key={x.id}><td>{x.period}</td><td><span className={'badge '+(x.status==='Locked'?'red':'green')}>{x.status}</span></td><td>{x.lockedAt||x.unlockedAt||'—'}</td><td><span className="rowActions">{x.status!=='Locked'&&canControl&&<button className="primary" onClick={()=>action('/api/hr/payroll/period-lock',{period:x.period})}>Lock</button>}{x.status==='Locked'&&canUnlock&&<button onClick={()=>action('/api/hr/payroll/period-unlock',{period:x.period})}>Unlock</button>}</span></td></tr>):<tr><td colSpan={4}><Empty text="No payroll periods have been locked yet."/></td></tr>}</tbody></table></div>}{show&&<Modal title="Prepare statutory payroll" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();action('/api/hr/payroll',{...form,gross:Number(form.gross),basicSalary:Number(form.basicSalary||form.gross),otherDeductions:Number(form.otherDeductions||0)});setShow(false)}}><label>Employee<select required value={form.employeeId} onChange={e=>setForm({...form,employeeId:e.target.value})}><option value="">Select employee</option>{employees.map((x:any)=><option key={x.id} value={x.id}>{x.name} — {x.employeeNo}</option>)}</select></label><label>Period<input type="month" required value={form.period} onChange={e=>setForm({...form,period:e.target.value})}/></label><label>Gross salary (ZMW)<input type="number" min="0.01" step="0.01" required value={form.gross} onChange={e=>setForm({...form,gross:e.target.value})}/></label><label>Basic salary (ZMW)<input type="number" min="0" required value={form.basicSalary} onChange={e=>setForm({...form,basicSalary:e.target.value})}/></label><label>Other deductions (ZMW)<input type="number" min="0" value={form.otherDeductions} onChange={e=>setForm({...form,otherDeductions:e.target.value})}/></label><div className="wide"><p>Statutory deductions are calculated by the system: PAYE, NAPSA and NHIMA. The record remains pending until approved by an authorised reviewer.</p></div><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Calculate & save</button></div></form></Modal>}</section>}
+function Payroll({data,employees,role,action}:any){const [tab,setTab]=useState('register');const [show,setShow]=useState(false);const [period,setPeriod]=useState(new Date().toISOString().slice(0,7));const [summary,setSummary]=useState<any>(null);const [summaryLoading,setSummaryLoading]=useState(false);const [form,setForm]=useState<any>({employeeId:'',period:new Date().toISOString().slice(0,7),gross:'',basicSalary:'',otherDeductions:'0'});const canPrepare=['admin','hr','finance','director'].includes(role);const canControl=['admin','finance','director'].includes(role);const canUnlock=['admin','director'].includes(role);const periods=data.payrollPeriods||[];const status=periods.find((x:any)=>x.period===period)?.status||'Open';const rows=(data||[]).filter((x:any)=>!period||x.period===period);const loadSummary=async()=>{setSummaryLoading(true);try{const r=await api.get('/api/hr/payroll/statutory-summary',{period});setSummary(r.data);}catch(e){setSummary(null)}finally{setSummaryLoading(false)}};const exportCsv=()=>{const header=['Employee','Employee No','Period','Gross','PAYE','Employee NAPSA','Employee NHIMA','Other deductions','Net','Employer NAPSA','Employer NHIMA','Employer cost','Status'];const body=rows.map((x:any)=>[x.employeeName,x.employeeNo||'',x.period,x.gross||0,x.paye||0,x.napsa||0,x.nhima||0,x.otherDeductions||0,x.net||0,x.employerNapsa||0,x.employerNhima||0,x.employerCost||0,x.status]);const csv=[header,...body].map((r:any[])=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download='vsi-payroll-'+period+'.csv';a.click();URL.revokeObjectURL(url)};return <section><div className="sectionTop"><div><h1>Payroll</h1><p>Statutory payroll preparation, approval, register and period controls.</p></div><div className="rowActions">{canPrepare&&status==='Open'&&<button className="primary" onClick={()=>{setForm({employeeId:'',period,gross:'',basicSalary:'',otherDeductions:'0'});setShow(true)}}>+ Prepare payroll</button>}{tab==='register'&&rows.length>0&&<button onClick={exportCsv}>Export CSV</button>}</div></div><div className="cards"><Metric title="Gross payroll" value={money(rows.reduce((s:number,x:any)=>s+Number(x.gross||0),0))} icon={WalletCards} note={period}/><Metric title="PAYE" value={money(rows.reduce((s:number,x:any)=>s+Number(x.paye||0),0))} icon={CircleDollarSign} note="Approved records"/><Metric title="Employee NAPSA" value={money(rows.reduce((s:number,x:any)=>s+Number(x.napsa||0),0))} icon={ShieldCheck} note="5% capped contribution"/><Metric title="Net payroll" value={money(rows.reduce((s:number,x:any)=>s+Number(x.net||0),0))} icon={Users} note="After statutory deductions"/></div><div className="tabs"><button className={tab==='register'?'selected':''} onClick={()=>setTab('register')}>Payroll Register</button><button className={tab==='summary'?'selected':''} onClick={()=>{setTab('summary');loadSummary()}}>Statutory Summary</button><button className={tab==='periods'?'selected':''} onClick={()=>setTab('periods')}>Period Control</button></div><div className="panel" style={{marginBottom:16}}><div className="formGrid"><label>Payroll period<input type="month" value={period} onChange={e=>{setPeriod(e.target.value);setSummary(null)}}/></label><div><span className="eyebrow">PERIOD STATUS</span><div><span className={'badge '+(status==='Locked'?'red':'green')}>{status}</span></div></div></div></div>{tab==='register'&&<div className="panel tableWrap"><table><thead><tr><th>Employee</th><th>Period</th><th>Gross</th><th>PAYE</th><th>NAPSA</th><th>NHIMA</th><th>Other</th><th>Net</th><th>Status</th></tr></thead><tbody>{rows.map((x:any)=><tr key={x.id}><td><strong>{x.employeeName}</strong><span>{x.employeeNo||''}</span></td><td>{x.period}</td><td>{money(x.gross||0)}</td><td>{money(x.paye||0)}</td><td>{money(x.napsa||0)}</td><td>{money(x.nhima||0)}</td><td>{money(x.otherDeductions??x.deductions??0)}</td><td><strong>{money(x.net||0)}</strong></td><td><span className="rowActions">{x.status==='Approved'&&<button onClick={()=>{const w=window.open('','_blank','width=760,height=900');if(w){w.document.write('<html><head><title>VSI Payslip</title></head><body><h1>VSI Finance & HR</h1><p>PAYSLIP — '+x.period+'</p><p><b>Employee:</b> '+(x.employeeName||'')+'<br><b>Employee No:</b> '+(x.employeeNo||'')+'</p><table><tr><td>Gross salary</td><td>'+money(x.gross||0)+'</td></tr><tr><td>PAYE</td><td>'+money(x.paye||0)+'</td></tr><tr><td>NAPSA</td><td>'+money(x.napsa||0)+'</td></tr><tr><td>NHIMA</td><td>'+money(x.nhima||0)+'</td></tr><tr><td>Other deductions</td><td>'+money(x.otherDeductions??x.deductions??0)+'</td></tr><tr><td><b>NET PAY</b></td><td><b>'+money(x.net||0)+'</b></td></tr></table><p>Employer NAPSA: '+money(x.employerNapsa||0)+'<br>Employer NHIMA: '+money(x.employerNhima||0)+'<br>Employer cost: '+money(x.employerCost||0)+'</p><script>window.print()</script></body></html>');w.document.close()}}}>Payslip</button>}{x.status==='Pending'&&canPrepare?<span className="rowActions"><button onClick={()=>{const reason=window.prompt('Reason for rejection (required):');if(reason&&reason.trim())action('/api/approvals/payroll',{id:x.id,status:'Rejected',reason:reason.trim()})}}>Reject</button><button className="primary" onClick={()=>action('/api/approvals/payroll',{id:x.id,status:'Approved'})}>Approve</button></span>:<span className={'badge '+(x.status==='Approved'?'green':x.status==='Rejected'?'red':'amber')}>{x.status}</span>}</span></td></tr>)}{!rows.length&&<tr><td colSpan={9}><Empty text="No payroll records for this period."/></td></tr>}</tbody></table></div>}{tab==='summary'&&<div className="cards"><Metric title="Approved employees" value={summaryLoading?'…':summary?.employees||0} icon={Users} note={period}/><Metric title="PAYE" value={summaryLoading?'…':money(summary?.paye||0)} icon={CircleDollarSign} note="Tax withheld"/><Metric title="NAPSA total" value={summaryLoading?'…':money((summary?.employeeNapsa||0)+(summary?.employerNapsa||0))} icon={ShieldCheck} note="Employee + employer"/><Metric title="NHIMA total" value={summaryLoading?'…':money((summary?.employeeNhima||0)+(summary?.employerNhima||0))} icon={WalletCards} note="Employee + employer"/><Metric title="Employer cost" value={summaryLoading?'…':money(summary?.employerCost||0)} icon={BriefcaseBusiness} note="Gross + employer contributions"/><Metric title="Net payroll" value={summaryLoading?'…':money(summary?.net||0)} icon={BarChart3} note="Approved payroll"/></div>}{tab==='periods'&&<div className="panel tableWrap"><table><thead><tr><th>Period</th><th>Status</th><th>Locked / updated</th><th>Action</th></tr></thead><tbody>{periods.length?periods.map((x:any)=><tr key={x.id}><td>{x.period}</td><td><span className={'badge '+(x.status==='Locked'?'red':'green')}>{x.status}</span></td><td>{x.lockedAt||x.unlockedAt||'—'}</td><td><span className="rowActions">{x.status!=='Locked'&&canControl&&<button className="primary" onClick={()=>action('/api/hr/payroll/period-lock',{period:x.period})}>Lock</button>}{x.status==='Locked'&&canUnlock&&<button onClick={()=>action('/api/hr/payroll/period-unlock',{period:x.period})}>Unlock</button>}</span></td></tr>):<tr><td colSpan={4}><Empty text="No payroll periods have been locked yet."/></td></tr>}</tbody></table></div>}{show&&<Modal title="Prepare statutory payroll" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();action('/api/hr/payroll',{...form,gross:Number(form.gross),basicSalary:Number(form.basicSalary||form.gross),otherDeductions:Number(form.otherDeductions||0)});setShow(false)}}><label>Employee<select required value={form.employeeId} onChange={e=>setForm({...form,employeeId:e.target.value})}><option value="">Select employee</option>{employees.map((x:any)=><option key={x.id} value={x.id}>{x.name} — {x.employeeNo}</option>)}</select></label><label>Period<input type="month" required value={form.period} onChange={e=>setForm({...form,period:e.target.value})}/></label><label>Gross salary (ZMW)<input type="number" min="0.01" step="0.01" required value={form.gross} onChange={e=>setForm({...form,gross:e.target.value})}/></label><label>Basic salary (ZMW)<input type="number" min="0" required value={form.basicSalary} onChange={e=>setForm({...form,basicSalary:e.target.value})}/></label><label>Other deductions (ZMW)<input type="number" min="0" value={form.otherDeductions} onChange={e=>setForm({...form,otherDeductions:e.target.value})}/></label><div className="wide"><p>Statutory deductions are calculated by the system: PAYE, NAPSA and NHIMA. The record remains pending until approved by an authorised reviewer.</p></div><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Calculate & save</button></div></form></Modal>}</section>}
 
-function Contracts({data,employees,role,action}:any){const [show,setShow]=useState(false);const today=new Date();const expiring=data.filter((x:any)=>x.endDate).map((x:any)=>({...x,daysLeft:Math.ceil((new Date(x.endDate).getTime()-today.getTime())/86400000)})).filter((x:any)=>x.daysLeft>=0&&x.daysLeft<=90).sort((a:any,b:any)=>a.daysLeft-b.daysLeft);const [form,setForm]=useState<any>({employeeId:'',type:'Employment',startDate:'',endDate:'',salary:'',notes:''});const can=['admin','hr','finance','director'].includes(role);return <section><div className="sectionTop"><div><h1>Employment Contracts</h1><p>Track contract terms, dates, status and renewal information.</p></div>{can&&<button className="primary" onClick={()=>setShow(true)}>+ New contract</button>}</div><div className="panel tableWrap"><table><thead><tr><th>Employee</th><th>Type</th><th>Start</th><th>End</th><th>Salary</th><th>Status</th></tr></thead><tbody>{data.map((x:any)=><tr key={x.id}><td>{x.employeeName||employees.find((e:any)=>e.id===x.employeeId)?.name||x.employeeId}</td><td>{x.type}</td><td>{x.startDate}</td><td>{x.endDate||'Open-ended'}</td><td>{x.salary?money(x.salary):'—'}</td><td><span className="badge green">{x.status}</span></td></tr>)}{!data.length&&<tr><td colSpan={6}><Empty text="No employment contracts recorded yet."/></td></tr>}</tbody></table></div>{show&&<Modal title="New employment contract" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();const employee=employees.find((x:any)=>x.id===form.employeeId);action('/api/hr/contracts',{...form,employeeName:employee?.name||''});setShow(false)}}><label>Employee<select required value={form.employeeId} onChange={e=>setForm({...form,employeeId:e.target.value})}><option value="">Select employee</option>{employees.map((x:any)=><option key={x.id} value={x.id}>{x.name} — {x.employeeNo}</option>)}</select></label><label>Contract type<select value={form.type} onChange={e=>setForm({...form,type:e.target.value})}><option>Employment</option><option>Fixed-term</option><option>Consultancy</option><option>Volunteer</option><option>Internship</option></select></label><label>Start date<input type="date" required value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})}/></label><label>End date<input type="date" value={form.endDate} onChange={e=>setForm({...form,endDate:e.target.value})}/></label><label>Salary (ZMW)<input type="number" min="0" value={form.salary} onChange={e=>setForm({...form,salary:e.target.value})}/></label><label className="wide">Notes<input value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></label><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Save contract</button></div></form></Modal>}</section>}
-function Procurement({data,role,action}:any){const [show,setShow]=useState(false);const [form,setForm]=useState<any>({description:'',project:'',vendor:'',amount:'',justification:''});return <section><div className="sectionTop"><div><h1>Procurement</h1><p>Requests, supplier details and approval controls.</p></div><button className="primary" onClick={()=>setShow(true)}>+ Request procurement</button></div><div className="panel tableWrap"><table><thead><tr><th>Request</th><th>Project</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>{data.map((x:any)=><tr key={x.id}><td><strong>{x.description}</strong><span>{x.requestedBy}</span></td><td>{x.project}</td><td>{x.vendor||'—'}</td><td>{money(x.amount)}</td><td><span className={'badge '+(x.status==='Approved'?'green':x.status==='Rejected'?'red':'amber')}>{x.status}</span></td><td>{x.status==='Pending'&&['admin','finance','director'].includes(role)&&<span className="rowActions"><button onClick={()=>action('/api/procurement/approve',{id:x.id,status:'Rejected'})}>Reject</button><button className="primary" onClick={()=>action('/api/procurement/approve',{id:x.id,status:'Approved'})}>Approve</button></span>}</td></tr>)}</tbody></table></div>{show&&<Modal title="Procurement request" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();action('/api/procurement',form);setShow(false)}}><label className="wide">Description<input required value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><label>Project / donor code<input required value={form.project} onChange={e=>setForm({...form,project:e.target.value})}/></label><label>Vendor / supplier<input value={form.vendor} onChange={e=>setForm({...form,vendor:e.target.value})}/></label><label>Amount (ZMW)<input type="number" min="0.01" step="0.01" required value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/></label><label className="wide">Justification<input value={form.justification} onChange={e=>setForm({...form,justification:e.target.value})}/></label><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Submit request</button></div></form></Modal>}</section>}
+function Contracts({data,employees,role,action}:any){const [show,setShow]=useState(false);const today=new Date();const expiring=data.filter((x:any)=>x.endDate).map((x:any)=>({...x,daysLeft:Math.ceil((new Date(x.endDate).getTime()-today.getTime())/86400000)})).filter((x:any)=>x.daysLeft>=0&&x.daysLeft<=90).sort((a:any,b:any)=>a.daysLeft-b.daysLeft);const [form,setForm]=useState<any>({employeeId:'',type:'Employment',startDate:'',endDate:'',salary:'',notes:''});const can=['admin','hr','finance','director'].includes(role);return <section><div className="sectionTop"><div><h1>Employment Contracts</h1><p>Track contract terms, dates, status and renewal information.</p></div>{can&&<button className="primary" onClick={()=>setShow(true)}>+ New contract</button>}</div><div className="panel tableWrap"><table><thead><tr><th>Employee</th><th>Type</th><th>Start</th><th>End</th><th>Salary</th><th>Status</th></tr></thead><tbody>{data.map((x:any)=><tr key={x.id}><td>{x.employeeName||employees.find((e:any)=>e.id===x.employeeId)?.name||x.employeeId}</td><td>{x.type}</td><td>{x.startDate}</td><td>{x.endDate||'Open-ended'}</td><td>{x.salary?money(x.salary):'—'}</td><td><span className={'badge '+(x.endDate && x.endDate < new Date().toISOString().slice(0,10) ? 'red' : (x.startDate && x.startDate > new Date().toISOString().slice(0,10) ? 'amber' : 'green'))}>{x.endDate && x.endDate < new Date().toISOString().slice(0,10) ? 'Expired' : (x.startDate && x.startDate > new Date().toISOString().slice(0,10) ? 'Upcoming' : (['Terminated','Cancelled'].includes(x.status) ? x.status : 'Active'))}</span></td></tr>)}{!data.length&&<tr><td colSpan={6}><Empty text="No employment contracts recorded yet."/></td></tr>}</tbody></table></div>{show&&<Modal title="New employment contract" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();const employee=employees.find((x:any)=>x.id===form.employeeId);action('/api/hr/contracts',{...form,employeeName:employee?.name||''});setShow(false)}}><label>Employee<select required value={form.employeeId} onChange={e=>setForm({...form,employeeId:e.target.value})}><option value="">Select employee</option>{employees.map((x:any)=><option key={x.id} value={x.id}>{x.name} — {x.employeeNo}</option>)}</select></label><label>Contract type<select value={form.type} onChange={e=>setForm({...form,type:e.target.value})}><option>Employment</option><option>Fixed-term</option><option>Consultancy</option><option>Volunteer</option><option>Internship</option></select></label><label>Start date<input type="date" required value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})}/></label><label>End date<input type="date" value={form.endDate} onChange={e=>setForm({...form,endDate:e.target.value})}/></label><label>Salary (ZMW)<input type="number" min="0" value={form.salary} onChange={e=>setForm({...form,salary:e.target.value})}/></label><label className="wide">Notes<input value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></label><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Save contract</button></div></form></Modal>}</section>}
+function Procurement({data,role,action}:any){const [show,setShow]=useState(false);const [form,setForm]=useState<any>({description:'',project:'',vendor:'',amount:'',justification:''});return <section><div className="sectionTop"><div><h1>Procurement</h1><p>Requests, supplier details and approval controls.</p></div><button className="primary" onClick={()=>setShow(true)}>+ Request procurement</button></div><div className="panel tableWrap"><table><thead><tr><th>Request</th><th>Project</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>{data.map((x:any)=><tr key={x.id}><td><strong>{x.description}</strong><span>{x.requestedBy}</span></td><td>{x.project}</td><td>{x.vendor||'—'}</td><td>{money(x.amount)}</td><td><span className={'badge '+(x.status==='Approved'?'green':x.status==='Rejected'?'red':'amber')}>{x.status}</span></td><td>{x.status==='Pending'&&['admin','finance','director'].includes(role)&&<span className="rowActions"><button onClick={()=>{const reason=window.prompt('Reason for rejection (required):');if(reason&&reason.trim())action('/api/procurement/approve',{id:x.id,status:'Rejected',reason:reason.trim()})}}>Reject</button><button className="primary" onClick={()=>action('/api/procurement/approve',{id:x.id,status:'Approved'})}>Approve</button></span>}</td></tr>)}</tbody></table></div>{show&&<Modal title="Procurement request" onClose={()=>setShow(false)}><form className="formGrid" onSubmit={e=>{e.preventDefault();action('/api/procurement',form);setShow(false)}}><label className="wide">Description<input required value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><label>Project / donor code<input required value={form.project} onChange={e=>setForm({...form,project:e.target.value})}/></label><label>Vendor / supplier<input value={form.vendor} onChange={e=>setForm({...form,vendor:e.target.value})}/></label><label>Amount (ZMW)<input type="number" min="0.01" step="0.01" required value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/></label><label className="wide">Justification<input value={form.justification} onChange={e=>setForm({...form,justification:e.target.value})}/></label><div className="formActions"><button type="button" onClick={()=>setShow(false)}>Cancel</button><button className="primary">Submit request</button></div></form></Modal>}</section>}
 function Projects({data,role,action}:any){
   const [show,setShow]=useState(false);
   const [form,setForm]=useState<any>({code:'',name:'',donor:'',budget:'',endDate:'',fundingType:'Unrestricted',restrictedPurpose:''});

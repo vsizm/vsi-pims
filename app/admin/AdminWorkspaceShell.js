@@ -7,12 +7,9 @@ import { useEffect, useState } from 'react';
 const ROLE_ACCESS = { admin: ['programmes', 'finance'], programmes: ['programmes'], finance: ['finance'] };
 
 const NAV = [
-  ['Activity Reports', '/admin/reports'],
-  ['MEAL Intelligence', '/admin/meal'],
-  ['Finance Intelligence', '/admin/finance'],
-  ['Finance & HR', '/admin/finance-hr'],
-  ['Directorates', '/admin/directorates'],
-  ['Follow-up Actions', '/admin/follow-up-actions'],
+  ['Finance', '/admin/finance-hr'],
+  ['Programmes', '/admin'],
+  ['Approvals', '/admin/approvals'],
 ];
 
 export default function AdminWorkspaceShell({ children }) {
@@ -21,6 +18,7 @@ export default function AdminWorkspaceShell({ children }) {
   const [status, setStatus] = useState(null);
   const [role, setRole] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [authStatus, setAuthStatus] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,11 +30,13 @@ export default function AdminWorkspaceShell({ children }) {
         const data = await r.json().catch(() => null);
         if (cancelled) return;
         setRole(r.ok ? (data?.role || null) : null);
+        setAuthStatus(r.status);
         setAuthChecked(true);
       })
       .catch(() => {
         if (!cancelled) {
           setRole(null);
+          setAuthStatus(0);
           setAuthChecked(true);
         }
       });
@@ -48,18 +48,27 @@ export default function AdminWorkspaceShell({ children }) {
   }, [pathname]);
 
   useEffect(() => {
+    if (authChecked && !role && authStatus === 401 && pathname !== '/admin/login' && pathname !== '/admin/forgot-password') {
+      const next = pathname + (typeof window !== 'undefined' ? window.location.search : '');
+      router.replace('/admin/login?next=' + encodeURIComponent(next));
+    }
+  }, [authChecked, authStatus, role, pathname, router]);
+
+  useEffect(() => {
     if (role === 'finance' && pathname === '/admin') router.replace('/admin/finance-hr');
   }, [role, pathname, router]);
 
   if (pathname === '/admin/login' || pathname === '/admin/forgot-password') return children;
   if (!authChecked) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'Inter,system-ui,sans-serif',color:'#063b73'}}>Checking IMS access…</div>;
-  if (!role) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',padding:24,fontFamily:'Inter,system-ui,sans-serif',background:'#f4f7fa'}}><div style={{maxWidth:520,padding:32,border:'1px solid #dce5ed',borderRadius:14,background:'#fff',textAlign:'center'}}><div style={{fontSize:12,fontWeight:900,letterSpacing:'.12em',color:'#1677c8'}}>VSI IMS</div><h1 style={{color:'#063b73',margin:'10px 0'}}>Access restricted</h1><p style={{color:'#718091',fontSize:14,lineHeight:1.6}}>Your IMS role does not have access to this workspace.</p></div></div>;
+  if (!role && authStatus === 401) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'Inter,system-ui,sans-serif',color:'#063b73'}}>Redirecting to IMS sign in…</div>;
+  if (!role) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',padding:24,fontFamily:'Inter,system-ui,sans-serif',background:'#f4f7fa'}}><div style={{maxWidth:520,padding:32,border:'1px solid #dce5ed',borderRadius:14,background:'#fff',textAlign:'center'}}><div style={{fontSize:12,fontWeight:900,letterSpacing:'.12em',color:'#1677c8'}}>VSI IMS</div><h1 style={{color:'#063b73',margin:'10px 0'}}>Access restricted</h1><p style={{color:'#718091',fontSize:14,lineHeight:1.6}}>Your IMS role does not have access to this workspace. Please sign in with an authorised account.</p></div></div>;
 
   // Finance-only accounts land on /admin after sign-in; let the existing redirect run before applying workspace restrictions.
   if (pathname === '/admin' && role === 'finance') return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',fontFamily:'Inter,system-ui,sans-serif',color:'#063b73'}}>Opening Finance &amp; HR workspace…</div>;
 
   const financeRoute = pathname === '/admin/finance-hr' || pathname.startsWith('/admin/finance-hr/');
-  const allowed = financeRoute ? ROLE_ACCESS[role]?.includes('finance') : ROLE_ACCESS[role]?.includes('programmes');
+  const approvalsRoute = pathname === '/admin/approvals' || pathname.startsWith('/admin/approvals/');
+  const allowed = financeRoute ? ROLE_ACCESS[role]?.includes('finance') : approvalsRoute ? role === 'admin' : ROLE_ACCESS[role]?.includes('programmes');
   if (!allowed) return <div style={{minHeight:'100vh',display:'grid',placeItems:'center',padding:24,fontFamily:'Inter,system-ui,sans-serif',background:'#f4f7fa'}}><div style={{maxWidth:520,padding:32,border:'1px solid #dce5ed',borderRadius:14,background:'#fff',textAlign:'center'}}><div style={{fontSize:12,fontWeight:900,letterSpacing:'.12em',color:'#1677c8'}}>VSI IMS</div><h1 style={{color:'#063b73',margin:'10px 0'}}>Access restricted</h1><p style={{color:'#718091',fontSize:14,lineHeight:1.6}}>Your IMS role does not have access to this workspace.</p></div></div>;
 
   if (financeRoute) return <>{children}</>;
@@ -70,8 +79,8 @@ export default function AdminWorkspaceShell({ children }) {
         <div className="admin-workspace-brand"><img src="/vsi-logo-white.png" alt="Visionary Students Initiative" /></div>
         <div className="admin-workspace-label">WORKSPACE</div>
         <nav aria-label="VSI IMS Workspace">
-          {NAV.filter(([label]) => ROLE_ACCESS[role]?.includes(label === 'Finance & HR' ? 'finance' : 'programmes')).map(([label, href]) => {
-            const active = label === 'Activity Reports' ? pathname === '/admin/reports' && !status : pathname === href;
+          {NAV.filter(([label]) => label === 'Finance' ? ROLE_ACCESS[role]?.includes('finance') : label === 'Approvals' ? role === 'admin' : ROLE_ACCESS[role]?.includes('programmes')).map(([label, href]) => {
+            const active = label === 'Programmes' ? pathname === '/admin' || pathname.startsWith('/admin/reports') || pathname.startsWith('/admin/meal') : pathname === href;
             return <Link key={label} href={href} className={active ? 'active' : ''}>{label}</Link>;
           })}
         </nav>
