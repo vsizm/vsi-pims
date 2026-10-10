@@ -7,8 +7,10 @@ import { useEffect, useState } from 'react';
 const ROLE_ACCESS = { admin: ['programmes', 'finance'], programmes: ['programmes'], finance: ['finance'] };
 
 const NAV = [
+  ['Overview', '/admin'],
+  ['Programme Register', '/admin/programmes'],
+  ['Activity Reports', '/admin/reports'],
   ['Finance', '/admin/finance-hr'],
-  ['Programmes', '/admin'],
   ['Approvals', '/admin/approvals'],
 ];
 
@@ -80,7 +82,7 @@ export default function AdminWorkspaceShell({ children }) {
         <div className="admin-workspace-label">WORKSPACE</div>
         <nav aria-label="VSI IMS Workspace">
           {NAV.filter(([label]) => label === 'Finance' ? ROLE_ACCESS[role]?.includes('finance') : label === 'Approvals' ? role === 'admin' : ROLE_ACCESS[role]?.includes('programmes')).map(([label, href]) => {
-            const active = label === 'Programmes' ? pathname === '/admin' || pathname.startsWith('/admin/reports') || pathname.startsWith('/admin/meal') : pathname === href;
+            const active = label === 'Overview' ? pathname === '/admin' || pathname.startsWith('/admin/meal') : label === 'Programme Register' ? pathname === '/admin/programmes' || pathname.startsWith('/admin/programmes/') : label === 'Activity Reports' ? pathname.startsWith('/admin/reports') : pathname === href;
             return <Link key={label} href={href} className={active ? 'active' : ''}>{label}</Link>;
           })}
         </nav>
