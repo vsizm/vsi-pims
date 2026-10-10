@@ -214,7 +214,7 @@ export default function App({ approvalsOnly = false }: { approvalsOnly?: boolean
       )}
 
       {!approvalsOnly && open && <div className="backdrop" onClick={() => setOpen(false)} />}
-      <main className="financeMain">
+      <main className="financeMain" style={approvalsOnly ? { marginLeft: 0, width: '100%', padding: '0 24px 45px' } : undefined}>
         <header className="financeHeader">
           {!approvalsOnly && <button className="mobileMenu" onClick={() => setOpen(true)}>
             <Menu />
