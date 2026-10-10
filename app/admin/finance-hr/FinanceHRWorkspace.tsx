@@ -83,12 +83,13 @@ function money(n: number) {
   }).format(n);
 }
 
-export default function App() {
+export default function App({ approvalsOnly = false }: { approvalsOnly?: boolean }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState('dashboard');
+  const [page, setPage] = useState(approvalsOnly ? 'approvals' : 'dashboard');
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<any>({ employees: [], finance: [], leaves: [], users: [], audit: [], suppliers: [] });
+  const [programmeReports, setProgrammeReports] = useState<any[]>([]);
   const [error, setError] = useState('');
   const load = async () => {
     try {
@@ -110,6 +111,12 @@ export default function App() {
       }
     })();
   }, []);
+  useEffect(() => {
+    if (!approvalsOnly || !user) return;
+    fetch('/api/admin/activity-reports', { cache: 'no-store', credentials: 'include' })
+      .then(async response => { const result = await response.json().catch(() => ({})); if (response.ok) setProgrammeReports(result.reports || []); })
+      .catch(() => setProgrammeReports([]));
+  }, [approvalsOnly, user]);
   if (loading)
     return (
       <div
@@ -166,6 +173,7 @@ export default function App() {
   };
   return (
     <div className="finance-hr-root"><div className="financeShell">
+      {!approvalsOnly && (
       <aside className={open ? 'financeSidebar open' : 'financeSidebar'}>
         <div className="brand">
           <img src="/vsi-logo-white.png" alt="Visionary Students Initiative" />
@@ -203,12 +211,14 @@ export default function App() {
           </button>
         </div>
       </aside>
-      {open && <div className="backdrop" onClick={() => setOpen(false)} />}
+      )}
+
+      {!approvalsOnly && open && <div className="backdrop" onClick={() => setOpen(false)} />}
       <main className="financeMain">
         <header className="financeHeader">
-          <button className="mobileMenu" onClick={() => setOpen(true)}>
+          {!approvalsOnly && <button className="mobileMenu" onClick={() => setOpen(true)}>
             <Menu />
-          </button>
+          </button>}
           <div>
             <p className="eyebrow">VISIONARY STUDENTS INITIATIVE</p>
             <h2>{nav.find(x => x[0] === page)?.[1] || 'Dashboard'}</h2>
@@ -254,6 +264,13 @@ export default function App() {
           <Approvals
             finance={finance}
             leaves={leaves}
+            payroll={data.payroll || []}
+            procurement={data.procurement || []}
+            paymentVouchers={data.paymentVouchers || []}
+            purchaseOrders={data.purchaseOrders || []}
+            programmeReports={programmeReports}
+            setProgrammeReports={setProgrammeReports}
+            role={role}
             canApprove={canApprove}
             action={action}
           />
