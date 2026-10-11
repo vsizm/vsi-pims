@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { cookies } from 'next/headers';
-import { getAdminSession } from '../../login/route';
+import { getAdminSession } from '../login/route';
 
 async function authorised() {
   const token = (await cookies()).get('vsi_admin_session')?.value;
